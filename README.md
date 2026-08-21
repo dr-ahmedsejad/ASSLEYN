@@ -156,11 +156,22 @@ priver.
 
 ## Sécurité
 
-- Argon2id, 12 caractères minimum, changement forcé à la première connexion.
+- Argon2id. Huit caractères minimum, **numérique autorisé** : le mot de passe
+  de première connexion d'une étudiante est son matricule écrit deux fois —
+  24060 ouvre avec `2406024060` — et son remplacement est imposé aussitôt.
 - Session en cookie `httpOnly` + `SameSite=Strict` posée par le BFF Next.js :
   aucun jeton n'atteint le JavaScript du navigateur.
-- Verrouillage après 5 échecs ; message de connexion unique qui ne révèle
-  jamais si un compte existe.
+- **Verrouillage progressif** : cinq échecs ferment le compte 5 minutes, cinq
+  de plus 15, cinq encore 30. L'écran de connexion affiche le décompte plutôt
+  que de laisser réessayer dans le vide. Pendant le blocage, le bon mot de
+  passe est refusé comme les autres — sinon le compte fermé deviendrait un
+  oracle.
+- Message de connexion unique, qui ne révèle jamais si un compte existe.
+- **Journal des connexions** : chaque tentative, réussie ou non, avec son issue
+  et son adresse IP. Il alimente aussi la page de fréquentation — visites,
+  visiteuses, et les dix étudiantes les plus assidues.
+- L'administration **débloque** un compte en un geste, et **réinitialise** un
+  mot de passe sans connaître l'ancien : le nouveau s'affiche une seule fois.
 - Filtrage **au niveau du queryset** : forger l'identifiant du résultat d'une
   camarade renvoie 404, pas la donnée.
 - Relais BFF restreint par liste blanche de chemins.

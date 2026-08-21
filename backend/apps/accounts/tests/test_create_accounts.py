@@ -32,7 +32,14 @@ def test_creation_des_comptes(sans_compte) -> None:
 
 
 @pytest.mark.django_db
-def test_mots_de_passe_tous_differents(sans_compte, tmp_path) -> None:
+def test_le_mot_de_passe_initial_est_le_matricule_double(sans_compte, tmp_path) -> None:
+    """
+    Regle de l'etablissement : 24060 ouvre avec 2406024060.
+
+    Elle evite la feuille de mots de passe a imprimer puis a detruire — chaque
+    etudiante connait deja son numero — et le changement est impose des la
+    premiere connexion.
+    """
     fichier = tmp_path / "comptes.csv"
     call_command("create_student_accounts", "--output", str(fichier), verbosity=0)
 
@@ -40,14 +47,13 @@ def test_mots_de_passe_tous_differents(sans_compte, tmp_path) -> None:
         lignes = list(csv.reader(handle))[1:]
 
     assert len(lignes) == 3
-    mots_de_passe = [ligne[2] for ligne in lignes]
-    assert len(set(mots_de_passe)) == 3
-    assert all(len(m) == 12 for m in mots_de_passe)
-    # Les mots de passe ne sont jamais stockes en clair en base.
     for matricule, _nom, mot_de_passe in lignes:
+        assert mot_de_passe == matricule * 2
         user = User.objects.get(username=matricule)
         assert user.check_password(mot_de_passe)
+        # Jamais stocke en clair : la colonne ne contient qu'une empreinte.
         assert mot_de_passe not in user.password
+        assert user.password.startswith("argon2")
 
 
 @pytest.mark.django_db

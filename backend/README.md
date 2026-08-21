@@ -83,7 +83,8 @@ le test vérifie que le moteur produit la valeur corrigée.
 | Commande | Rôle |
 |---|---|
 | `seed_2025_2026` | Amorce l'année réelle : 5 sections, 8 matières, coefficients, 97 étudiantes, notes du فصل 1, puis calcule. Idempotente. |
-| `create_student_accounts` | Crée les comptes manquants avec mot de passe temporaire, export CSV optionnel. |
+| `create_student_accounts` | Crée les comptes manquants. Mot de passe initial : le matricule écrit deux fois. |
+| `reset_student_passwords` | Remet les mots de passe à cette règle. Épargne par défaut celles qui ont déjà choisi le leur ; `--tout` passe outre. |
 | `importer_programme` | Pose les matières et coefficients d'un فصل depuis un JSON. Idempotente, `--dry-run` disponible. |
 
 Les programmes vivent dans `programmes/*.json` — un fichier par فصل :
@@ -106,17 +107,80 @@ l'importe alors avec un numéro provisoire de la plage 99xxx.
 
 ## Sécurité
 
-- Argon2id pour les mots de passe, 12 caractères minimum.
+- Argon2id pour les mots de passe.
 - Session en cookie `httpOnly` + `Secure` + `SameSite=Strict`, posée par le
   BFF Next.js : aucun jeton n'est jamais exposé au JavaScript du navigateur.
-- `django-axes` : verrouillage après 5 échecs sur (utilisateur, IP).
 - Message de connexion unique : ne révèle jamais si un compte existe.
-- Throttling DRF, 10 tentatives de connexion par heure.
+- Throttling DRF, 30 tentatives de connexion par minute et par adresse.
 - CSP stricte, HSTS, `X-Frame-Options: DENY` (voir `settings/prod.py`).
 - **Filtrage au niveau du queryset** : une étudiante qui forge l'identifiant
   du résultat d'une camarade obtient un 404, pas la donnée.
 - Journal `asleyn.audit` : connexions, changements de notes, modifications de
   coefficients, décisions de jury, publications.
+
+### Mots de passe
+
+Huit caractères au minimum, **numérique autorisé**. Le mot de passe de
+première connexion d'une étudiante est son matricule écrit deux fois — 24060
+ouvre avec `2406024060` — et son remplacement est imposé dès l'ouverture de
+session. Aucune feuille de mots de passe à imprimer puis à détruire : chaque
+étudiante connaît déjà son numéro.
+
+Huit chiffres, c'est cent millions de combinaisons : dérisoire face à une
+machine qui essaie hors ligne, hors d'atteinte en ligne où le verrouillage
+n'accorde que cinq essais. C'est cette barrière-là qui tient, pas la longueur.
+
+Deux validateurs de Django sont volontairement absents : `NumericPassword`
+refuserait les mots de passe numériques, et `UserAttributeSimilarity`
+refuserait un mot de passe dérivé du nom d'utilisateur — ce qui est exactement
+la règle retenue. `CommonPassword` reste : il écarte `12345678`.
+
+### Verrouillage progressif
+
+`apps/accounts/verrouillage.py`. Cinq échecs ferment le compte **5 minutes** ;
+cinq de plus, **15** ; cinq encore, **30**. Les paliers montent tant que les
+blocages se succèdent dans la journée, puis le compteur repart de zéro.
+
+Le blocage porte sur le nom d'utilisateur, pas sur l'adresse : l'institut sort
+par une seule connexion internet, bloquer l'IP fermerait la porte à toute une
+classe. Le revers est connu — qui connaît un identifiant peut en bloquer
+l'accès — d'où l'écran de déblocage, qui rouvre en un geste.
+
+Pendant le blocage, **le bon mot de passe est refusé comme les autres** : une
+réponse différente ferait du compte fermé un oracle.
+
+`django-axes` a été retiré. Il verrouille bien, mais à durée fixe ; l'escalade,
+le minuteur affiché, la liste des comptes fermés et leur réouverture se lisent
+tous dans le journal des tentatives, qui devait de toute façon exister pour
+tracer les adresses. Deux comptabilités du même phénomène auraient fini par se
+contredire.
+
+### Journal des connexions et fréquentation
+
+`LoginAttempt` enregistre **chaque** tentative — réussie ou non — avec l'issue,
+l'adresse IP et le navigateur. L'identifiant est conservé tel qu'il a été
+saisi, même inconnu : c'est précisément ce qu'on veut lire après coup.
+
+De ce même journal découlent les statistiques de fréquentation : nombre de
+visites, visiteuses distinctes, échecs, et les **dix étudiantes les plus
+assidues**. Une visite est une connexion réussie — le navigateur ne joignant
+jamais Django directement, il n'y a pas de page vue côté API à compter.
+
+| Route | Permission |
+|---|---|
+| `GET /securite/journal/` | `journal.consulter` |
+| `GET /securite/statistiques/` | `journal.consulter` |
+| `GET /securite/verrous/` | `comptes.gerer` |
+| `POST /securite/verrous/{id}/deverrouiller/` | `comptes.gerer` |
+| `POST /securite/utilisateurs/{id}/reinitialiser-mot-de-passe/` | `comptes.gerer` |
+
+Un blocage débloqué est **clos, pas effacé** : effacer l'incident retirerait à
+l'administration le seul indice d'une attaque en cours.
+
+La réinitialisation ne demande pas l'ancien mot de passe — l'administration
+intervient justement quand il est perdu. Le nouveau est renvoyé **une seule
+fois**, n'est stocké nulle part en clair, doit être changé à la première
+connexion, et lève au passage un éventuel blocage.
 
 ## Les deux sessions
 

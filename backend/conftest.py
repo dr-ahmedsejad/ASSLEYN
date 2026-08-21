@@ -12,6 +12,7 @@ from datetime import date
 from decimal import Decimal
 
 import pytest
+from django.core.cache import cache
 from rest_framework.test import APIClient
 
 from apps.academics.models import (
@@ -28,6 +29,20 @@ from apps.accounts.models import Role, Student, Teacher, User
 from apps.results.services import default_rule_for
 
 MOT_DE_PASSE = "Un-Mot-De-Passe-Solide-2026"
+
+
+@pytest.fixture(autouse=True)
+def _throttle_vierge():
+    """
+    Compteurs de debit remis a zero entre deux tests.
+
+    Le throttle de DRF vit dans le cache, qui survit d'un test a l'autre : un
+    test qui enchaine les connexions ferait echouer le suivant pour une raison
+    qui n'a rien a voir avec ce qu'il verifie.
+    """
+    cache.clear()
+    yield
+    cache.clear()
 
 
 @pytest.fixture

@@ -26,7 +26,7 @@ class Permission(models.TextChoices):
     STRUCTURE_GERER = "structure.gerer", _("البنية البيداغوجية والضوارب")
     ETUDIANTES_GERER = "etudiantes.gerer", _("ملفات الطالبات والتسجيل")
     ANNEES_GERER = "annees.gerer", _("السنوات الدراسية")
-    JOURNAL_CONSULTER = "journal.consulter", _("سجل تغييرات النقاط")
+    JOURNAL_CONSULTER = "journal.consulter", _("السجلات والزيارات")
     COMPTES_GERER = "comptes.gerer", _("الحسابات والصلاحيات")
     RESULTATS_PERSONNELS = "resultats.personnels", _("الاطلاع على نتائجها")
 

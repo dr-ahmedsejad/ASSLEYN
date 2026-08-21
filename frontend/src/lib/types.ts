@@ -299,3 +299,60 @@ export interface AvancementSaisie {
   total: { attendues: number; saisies: number };
   sections: SectionAvancement[];
 }
+
+// --------------------------------------------------------------------------
+// Surveillance des connexions
+// --------------------------------------------------------------------------
+
+export type IssueConnexion =
+  | "SUCCESS"
+  | "BAD_PASSWORD"
+  | "UNKNOWN_USER"
+  | "INACTIVE"
+  | "LOCKED";
+
+export interface TentativeConnexion {
+  id: number;
+  username: string;
+  full_name_ar: string;
+  role: Role | null;
+  outcome: IssueConnexion;
+  outcome_display: string;
+  ip_address: string | null;
+  user_agent: string;
+  at: string;
+}
+
+export interface Verrou {
+  id: number;
+  username: string;
+  full_name_ar: string;
+  level: number;
+  duree_minutes: number;
+  started_at: string;
+  until: string;
+  ip_address: string | null;
+  actif: boolean;
+  secondes_restantes: number;
+  released_at: string | null;
+  released_by_name: string;
+}
+
+export interface VisiteuseAssidue {
+  username: string;
+  full_name_ar: string;
+  visites: number;
+  derniere: string;
+}
+
+export interface StatistiquesVisites {
+  periode: string;
+  visites: number;
+  visiteurs: number;
+  visites_aujourdhui: number;
+  echecs: number;
+  blocages: number;
+  blocages_actifs: number;
+  top_etudiantes: VisiteuseAssidue[];
+  par_jour: { jour: string; visites: number }[];
+}

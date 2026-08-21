@@ -259,3 +259,112 @@ class Teacher(models.Model):
 
     def __str__(self) -> str:
         return self.full_name_ar
+
+
+class LoginOutcome(models.TextChoices):
+    """Issue d'une tentative de connexion."""
+
+    SUCCESS = "SUCCESS", _("نجاح")
+    BAD_PASSWORD = "BAD_PASSWORD", _("كلمة سر خاطئة")
+    UNKNOWN_USER = "UNKNOWN_USER", _("مستخدم غير معروف")
+    INACTIVE = "INACTIVE", _("حساب معطل")
+    LOCKED = "LOCKED", _("محاولة أثناء الإقفال")
+
+
+class LoginAttempt(models.Model):
+    """
+    Journal des connexions — reussites comme echecs.
+
+    Le nom d'utilisateur est conserve **tel qu'il a ete saisi**, meme s'il ne
+    correspond a aucun compte : c'est precisement ce qu'on veut lire apres
+    coup. Un lien vers `User` serait vide dans le cas le plus interessant.
+
+    Ce journal est en ecriture seule du point de vue de l'application : rien
+    ne le modifie, rien ne l'efface. Une trace qu'on peut retoucher ne prouve
+    plus rien.
+    """
+
+    username = models.CharField(_("اسم المستخدم"), max_length=150, db_index=True)
+    user = models.ForeignKey(
+        "accounts.User",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="login_attempts",
+        verbose_name=_("الحساب"),
+    )
+    outcome = models.CharField(
+        _("النتيجة"), max_length=15, choices=LoginOutcome.choices, db_index=True
+    )
+    ip_address = models.GenericIPAddressField(_("عنوان IP"), null=True, blank=True)
+    # Tronque : un agent utilisateur depasse parfois le kilo-octet, et seul son
+    # debut identifie le navigateur.
+    user_agent = models.CharField(_("المتصفح"), max_length=255, blank=True)
+    at = models.DateTimeField(_("التاريخ"), auto_now_add=True, db_index=True)
+
+    class Meta:
+        verbose_name = _("محاولة دخول")
+        verbose_name_plural = _("سجل الدخول")
+        ordering = ["-at"]
+        indexes = [
+            # Sert deux lectures chaudes : le decompte des echecs recents d'un
+            # compte, et le classement des visiteuses.
+            models.Index(fields=["username", "-at"], name="tentative_par_compte"),
+            models.Index(fields=["outcome", "-at"], name="tentative_par_issue"),
+        ]
+
+    def __str__(self) -> str:
+        return f"{self.username} — {self.outcome} — {self.at:%Y-%m-%d %H:%M}"
+
+    @property
+    def reussie(self) -> bool:
+        return self.outcome == LoginOutcome.SUCCESS
+
+
+class Lockout(models.Model):
+    """
+    Periode de blocage d'un compte apres des echecs repetes.
+
+    Le blocage porte sur le **nom d'utilisateur**, pas sur l'adresse IP : c'est
+    ce que demande l'etablissement, et c'est aussi ce qui protege une etudiante
+    dont le mot de passe est essaye depuis plusieurs reseaux. Le revers est
+    connu : quelqu'un qui connait un identifiant peut en bloquer l'acces a
+    repetition. D'ou l'ecran de deblocage — l'administration rouvre en un
+    geste, sans attendre l'expiration.
+    """
+
+    username = models.CharField(_("اسم المستخدم"), max_length=150, db_index=True)
+    user = models.ForeignKey(
+        "accounts.User",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="lockouts",
+        verbose_name=_("الحساب"),
+    )
+    #: 1, 2, 3 — le palier atteint, qui determine la duree.
+    level = models.PositiveSmallIntegerField(_("المستوى"), default=1)
+    started_at = models.DateTimeField(_("بداية الإقفال"), auto_now_add=True)
+    until = models.DateTimeField(_("نهاية الإقفال"), db_index=True)
+    ip_address = models.GenericIPAddressField(_("عنوان IP"), null=True, blank=True)
+    released_at = models.DateTimeField(_("تاريخ الفتح"), null=True, blank=True)
+    released_by = models.ForeignKey(
+        "accounts.User",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="lockouts_released",
+        verbose_name=_("فتحه"),
+    )
+
+    class Meta:
+        verbose_name = _("إقفال حساب")
+        verbose_name_plural = _("الحسابات المقفلة")
+        ordering = ["-started_at"]
+
+    def __str__(self) -> str:
+        return f"{self.username} — niveau {self.level} jusqu'a {self.until:%H:%M}"
+
+    @property
+    def libere(self) -> bool:
+        return self.released_at is not None

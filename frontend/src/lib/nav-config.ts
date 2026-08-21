@@ -9,6 +9,7 @@ import {
   Scale,
   ScrollText,
   ShieldCheck,
+  Siren,
   Users,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
@@ -134,6 +135,13 @@ export const NAV_GROUPS: NavGroup[] = [
     section: "المتابعة",
     permission: PERMISSIONS.JOURNAL_CONSULTER,
     items: [{ href: "/journal", label: "سجل تغييرات النقاط" }],
+  },
+  {
+    key: "securite",
+    label: "الزيارات والدخول",
+    icon: Siren,
+    permission: PERMISSIONS.JOURNAL_CONSULTER,
+    items: [{ href: "/securite", label: "الزيارات وسجل الدخول" }],
   },
   {
     key: "droits",

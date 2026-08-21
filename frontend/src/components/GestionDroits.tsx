@@ -4,6 +4,7 @@ import { Fragment, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Check, Lock, ShieldCheck, UserCog } from "lucide-react";
 
+import { ReinitialisationMotDePasse } from "@/components/ReinitialisationMotDePasse";
 import type {
   DetailDroitsUtilisateur,
   MatriceDroits,
@@ -358,6 +359,23 @@ export function DroitsIndividuels({
                   <Alerte ton={message.ton}>{message.texte}</Alerte>
                 </div>
               ) : null}
+
+              {/* L'administration rend un acces sans connaitre l'ancien mot de
+                  passe : c'est le seul cas ou elle est appelee. Pour une
+                  etudiante, le champ propose d'emblee la regle de
+                  l'etablissement — son numero ecrit deux fois. */}
+              <div className="mb-4">
+                <ReinitialisationMotDePasse
+                  key={detail.id}
+                  utilisateur={detail.id}
+                  nom={detail.full_name_ar}
+                  suggestion={
+                    detail.role === "STUDENT"
+                      ? `${detail.username}${detail.username}`
+                      : undefined
+                  }
+                />
+              </div>
 
               <div className="overflow-x-auto">
                 <table className="data-table min-w-[30rem]">

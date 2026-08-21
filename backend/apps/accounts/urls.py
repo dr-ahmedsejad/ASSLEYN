@@ -6,6 +6,13 @@ from apps.accounts.rbac_views import (
     MatriceDroitsView,
     UtilisateursDroitsView,
 )
+from apps.accounts.securite_views import (
+    DeverrouillerView,
+    JournalConnexionsView,
+    ReinitialiserMotDePasseView,
+    StatistiquesVisitesView,
+    VerrousView,
+)
 from apps.accounts.views import (
     ChangePasswordView,
     CsrfView,
@@ -29,6 +36,27 @@ urlpatterns = [
         "auth/change-password/",
         ChangePasswordView.as_view(),
         name="auth-change-password",
+    ),
+    path(
+        "securite/journal/",
+        JournalConnexionsView.as_view(),
+        name="securite-journal",
+    ),
+    path(
+        "securite/statistiques/",
+        StatistiquesVisitesView.as_view(),
+        name="securite-statistiques",
+    ),
+    path("securite/verrous/", VerrousView.as_view(), name="securite-verrous"),
+    path(
+        "securite/verrous/<int:pk>/deverrouiller/",
+        DeverrouillerView.as_view(),
+        name="securite-deverrouiller",
+    ),
+    path(
+        "securite/utilisateurs/<int:pk>/reinitialiser-mot-de-passe/",
+        ReinitialiserMotDePasseView.as_view(),
+        name="securite-reinitialiser",
     ),
     path("rbac/matrice/", MatriceDroitsView.as_view(), name="rbac-matrice"),
     path("rbac/utilisateurs/", UtilisateursDroitsView.as_view(), name="rbac-utilisateurs"),

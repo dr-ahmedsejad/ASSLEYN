@@ -24,6 +24,12 @@ import { ApiError, apiRequest } from "@/lib/api";
 export interface FormState {
   error?: string;
   success?: boolean;
+  /** Secondes restantes avant reouverture, quand le compte est bloque. */
+  secondesRestantes?: number;
+  /** Palier atteint : 1, 2 ou 3. Sert a expliquer la duree. */
+  niveau?: number;
+  /** Essais encore possibles avant blocage. */
+  tentativesRestantes?: number;
 }
 
 /** Recopie les cookies renvoyes par Django dans la reponse Next.js. */
@@ -90,13 +96,33 @@ export async function connexion(
   });
 
   if (!response.ok) {
-    const payload = await response.json().catch(() => null);
-    const messages = new ApiError(response.status, payload).messages;
+    const payload = (await response.json().catch(() => null)) as {
+      detail?: string;
+      verrouille?: boolean;
+      secondes_restantes?: number;
+      niveau?: number;
+      tentatives_restantes?: number;
+    } | null;
+
     if (response.status === 429) {
       return { error: "عدد المحاولات كبير. انتظر قليلا ثم أعد المحاولة." };
     }
+
+    // 423 : le compte est ferme pour un temps. Le minuteur remonte jusqu'au
+    // formulaire, qui l'affiche en decompte plutot que de laisser l'etudiante
+    // reessayer dans le vide.
+    if (response.status === 423 && payload?.verrouille) {
+      return {
+        error: payload.detail ?? "تم إقفال الحساب مؤقتا.",
+        secondesRestantes: payload.secondes_restantes ?? 0,
+        niveau: payload.niveau,
+      };
+    }
+
+    const messages = new ApiError(response.status, payload).messages;
     return {
-      error: messages[0] ?? "اسم المستخدم أو كلمة السر غير صحيحة.",
+      error: payload?.detail ?? messages[0] ?? "اسم المستخدم أو كلمة السر غير صحيحة.",
+      tentativesRestantes: payload?.tentatives_restantes,
     };
   }
 

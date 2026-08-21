@@ -1,22 +1,22 @@
 """
 Creation en lot des comptes etudiantes.
 
-Chaque etudiante recoit un identifiant egal a son matricule et un mot de passe
-temporaire genere aleatoirement, qu'elle devra changer a sa premiere
-connexion.
+Chaque etudiante recoit un identifiant egal a son matricule et, pour premier
+mot de passe, **ce meme matricule ecrit deux fois** — 24060 ouvre avec
+2406024060. Le changement est impose des la premiere connexion.
 
     python manage.py create_student_accounts --dry-run
-    python manage.py create_student_accounts --output comptes.csv
+    python manage.py create_student_accounts
 
-Le fichier produit contient les mots de passe en clair : il est destine a etre
-imprime, distribue, puis detruit. Il ne doit jamais etre conserve ni
-versionne.
+La regle etant connue de tous, aucun fichier n'est necessaire. `--output`
+reste disponible pour produire la liste, mais elle contient des mots de passe
+en clair : a imprimer, distribuer, puis detruire — jamais a conserver ni a
+versionner.
 """
 
 from __future__ import annotations
 
 import csv
-import secrets
 from pathlib import Path
 
 from django.core.management.base import BaseCommand
@@ -24,14 +24,21 @@ from django.db import transaction
 
 from apps.accounts.models import Role, Student, User
 
-# Alphabet sans caracteres ambigus (0/O, 1/l/I) : ces mots de passe sont
-# recopies a la main depuis une feuille imprimee.
-ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789"
-LONGUEUR = 12
+def mot_de_passe_initial(matricule: str) -> str:
+    """
+    Mot de passe de premiere connexion : le matricule ecrit deux fois.
 
+    Regle fixee par l'etablissement. Elle a un merite decisif sur un tirage
+    aleatoire : aucune feuille de mots de passe a imprimer, a distribuer et a
+    detruire. Chaque etudiante connait deja son numero, et le changement est
+    impose des la premiere connexion.
 
-def mot_de_passe_temporaire() -> str:
-    return "".join(secrets.choice(ALPHABET) for _ in range(LONGUEUR))
+    Ce mot de passe n'a donc de valeur que le temps d'une ouverture de
+    session. C'est aussi pour cela qu'il n'est pas soumis aux validateurs :
+    `set_password` ne les appelle pas, et il n'y a rien a valider dans un
+    identifiant destine a etre remplace tout de suite.
+    """
+    return f"{matricule}{matricule}"
 
 
 class Command(BaseCommand):
@@ -82,7 +89,7 @@ class Command(BaseCommand):
                     )
                     continue
 
-                mot_de_passe = mot_de_passe_temporaire()
+                mot_de_passe = mot_de_passe_initial(etudiante.matricule)
                 user = User.objects.create_user(
                     username=etudiante.matricule,
                     password=mot_de_passe,
@@ -104,7 +111,7 @@ class Command(BaseCommand):
             chemin: Path = options["output"]
             with chemin.open("w", encoding="utf-8-sig", newline="") as fichier:
                 writer = csv.writer(fichier)
-                writer.writerow(["رقم الطالبة", "الاسم الكامل", "كلمة السر المؤقتة"])
+                writer.writerow(["رقم الطالبة", "الاسم الكامل", "كلمة السر الأولى"])
                 writer.writerows(crees)
             self.stdout.write(
                 self.style.WARNING(

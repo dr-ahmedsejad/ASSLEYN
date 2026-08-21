@@ -42,7 +42,6 @@ THIRD_PARTY_APPS = [
     "django_filters",
     "corsheaders",
     "drf_spectacular",
-    "axes",
     "django_otp",
     "django_otp.plugins.otp_totp",
 ]
@@ -74,7 +73,6 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "csp.middleware.CSPMiddleware",
-    "axes.middleware.AxesMiddleware",
 ]
 
 ROOT_URLCONF = "config.urls"
@@ -119,29 +117,41 @@ PASSWORD_HASHERS = [
     "django.contrib.auth.hashers.ScryptPasswordHasher",
 ]
 
+# Politique de mot de passe, telle que l'etablissement l'a fixee : huit
+# caracteres au minimum, et un mot de passe entierement numerique est permis.
+# Le mot de passe initial d'une etudiante est son matricule ecrit deux fois.
+#
+# Ce choix se defend ici, et pas partout. Huit chiffres, c'est cent millions
+# de combinaisons : derisoire face a une machine qui essaie hors ligne, mais
+# hors d'atteinte en ligne, ou le verrouillage progressif (apps/accounts/
+# verrouillage.py) n'autorise que cinq essais avant de fermer la porte pour 5,
+# puis 15, puis 30 minutes. C'est cette barriere-la qui tient, pas la longueur.
+#
+# Deux validateurs sont volontairement absents :
+#   - NumericPasswordValidator refuserait les mots de passe numeriques ;
+#   - UserAttributeSimilarityValidator refuserait un mot de passe derive du
+#     nom d'utilisateur — ce qui est exactement la regle retenue.
+# CommonPasswordValidator reste : il ne coute rien et ecarte « 12345678 »,
+# la chaine la plus essayee au monde.
 AUTH_PASSWORD_VALIDATORS = [
-    {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
     {
         "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
-        "OPTIONS": {"min_length": 12},
+        "OPTIONS": {"min_length": 8},
     },
     {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
-    {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
 
-# django-axes doit preceder le backend standard pour intercepter les echecs.
-AUTHENTICATION_BACKENDS = [
-    "axes.backends.AxesStandaloneBackend",
-    "django.contrib.auth.backends.ModelBackend",
-]
+AUTHENTICATION_BACKENDS = ["django.contrib.auth.backends.ModelBackend"]
 
-# Verrouillage progressif : 5 echecs sur un couple (utilisateur, IP),
-# deverrouillage automatique au bout d'une heure.
-AXES_FAILURE_LIMIT = 5
-AXES_COOLOFF_TIME = 1
-AXES_LOCKOUT_PARAMETERS = ["username", "ip_address"]
-AXES_RESET_ON_SUCCESS = True
-AXES_LOCKOUT_TEMPLATE = None
+# Le verrouillage apres echecs repetes est traite par apps/accounts/
+# verrouillage.py, et non plus par django-axes.
+#
+# Axes verrouille tres bien, mais a duree fixe. La regle de l'etablissement
+# monte par paliers — 5 minutes, puis 15, puis 30 — et l'interface doit
+# afficher un minuteur, lister les comptes fermes et permettre de les rouvrir.
+# Tout cela se lit dans le journal des tentatives, qui devait de toute facon
+# exister pour tracer les adresses IP. Deux comptabilites paralleles du meme
+# phenomene auraient fini par se contredire ; il n'en reste qu'une.
 
 # --------------------------------------------------------------------------
 # Sessions (modele BFF : le navigateur ne detient jamais de jeton)
@@ -213,7 +223,13 @@ REST_FRAMEWORK = {
     "DEFAULT_THROTTLE_RATES": {
         "anon": "30/min",
         "user": "600/hour",
-        "login": "10/hour",
+        # Le debit de connexion est compte par adresse IP. L'institut est
+        # derriere une seule sortie internet : dix connexions par heure
+        # fermeraient la porte a toute une classe qui consulte ses resultats
+        # le meme matin. Ce plafond n'est la que contre un automate ; c'est le
+        # verrouillage par compte (apps/accounts/verrouillage.py) qui protege
+        # un mot de passe, et lui ne se laisse pas diluer par le nombre.
+        "login": "30/min",
     },
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     "DEFAULT_RENDERER_CLASSES": ["rest_framework.renderers.JSONRenderer"],
