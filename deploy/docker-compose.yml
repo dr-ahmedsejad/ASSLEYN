@@ -1,0 +1,207 @@
+# ═══════════════════════════════════════════════════════════════════
+# ASSLEYN — pile de production
+#
+# Cinq services : PostgreSQL, Redis, Django, Next.js, Nginx.
+#
+# Ce qui change par rapport a SIGA, et pourquoi
+# ------------------------------------------------------------------
+# SIGA injecte l'adresse de l'API dans le JavaScript a la construction, puis
+# la reecrit au vol dans Nginx (`sub_filter` sur un placeholder) parce que le
+# navigateur appelle Django directement.
+#
+# ASSLEYN n'en a pas besoin : le navigateur ne connait pas Django. Toutes les
+# requetes passent par le serveur Next, qui lit `API_BASE_URL` a l'execution.
+# D'ou une image unique valable pour n'importe quel domaine, aucun filtre de
+# reecriture dans Nginx, et un jeton de session que le navigateur ne voit
+# jamais.
+#
+# Avant `docker compose up` — cf. deploy/README.md
+# ------------------------------------------------------------------
+#   1. Copier .env.example en .env et le remplir (`deploy.sh init` le fait).
+#   2. Pour reprendre les donnees existantes, deposer ici un dump.sql.gz
+#      produit par `pg_dump --no-owner --no-privileges`. Les deux drapeaux
+#      sont obligatoires : sinon les ALTER ... OWNER TO du dump designent des
+#      roles absents du conteneur et l'import s'arrete.
+#      Sans dump, la base demarre vide et les migrations la peuplent.
+# ═══════════════════════════════════════════════════════════════════
+
+services:
+
+  # ─── Base PostgreSQL ─────────────────────────────────────────────
+  db:
+    image: postgres:18
+    container_name: asleyn-db
+    restart: always
+    environment:
+      POSTGRES_DB: ${DB_NAME:-asleyn}
+      POSTGRES_USER: ${DB_USER:-asleyn}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?mot de passe de base absent du .env}
+      # Tri linguistique arabe. L'etablissement classe des noms arabes — les
+      # sections, les matieres et les enseignantes sont ordonnees par leur
+      # libelle. Le provider ICU en locale `ar` les range comme un lecteur
+      # arabophone les attend, la ou l'ordre par point de code disperse les
+      # variantes de alef et de hamza.
+      #
+      # A savoir : la base de developpement locale utilise le provider par
+      # defaut. La divergence ne touche que l'ordre d'affichage de libelles
+      # arabes a rang egal — jamais une moyenne, jamais un classement, qui
+      # sont calcules en Python.
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8 --locale-provider=icu --icu-locale=ar --locale=C.UTF-8"
+    volumes:
+      # postgres:18 a change de convention : le volume se monte sur
+      # /var/lib/postgresql (les donnees vivent dans le sous-dossier 18/docker)
+      # et non plus sur /var/lib/postgresql/data comme en 16. Monter l'ancien
+      # chemin donnerait une base ephemere, perdue a chaque recreation.
+      - pg_data:/var/lib/postgresql
+      # Contenu importe au tout PREMIER demarrage seulement : si pg_data
+      # existe deja, ce dossier est ignore — `deploy.sh reset-db` pour
+      # reimporter. L'image execute d'elle-meme les *.sql et *.sql.gz qu'il
+      # contient, dans l'ordre alphabetique.
+      #
+      # C'est le DOSSIER qui est monte, pas le fichier : Docker cree un
+      # repertoire vide a la place d'un fichier de montage absent, et
+      # PostgreSQL echouerait alors sur un « dump.sql.gz » qui est un dossier.
+      # Un initdb/ vide est un cas parfaitement normal — la base demarre
+      # vierge et les migrations la construisent.
+      - ./initdb:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      # -h 127.0.0.1 force le test en TCP. Pendant l'import du dump, PostgreSQL
+      # tourne d'abord sur le socket local puis redemarre en TCP : sans ce
+      # drapeau, le service serait declare sain trop tot et le backend
+      # demarrerait sur un port qui n'ecoute pas encore.
+      test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -U ${DB_USER:-asleyn} -d ${DB_NAME:-asleyn}"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 60s
+
+  # ─── Redis ───────────────────────────────────────────────────────
+  # Sessions (cached_db) et cache applicatif. La consultation des resultats
+  # est une pointe courte et tres repetitive : c'est exactement ce qu'un cache
+  # absorbe. `noeviction` sur la base des sessions serait dangereux, mais
+  # celles-ci sont doublees en base (cached_db) — une eviction degrade, elle
+  # ne deconnecte pas.
+  redis:
+    image: redis:7-alpine
+    container_name: asleyn-redis
+    restart: always
+    command: >
+      redis-server
+      --appendonly yes
+      --maxmemory 128mb
+      --maxmemory-policy allkeys-lru
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  # ─── Backend Django ──────────────────────────────────────────────
+  backend:
+    build:
+      context: ../backend
+      dockerfile: Dockerfile
+    container_name: asleyn-backend
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      DJANGO_SETTINGS_MODULE: config.settings.prod
+      DJANGO_SECRET_KEY: ${SECRET_KEY:?cle Django absente du .env}
+      DJANGO_DEBUG: "False"
+      # Django compare le nom d'hote seul, sans le port. `backend` y figure
+      # parce que Nginx et le serveur Next appellent le conteneur par ce nom.
+      DJANGO_ALLOWED_HOSTS: ${DOMAIN},localhost,127.0.0.1,backend
+      # Le mot de passe est alphanumerique (cf. deploy.sh) : un « @ » ou un
+      # « / » devrait etre encode ici, et se perdrait silencieusement.
+      DATABASE_URL: postgres://${DB_USER:-asleyn}:${DB_PASSWORD}@db:5432/${DB_NAME:-asleyn}
+      REDIS_URL: redis://redis:6379/2
+      CORS_ALLOWED_ORIGINS: https://${DOMAIN},http://${DOMAIN}
+      CSRF_TRUSTED_ORIGINS: https://${DOMAIN},http://${DOMAIN}
+      AUDIT_LOG_PATH: /app/logs/audit.log
+      # Pas de worker Celery dans cette pile : les rares taches differees
+      # s'executent dans le processus appelant. Ajouter un service worker le
+      # jour ou une tache devient longue — ce reglage passera alors a False.
+      CELERY_BROKER_URL: redis://redis:6379/0
+      CELERY_RESULT_BACKEND: redis://redis:6379/1
+      CELERY_TASK_ALWAYS_EAGER: "True"
+      GUNICORN_WORKERS: ${GUNICORN_WORKERS:-3}
+    volumes:
+      - static:/app/staticfiles
+      - logs:/app/logs
+
+  # ─── Frontend Next.js ────────────────────────────────────────────
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+    container_name: asleyn-frontend
+    restart: always
+    depends_on:
+      backend:
+        condition: service_healthy
+    environment:
+      # Lue a l'execution, cote serveur uniquement. Le navigateur ne voit
+      # jamais cette adresse, et ne peut donc pas joindre Django directement.
+      API_BASE_URL: http://backend:8010
+
+  # ─── Reverse proxy Nginx ─────────────────────────────────────────
+  nginx:
+    image: nginx:alpine
+    container_name: asleyn-nginx
+    restart: always
+    ports:
+      # Ports configurables : si un autre service occupe deja 80/443 sur la
+      # machine, poser HTTP_PORT / HTTPS_PORT dans le .env suffit.
+      - "${HTTP_PORT:-80}:80"
+      - "${HTTPS_PORT:-443}:443"
+    environment:
+      # L'image nginx substitue les variables des fichiers de
+      # /etc/nginx/templates avant de demarrer. Le filtre restreint la
+      # substitution au prefixe ASLEYN_ : sans lui, envsubst effacerait aussi
+      # $host, $scheme et $http_host, qui doivent rester des variables Nginx.
+      ASLEYN_DOMAIN: ${DOMAIN}
+      NGINX_ENVSUBST_FILTER: "ASLEYN_"
+    volumes:
+      # Domaine public + Let's Encrypt par defaut ; la variante LAN se choisit
+      # dans le .env avec ASLEYN_NGINX_CONF=./nginx.lan.conf.
+      - ${ASLEYN_NGINX_CONF:-./nginx.conf}:/etc/nginx/templates/default.conf.template:ro
+      - static:/var/www/static:ro
+      # Certificats Let's Encrypt, emis sur l'hote par certbot.
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+      # Certificat auto-signe de la variante LAN, produit par `deploy.sh setup-lan`.
+      - ./certs:/etc/nginx/certs:ro
+      # Racine du defi ACME, pour renouveler le certificat sans interruption.
+      - ./certbot-webroot:/var/www/certbot:ro
+    depends_on:
+      - backend
+      - frontend
+
+  # ─── Adminer (optionnel) ─────────────────────────────────────────
+  # Ne demarre qu'avec `docker compose --profile admin up -d`, et n'ecoute que
+  # sur la boucle locale : pour l'atteindre a distance, un tunnel SSH
+  # (`ssh -L 8092:127.0.0.1:8092 user@serveur`). Une console SQL ouverte sur
+  # le reseau serait la porte d'entree la plus large de toute la pile.
+  adminer:
+    image: adminer:latest
+    container_name: asleyn-adminer
+    restart: unless-stopped
+    profiles: ["admin"]
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      ADMINER_DEFAULT_SERVER: db
+    ports:
+      - "127.0.0.1:${ADMINER_PORT:-8092}:8080"
+
+volumes:
+  pg_data:
+  redis_data:
+  static:
+  logs:

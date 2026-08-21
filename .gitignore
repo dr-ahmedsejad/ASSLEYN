@@ -55,3 +55,17 @@ Thumbs.db
 .idea/
 .vscode/
 *.swp
+
+# Deploiement
+# ------------------------------------------------------------------
+# deploy/.env porte la cle Django et le mot de passe de la base ; certs/
+# porte une cle privee ; initdb/ et les sauvegardes portent les dossiers
+# reels de 98 etudiantes mineures. Rien de tout cela ne se versionne.
+deploy/.env
+deploy/certs/
+deploy/certbot-webroot/*
+!deploy/certbot-webroot/.gitkeep
+deploy/initdb/*
+!deploy/initdb/.gitkeep
+*.sql
+*.sql.gz

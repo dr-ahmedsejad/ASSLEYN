@@ -19,6 +19,16 @@ const originesDevAutorisees = [
 
 const nextConfig: NextConfig = {
   allowedDevOrigins: originesDevAutorisees,
+
+  /**
+   * Build autonome pour la mise en conteneur.
+   *
+   * Next reconstruit alors un `node_modules` reduit aux seuls modules que le
+   * serveur atteint reellement, et produit un `server.js` qui se lance sans
+   * npm. L'image de production n'embarque plus l'arbre de dependances complet
+   * — ni les outils de build, ni ce qui ne sert qu'au developpement.
+   */
+  output: "standalone",
 };
 
 export default nextConfig;

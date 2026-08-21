@@ -1,0 +1,28 @@
+# Configuration locale : l'adresse de l'API vient du compose, pas d'un fichier
+.env
+.env.*
+!.env.example
+
+# Regeneres dans le conteneur
+node_modules/
+.next/
+out/
+build/
+
+# Git et editeurs
+.git/
+.gitignore
+.idea/
+.vscode/
+*.swp
+.DS_Store
+Thumbs.db
+
+# Journaux et caches
+*.log
+npm-debug.log*
+.eslintcache
+*.tsbuildinfo
+
+# Documentation
+*.md

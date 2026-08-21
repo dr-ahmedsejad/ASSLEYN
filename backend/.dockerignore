@@ -1,0 +1,47 @@
+# Ce qui ne doit JAMAIS entrer dans une image
+# ------------------------------------------------------------------
+# .env porte la cle Django et le mot de passe de la base ; la base SQLite
+# porte les dossiers reels de 98 etudiantes mineures. Une image se pousse,
+# se partage et se garde — ni l'un ni l'autre n'y ont leur place. La
+# configuration arrive par les variables d'environnement du compose.
+.env
+.env.*
+!.env.example
+*.sqlite3
+*.sqlite3-journal
+*.db
+comptes*.csv
+
+# Environnement Python local
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+
+# Caches d'outils
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# Tests : l'image de production n'en execute aucun. Les fixtures restent :
+# `seed_2025_2026` lit son fichier source dans apps/results/tests/fixtures/.
+conftest.py
+pytest.ini
+apps/*/tests/test_*.py
+
+# Artefacts regeneres au demarrage du conteneur
+staticfiles/
+media/
+logs/
+*.log
+
+# Git et editeurs
+.git/
+.gitignore
+.idea/
+.vscode/
+*.swp
+.DS_Store
+Thumbs.db

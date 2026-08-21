@@ -19,6 +19,11 @@ SECURE_HSTS_SECONDS = 31_536_000  # 1 an
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 SECURE_HSTS_PRELOAD = True
 
+# La sonde de l'orchestrateur interroge le conteneur en clair, de l'interieur :
+# sans cette exemption, SECURE_SSL_REDIRECT lui repondrait 301 et Docker
+# declarerait le service en panne.
+SECURE_REDIRECT_EXEMPT = [r"^healthz/$"]
+
 # --- Cookies ---
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True

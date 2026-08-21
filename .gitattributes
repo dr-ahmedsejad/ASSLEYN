@@ -1,0 +1,17 @@
+# Fins de ligne
+# ------------------------------------------------------------------
+# Le depot est edite sous Windows et deploye sous Linux. Un script shell
+# ou un point d'entree de conteneur enregistre avec des CRLF echoue au
+# demarrage sur un message deroutant — « bad interpreter: /bin/sh^M ». Ces
+# fichiers gardent donc des fins de ligne Unix, partout, tout le temps.
+*.sh            text eol=lf
+Dockerfile      text eol=lf
+*.dockerfile    text eol=lf
+.dockerignore   text eol=lf
+docker-entrypoint.sh text eol=lf
+*.yml           text eol=lf
+*.yaml          text eol=lf
+*.conf          text eol=lf
+
+# Le reste suit la convention de la plateforme.
+* text=auto
