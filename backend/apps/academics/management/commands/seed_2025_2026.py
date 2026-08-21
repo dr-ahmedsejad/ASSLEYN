@@ -11,10 +11,14 @@ notes du فصل 1 — puis lance le calcul.
 La commande est idempotente : la relancer ne cree pas de doublons.
 
 Le matricule 24097 est attribue a deux etudiantes differentes dans le fichier
-source, et n'apparait dans aucune liste officielle. Par defaut la seconde
-occurrence est **refusee** et signalee : c'est a la direction d'attribuer un
-matricule. L'option --provisional-matricules permet de l'importer malgre tout
-avec un numero provisoire de la plage 99xxx.
+source, et n'apparait dans aucune liste officielle. La direction a tranche :
+le 24097 reste a أمبيغية أمينو (الحفيدات) et تبراك اسليمان (المتميزات) recoit
+le 24098, premier numero libre de la serie. Cette decision est portee par la
+table ARBITRAGES ci-dessous.
+
+Un conflit qui n'y figure pas est refuse et signale : c'est a la direction
+d'attribuer un matricule. L'option --provisional-matricules permet alors de
+l'importer malgre tout avec un numero provisoire de la plage 99xxx.
 """
 
 from __future__ import annotations
@@ -68,6 +72,16 @@ SUBJECT_ORDER = list(SUBJECT_NAMES)
 
 PROVISIONAL_START = 99001
 
+# Arbitrage de la direction sur les matricules en conflit du fichier source.
+# Cle : (matricule du fichier, code de section) -> matricule reellement attribue.
+#
+# Le 24097 reste a أمبيغية أمينو (الحفيدات) ; تبراك اسليمان (المتميزات) recoit
+# le premier numero libre de la serie, le 24098. Une entree ici vaut decision
+# prise : la ligne concernee n'est plus refusee ni numerotee 99xxx.
+ARBITRAGES = {
+    ("24097", "MUTAMAYYIZAT"): "24098",
+}
+
 
 class Command(BaseCommand):
     help = "Amorce l'annee 2025-2026 avec les donnees reelles de l'institut."
@@ -107,9 +121,13 @@ class Command(BaseCommand):
             )
             for matricule, lignes in conflits.items():
                 for ligne in lignes:
+                    attribue = ARBITRAGES.get((matricule, ligne["section"]))
+                    verdict = (
+                        f" -> {attribue} (arbitrage)" if attribue else " -> a arbitrer"
+                    )
                     self.stdout.write(
                         f"   {matricule} — {ligne['full_name_ar']} "
-                        f"({ligne['section']}, ligne {ligne['row']})"
+                        f"({ligne['section']}, ligne {ligne['row']}){verdict}"
                     )
 
         if options["dry_run"]:
@@ -245,7 +263,10 @@ class Command(BaseCommand):
                 stats["curricula"] += 1
 
             for ligne in bloc["students"]:
-                matricule = ligne["matricule"]
+                # L'arbitrage prime : la ligne cesse alors d'etre un conflit.
+                matricule = ARBITRAGES.get(
+                    (ligne["matricule"], bloc["code"]), ligne["matricule"]
+                )
                 if matricule in conflits and matricule in deja_importes:
                     if not provisoire:
                         stats["refusees"] += 1
@@ -258,7 +279,7 @@ class Command(BaseCommand):
                     matricule=matricule,
                     defaults={"full_name_ar": ligne["full_name_ar"]},
                 )
-                deja_importes.add(ligne["matricule"])
+                deja_importes.add(matricule)
                 if cree:
                     stats["etudiantes"] += 1
 
@@ -291,11 +312,12 @@ class Command(BaseCommand):
         self.stdout.write(self.style.SUCCESS("\nImport termine."))
         for cle, valeur in stats.items():
             self.stdout.write(f"   {cle:<14} : {valeur}")
-        if conflits and not provisoire:
+        if stats["refusees"] and not provisoire:
             self.stdout.write(
                 self.style.ERROR(
                     f"\n{stats['refusees']} etudiante(s) non importee(s) pour cause de "
                     "matricule en conflit. La direction doit leur attribuer un "
-                    "matricule, ou relancer avec --provisional-matricules."
+                    "matricule — a inscrire dans ARBITRAGES — ou relancer avec "
+                    "--provisional-matricules."
                 )
             )

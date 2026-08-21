@@ -95,10 +95,14 @@ Les programmes vivent dans `programmes/*.json` — un fichier par فصل :
 Une matière retirée du fichier est **désactivée**, jamais supprimée : elle
 peut déjà porter des notes. L'import refuse d'écrire si le فصل est publié.
 
-`seed_2025_2026` refuse par défaut la seconde étudiante portant le matricule
-24097 — ce numéro est attribué à deux personnes dans le fichier source et
-n'existe dans aucune liste officielle. `--provisional-matricules` l'importe
-avec un numéro provisoire de la plage 99xxx.
+Le matricule 24097 est attribué à deux personnes dans le fichier source et
+n'existe dans aucune liste officielle. La direction a tranché : il reste à
+`أمبيغية أمينو` (الحفيدات), et `تبراك اسليمان` (المتميزات) reçoit le 24098.
+La table `ARBITRAGES` de `seed_2025_2026` porte cette décision — un import
+neuf la reproduit, sans intervention.
+
+Un conflit qui n'y figure pas est refusé et signalé ; `--provisional-matricules`
+l'importe alors avec un numéro provisoire de la plage 99xxx.
 
 ## Sécurité
 

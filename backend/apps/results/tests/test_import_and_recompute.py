@@ -35,8 +35,8 @@ def golden() -> dict:
 
 @pytest.fixture
 def imported(db) -> None:
-    """Import complet, matricules provisoires acceptes pour couvrir 98 lignes."""
-    call_command("seed_2025_2026", "--provisional-matricules", verbosity=0)
+    """Import complet des 98 lignes, le conflit de matricule etant arbitre."""
+    call_command("seed_2025_2026", verbosity=0)
 
 
 @pytest.mark.django_db
@@ -183,11 +183,18 @@ def test_import_idempotent(imported: None) -> None:
 def test_matricule_unique_en_base(imported: None) -> None:
     """
     Le conflit du fichier source ne peut pas se reproduire : les deux
-    etudiantes portent desormais deux matricules distincts.
+    etudiantes portent desormais deux matricules distincts, conformes a
+    l'arbitrage de la direction.
     """
     matricules = list(Student.objects.values_list("matricule", flat=True))
     assert len(matricules) == len(set(matricules))
-    assert Student.objects.filter(matricule__startswith="99").count() == 1
+    # L'arbitrage rend le numero provisoire inutile.
+    assert not Student.objects.filter(matricule__startswith="99").exists()
+
+    assert Student.objects.get(matricule="24097").full_name_ar == "أمبيغية أمينو"
+    tbrak = Student.objects.get(matricule="24098")
+    assert tbrak.full_name_ar == "تبراك اسليمان"
+    assert tbrak.enrollments.get().section.code == "MUTAMAYYIZAT"
 
 
 @pytest.mark.django_db

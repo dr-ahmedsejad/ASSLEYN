@@ -76,7 +76,7 @@ Ces points sont à corriger — et le système proposé les rend structurellemen
 
 | # | Anomalie | Détail | Gravité |
 |---|---|---|---|
-| 1 | **Matricule 24097 dupliqué** | Attribué à **deux étudiantes différentes** : `أمبيغية أمينو` (الحفيدات) et `تبراك اسليمان` (المتميزات). De plus, 24097 **n'existe dans aucune liste PDF officielle** (les listes s'arrêtent à 24096). | 🔴 Bloquante |
+| 1 | ~~**Matricule 24097 dupliqué**~~ | Attribué à **deux étudiantes différentes** : `أمبيغية أمينو` (الحفيدات) et `تبراك اسليمان` (المتميزات). De plus, 24097 **n'existe dans aucune liste PDF officielle** (les listes s'arrêtent à 24096). ✅ **Arbitré** : le 24097 reste à `أمبيغية أمينو`, `تبراك اسليمان` reçoit le **24098**. | 🔴 Bloquante |
 | 2 | **4 rangs faux** | الحفيدات lignes 22 à 25 (`زينب أحبلالة`, `تانة الشيخ ولد بكيا`, `اماه محمدالأمين أحمدو`, `النياه محمدفال`) portent le rang **18** au lieu de **19** (elles sont à égalité avec `النياه الحسين`, rang 19). | 🟠 Majeure |
 | 3 | **Formules cassées (latentes)** | Feuille الحافظات : les décisions de اللغة et الفقه testent `J2` (note de السيرة) au lieu de `F2` et `H2`. Feuille الحفيدات : la cellule G16 référence la ligne **17**. Sans impact sur les valeurs actuelles par coïncidence, mais faux dès qu'une note change. | 🟠 Majeure |
 | 4 | **Formules écrasées par des valeurs** | Seule la **ligne 2** de chaque feuille contient encore des formules ; toutes les autres lignes sont des valeurs statiques collées. Toute correction de note ne se propage plus. | 🔴 Bloquante |
@@ -267,7 +267,7 @@ Ces décisions changent le modèle ou le règlement — j'ai retenu une hypothè
 | # | Question | Hypothèse retenue par défaut |
 |---|---|---|
 | 1 | ~~**Langue de l'interface**~~ | ✅ **Tranché** : arabe uniquement, RTL, sans bascule |
-| 2 | **Matricule 24097** | Deux étudiantes distinctes ont ce numéro et il est hors listes officielles → deux matricules valides à attribuer par la direction |
+| 2 | ~~**Matricule 24097**~~ | ✅ **Tranché** : le 24097 reste à `أمبيغية أمينو` (الحفيدات) ; `تبراك اسليمان` (المتميزات) reçoit le 24098, premier numéro libre. Décision portée par `ARBITRAGES` dans `seed_2025_2026`. |
 | 3 | ~~**Moyenne annuelle**~~ | ✅ **Tranché** : 2 فصل par an, moyenne arithmétique des deux |
 | 4 | **Coefficients par فصل** | Identiques aux 2 فصل au départ, mais modifiables فصل par فصل |
 | 5 | **Absence** | Compte pour 0 (conforme au fichier actuel), mais tracée comme absence — politique modifiable dans le règlement |

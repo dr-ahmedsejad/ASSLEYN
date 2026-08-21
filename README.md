@@ -129,15 +129,17 @@ L'analyse complète est dans [`analyse/ANALYSE_ET_CONCEPTION.md`](analyse/ANALYS
 
 | Anomalie | Traitement |
 |---|---|
-| Matricule **24097 attribué à deux étudiantes**, absent des listes officielles | `matricule` unique en base ; l'import refuse la seconde et le signale |
+| Matricule **24097 attribué à deux étudiantes**, absent des listes officielles | `matricule` unique en base ; arbitré par la direction — voir ci-dessous |
 | 4 rangs faux dans الحفيدات | Rangs recalculés, jamais saisis |
 | Formules cassées (décisions testant la mauvaise colonne) | Une seule implémentation, testée |
 | Formules écrasées par des valeurs collées | Le calcul est un service, pas une cellule |
 | Absence indistinguable d'un zéro | Statut explicite : مسجلة · غائبة · غياب مبرر · معفاة |
 | Aucune trace de qui a saisi quoi | `GradeHistory` immuable + journal d'audit |
 
-**Action attendue de la direction** : attribuer un matricule aux deux
-étudiantes qui portent le 24097.
+**Arbitrage de la direction** : le 24097 reste à `أمبيغية أمينو`
+(الحفيدات) ; `تبراك اسليمان` (المتميزات) reçoit le **24098**, premier numéro
+libre de la série. La décision est portée par la table `ARBITRAGES` de
+`seed_2025_2026`, si bien qu'un import neuf la reproduit.
 
 ---
 
