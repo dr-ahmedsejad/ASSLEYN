@@ -74,7 +74,7 @@ export default function Sidebar({
               }}
             />
             <p className="truncate text-[10px] leading-tight text-gris">
-              نظام إدارة النتائج
+              مصلحة الامتحانات
             </p>
           </div>
         )}
@@ -125,7 +125,7 @@ export default function Sidebar({
         </div>
         {hideText ? null : (
           <p className="truncate text-center text-[10px] text-gris/50">
-            معهد الأصلين — مصلحة الامتحانات
+            معهد الأصلين
           </p>
         )}
       </div>

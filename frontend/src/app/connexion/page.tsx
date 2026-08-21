@@ -36,7 +36,7 @@ export default async function PageConnexion() {
                 "linear-gradient(90deg, rgba(229,192,24,0.3), #E5C018, rgba(229,192,24,0.3))",
             }}
           />
-          <p className="text-sm text-gris">نظام إدارة النتائج الدراسية</p>
+          <p className="text-sm text-gris">مصلحة الامتحانات</p>
         </header>
 
         <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-card">

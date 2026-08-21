@@ -16,7 +16,7 @@ const cairo = Cairo({
 
 export const metadata: Metadata = {
   title: "معهد الأصلين",
-  description: "نظام إدارة النتائج الدراسية",
+  description: "مصلحة الامتحانات",
   icons: { icon: "/favicon.ico" },
 };
 
