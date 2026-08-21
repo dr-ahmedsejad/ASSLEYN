@@ -1,0 +1,132 @@
+[
+  {
+    "code": "MURABBIYAT",
+    "name_ar": "المربيات",
+    "subjects": [
+      {
+        "code": "NAHW",
+        "name_ar": "النحو",
+        "coefficient": 4
+      },
+      {
+        "code": "LUGHA",
+        "name_ar": "اللغة",
+        "coefficient": 2
+      },
+      {
+        "code": "FIQH",
+        "name_ar": "الفقه",
+        "coefficient": 3
+      },
+      {
+        "code": "QURAN",
+        "name_ar": "القرآن الكريم",
+        "coefficient": 5
+      }
+    ],
+    "total_coefficient": 14
+  },
+  {
+    "code": "HAFIDAT",
+    "name_ar": "الحفيدات",
+    "subjects": [
+      {
+        "code": "NAHW",
+        "name_ar": "النحو",
+        "coefficient": 4
+      },
+      {
+        "code": "LUGHA",
+        "name_ar": "اللغة",
+        "coefficient": 2
+      },
+      {
+        "code": "FIQH",
+        "name_ar": "الفقه",
+        "coefficient": 3
+      },
+      {
+        "code": "QURAN",
+        "name_ar": "القرآن الكريم",
+        "coefficient": 5
+      }
+    ],
+    "total_coefficient": 14
+  },
+  {
+    "code": "HAFIZAT",
+    "name_ar": "الحافظات",
+    "subjects": [
+      {
+        "code": "NAHW",
+        "name_ar": "النحو",
+        "coefficient": 4
+      },
+      {
+        "code": "LUGHA",
+        "name_ar": "اللغة",
+        "coefficient": 2
+      },
+      {
+        "code": "FIQH",
+        "name_ar": "الفقه",
+        "coefficient": 3
+      },
+      {
+        "code": "SIRA",
+        "name_ar": "السيرة النبوية",
+        "coefficient": 3
+      },
+      {
+        "code": "QURAN",
+        "name_ar": "القرآن الكريم",
+        "coefficient": 5
+      }
+    ],
+    "total_coefficient": 17
+  },
+  {
+    "code": "MUTAMAYYIZAT",
+    "name_ar": "المتميزات",
+    "subjects": [
+      {
+        "code": "FIQH",
+        "name_ar": "الفقه",
+        "coefficient": 3
+      },
+      {
+        "code": "QURAN",
+        "name_ar": "القرآن الكريم",
+        "coefficient": 5
+      }
+    ],
+    "total_coefficient": 8
+  },
+  {
+    "code": "ALIMAT",
+    "name_ar": "عالمات المستقبل",
+    "subjects": [
+      {
+        "code": "MAHARIM",
+        "name_ar": "محارم اللسان",
+        "coefficient": 3
+      },
+      {
+        "code": "AKHDARI",
+        "name_ar": "الأخضري",
+        "coefficient": 3
+      },
+      {
+        "code": "ABQARI",
+        "name_ar": "العبقري",
+        "coefficient": 3
+      },
+      {
+        "code": "QURAN",
+        "name_ar": "القرآن الكريم",
+        "coefficient": 5
+      }
+    ],
+    "total_coefficient": 14
+  }
+]

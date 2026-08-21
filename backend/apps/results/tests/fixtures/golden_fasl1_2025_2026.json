@@ -1,0 +1,1969 @@
+{
+  "source": "Résultat Trimestre 1 - A2 - 2025-2026.xlsx",
+  "academic_year": "2025-2026",
+  "semester": 1,
+  "note": "Jeu de reference extrait du fichier d'origine. Les moyennes et decisions sont celles produites par l'institut ; le moteur doit les reproduire a l'identique. Les rangs marques dans KNOWN_RANK_ERRORS (voir le test) sont des erreurs de saisie manuelle averees dans le fichier source.",
+  "sections": [
+    {
+      "code": "MURABBIYAT",
+      "name_ar": "المربيات",
+      "coefficients": {
+        "NAHW": 4,
+        "LUGHA": 2,
+        "FIQH": 3,
+        "QURAN": 5
+      },
+      "students": [
+        {
+          "row": 2,
+          "matricule": "24040",
+          "full_name_ar": "النياه محمد",
+          "grades": {
+            "NAHW": 17.5,
+            "LUGHA": 16.0,
+            "FIQH": 18.5,
+            "QURAN": 18.75
+          },
+          "excel_average": 17.94642857,
+          "excel_decision": "PASSED",
+          "excel_subject_decisions": {
+            "NAHW": "SATISFIED",
+            "LUGHA": "SATISFIED",
+            "FIQH": "SATISFIED",
+            "QURAN": "SATISFIED"
+          },
+          "excel_rank": 1
+        },
+        {
+          "row": 3,
+          "matricule": "24038",
+          "full_name_ar": "امامه الخليفة النيه",
+          "grades": {
+            "NAHW": 18.0,
+            "LUGHA": 18.0,
+            "FIQH": 18.25,
+            "QURAN": 17.5
+          },
+          "excel_average": 17.875,
+          "excel_decision": "PASSED",
+          "excel_subject_decisions": {
+            "NAHW": "SATISFIED",
+            "LUGHA": "SATISFIED",
+            "FIQH": "SATISFIED",
+            "QURAN": "SATISFIED"
+          },
+          "excel_rank": 2
+        },
+        {
+          "row": 4,
+          "matricule": "24050",
+          "full_name_ar": "اماه اموه بديه",
+          "grades": {
+            "NAHW": 12.5,
+            "LUGHA": 15.0,
+            "FIQH": 15.5,
+            "QURAN": 16.75
+          },
+          "excel_average": 15.01785714,
+          "excel_decision": "PASSED",
+          "excel_subject_decisions": {
+            "NAHW": "SATISFIED",
+            "LUGHA": "SATISFIED",
+            "FIQH": "SATISFIED",
+            "QURAN": "SATISFIED"
+          },
+          "excel_rank": 3
+        },
+        {
+          "row": 5,
+          "matricule": "24046",
+          "full_name_ar": "صفية الحسين",
+          "grades": {
+            "NAHW": 12.0,
+            "LUGHA": 15.0,
+            "FIQH": 14.0,
+            "QURAN": 17.0
+          },
+          "excel_average": 14.64285714,
+          "excel_decision": "PASSED",
+          "excel_subject_decisions": {
+            "NAHW": "SATISFIED",
+            "LUGHA": "SATISFIED",
+            "FIQH": "SATISFIED",
+            "QURAN": "SATISFIED"
+          },
+          "excel_rank": 4
+        },
+        {
+          "row": 6,
+          "matricule": "24045",
+          "full_name_ar": "سعاد الحسين",
+          "grades": {
+            "NAHW": 11.0,
+            "LUGHA": 15.5,
+            "FIQH": 16.0,
+            "QURAN": 16.0
+          },
+          "excel_average": 14.5,
+          "excel_decision": "PASSED",
+          "excel_subject_decisions": {
+            "NAHW": "SATISFIED",
+            "LUGHA": "SATISFIED",
+            "FIQH": "SATISFIED",
+            "QURAN": "SATISFIED"
+          },
+          "excel_rank": 5
+        },
+        {
+          "row": 7,
+          "matricule": "24044",
+          "full_name_ar": "اماه الحسين",
+          "grades": {
+            "NAHW": 11.0,
+            "LUGHA": 15.75,
+            "FIQH": 13.0,
+            "QURAN": 17.25
+          },
+          "excel_average": 14.33928571,
+          "excel_decision": "PASSED",
+          "excel_subject_decisions": {
+            "NAHW": "SATISFIED",
+            "LUGHA": "SATISFIED",
+            "FIQH": "SATISFIED",
+            "QURAN": "SATISFIED"
+          },
+          "excel_rank": 6
+        },
+        {
+          "row": 8,
+          "matricule": "24043",
+          "full_name_ar": "اماه عبدالرحمن أحمدو",
+          "grades": {
+            "NAHW": 12.0,
+            "LUGHA": 18.75,
+            "FIQH": 17.5,
+            "QURAN": 12.25
+          },
+          "excel_average": 14.23214286,
+          "excel_decision": "PASSED",
+          "excel_subject_decisions": {
+            "NAHW": "SATISFIED",
+            "LUGHA": "SATISFIED",
+            "FIQH": "SATISFIED",
+            "QURAN": "SATISFIED"
+          },
+          "excel_rank": 7
+        },
+        {
+          "row": 9,
+          "matricule": "24047",
+          "full_name_ar": "النياه  أدو",
+          "grades": {
+            "NAHW": 11.5,
+            "LUGHA": 14.5,
+            "FIQH": 12.0,
+            "QURAN": 16.0
+          },
+          "excel_average": 13.64285714,
+          "excel_decision": "PASSED",
+          "excel_subject_decisions": {
+            "NAHW": "SATISFIED",
+            "LUGHA": "SATISFIED",
+            "FIQH": "SATISFIED",
+            "QURAN": "SATISFIED"
+          },
+          "excel_rank": 8
+        },
+        {
+          "row": 10,
+          "matricule": "24042",
+          "full_name_ar": "دعيه مناه",
+          "grades": {
+            "NAHW": 10.0,
+            "LUGHA": 11.0,
+            "FIQH": 17.0,
+            "QURAN": 10.5
+          },
+          "excel_average": 11.82142857,
+          "excel_decision": "PASSED",
+          "excel_subject_decisions": {
+            "NAHW": "SATISFIED",
+            "LUGHA": "SATISFIED",
+            "FIQH": "SATISFIED",
+            "QURAN": "SATISFIED"
+          },
+          "excel_rank": 9
+        },
+        {
+          "row": 11,
+          "matricule": "24049",
+          "full_name_ar": "فاطمة الزهراء أمينو",
+          "grades": {
+            "NAHW": 4.0,
+            "LUGHA": 14.5,
+            "FIQH": 15.5,
+            "QURAN": 14.5
+          },
+          "excel_average": 11.71428571,
+          "excel_decision": "RESIT",
+          "excel_subject_decisions": {
+            "NAHW": "NOT_SATISFIED",
+            "LUGHA": "SATISFIED",
+            "FIQH": "SATISFIED",
+            "QURAN": "SATISFIED"
+          },
+          "excel_rank": 10
+        },
+        {
+          "row": 12,
+          "matricule": "24052",
+          "full_name_ar": "آمنة تاتيه",
+          "grades": {
+            "NAHW": null,
+            "LUGHA": 7.75,
+            "FIQH": 13.5,
+            "QURAN": 16.0
+          },
+          "excel_average": 9.714285714,
+          "excel_decision": "RESIT",
+          "excel_subject_decisions": {
+            "NAHW": "NOT_SATISFIED",
+            "LUGHA": "NOT_SATISFIED",
+            "FIQH": "SATISFIED",
+            "QURAN": "SATISFIED"
+          },
+          "excel_rank": 11
+        },
+        {
+          "row": 13,
+          "matricule": "24048",
+          "full_name_ar": "محجوبة بكيا",
+          "grades": {
+            "NAHW": null,
+            "LUGHA": 4.75,
+            "FIQH": 8.0,
+            "QURAN": 11.75
+          },
+          "excel_average": 6.589285714,
+          "excel_decision": "RESIT",
+          "excel_subject_decisions": {
+            "NAHW": "NOT_SATISFIED",
+            "LUGHA": "NOT_SATISFIED",
+            "FIQH": "NOT_SATISFIED",
+            "QURAN": "SATISFIED"
+          },
+          "excel_rank": 12
+        },
+        {
+          "row": 14,
+          "matricule": "24051",
+          "full_name_ar": "عيشة حمدي",
+          "grades": {
+            "NAHW": 4.0,
+            "LUGHA": 3.25,
+            "FIQH": 12.0,
+            "QURAN": null
+          },
+          "excel_average": 4.178571429,
+          "excel_decision": "RESIT",
+          "excel_subject_decisions": {
+            "NAHW": "NOT_SATISFIED",
+            "LUGHA": "NOT_SATISFIED",
+            "FIQH": "SATISFIED",
+            "QURAN": "NOT_SATISFIED"
+          },
+          "excel_rank": 13
+        },
+        {
+          "row": 15,
+          "matricule": "24039",
+          "full_name_ar": "صفية الخليفة النيه",
+          "grades": {
+            "NAHW": null,
+            "LUGHA": null,
+            "FIQH": null,
+            "QURAN": null
+          },
+          "excel_average": 0.0,
+          "excel_decision": "RESIT",
+          "excel_subject_decisions": {
+            "NAHW": "NOT_SATISFIED",
+            "LUGHA": "NOT_SATISFIED",
+            "FIQH": "NOT_SATISFIED",
+            "QURAN": "NOT_SATISFIED"
+          },
+          "excel_rank": 14
+        },
+        {
+          "row": 16,
+          "matricule": "24041",
+          "full_name_ar": "محجوبة سيدالفالي",
+          "grades": {
+            "NAHW": null,
+            "LUGHA": null,
+            "FIQH": null,
+            "QURAN": null
+          },
+          "excel_average": 0.0,
+          "excel_decision": "RESIT",
+          "excel_subject_decisions": {
+            "NAHW": "NOT_SATISFIED",
+            "LUGHA": "NOT_SATISFIED",
+            "FIQH": "NOT_SATISFIED",
+            "QURAN": "NOT_SATISFIED"
+          },
+          "excel_rank": 14
+        }
+      ]
+    },
+    {
+      "code": "HAFIDAT",
+      "name_ar": "الحفيدات",
+      "coefficients": {
+        "NAHW": 4,
+        "LUGHA": 2,
+        "FIQH": 3,
+        "QURAN": 5
+      },
+      "students": [
+        {
+          "row": 2,
+          "matricule": "24060",
+          "full_name_ar": "الدودو  حسن",
+          "grades": {
+            "NAHW": 17.0,
+            "LUGHA": 17.0,
+            "FIQH": 15.5,
+            "QURAN": 19.0
+          },
+          "excel_average": 17.39285714,
+          "excel_decision": "PASSED",
+          "excel_subject_decisions": {
+            "NAHW": "SATISFIED",
+            "LUGHA": "SATISFIED",
+            "FIQH": "SATISFIED",
+            "QURAN": "SATISFIED"
+          },
+          "excel_rank": 1
+        },
+        {
+          "row": 3,
+          "matricule": "24054",
+          "full_name_ar": "فاطمة أحمدو باب",
+          "grades": {
+            "NAHW": 17.0,
+            "LUGHA": 18.0,
+            "FIQH": 17.0,
+            "QURAN": 16.5
+          },
+          "excel_average": 16.96428571,
+          "excel_decision": "PASSED",
+          "excel_subject_decisions": {
+            "NAHW": "SATISFIED",
+            "LUGHA": "SATISFIED",
+            "FIQH": "SATISFIED",
+            "QURAN": "SATISFIED"
+          },
+          "excel_rank": 2
+        },
+        {
+          "row": 4,
+          "matricule": "24056",
+          "full_name_ar": "غنيمة  تاتيه",
+          "grades": {
+            "NAHW": 18.0,
+            "LUGHA": 15.0,
+            "FIQH": 15.75,
+            "QURAN": 15.5
+          },
+          "excel_average": 16.19642857,
+          "excel_decision": "PASSED",
+          "excel_subject_decisions": {
+            "NAHW": "SATISFIED",
+            "LUGHA": "SATISFIED",
+            "FIQH": "SATISFIED",
+            "QURAN": "SATISFIED"
+          },
+          "excel_rank": 3
+        },
+        {
+          "row": 5,
+          "matricule": "24059",
+          "full_name_ar": "نعيمة  محمد",
+          "grades": {
+            "NAHW": 15.0,
+            "LUGHA": 16.0,
+            "FIQH": 15.75,
+            "QURAN": 17.5
+          },
+          "excel_average": 16.19642857,
+          "excel_decision": "PASSED",
+          "excel_subject_decisions": {
+            "NAHW": "SATISFIED",
+            "LUGHA": "SATISFIED",
+            "FIQH": "SATISFIED",
+            "QURAN": "SATISFIED"
+          },
+          "excel_rank": 3
+        },
+        {
+          "row": 6,
+          "matricule": "24063",
+          "full_name_ar": "امام الداه سيدأحمد",
+          "grades": {
+            "NAHW": 17.0,
+            "LUGHA": 16.0,
+            "FIQH": 14.5,
+            "QURAN": 16.0
+          },
+          "excel_average": 15.96428571,
+          "excel_decision": "PASSED",
+          "excel_subject_decisions": {
+            "NAHW": "SATISFIED",
+            "LUGHA": "SATISFIED",
+            "FIQH": "SATISFIED",
+            "QURAN": "SATISFIED"
+          },
+          "excel_rank": 4
+        },
+        {
+          "row": 7,
+          "matricule": "24066",
+          "full_name_ar": "أميرة محمدفال",
+          "grades": {
+            "NAHW": 12.0,
+            "LUGHA": 17.75,
+            "FIQH": 15.75,
+            "QURAN": 9.75
+          },
+          "excel_average": 12.82142857,
+          "excel_decision": "PASSED",
+          "excel_subject_decisions": {
+            "NAHW": "SATISFIED",
+            "LUGHA": "SATISFIED",
+            "FIQH": "SATISFIED",
+            "QURAN": "SATISFIED"
+          },
+          "excel_rank": 5
+        },
+        {
+          "row": 8,
+          "matricule": "24053",
+          "full_name_ar": "فاطمة محمدن الشيخ",
+          "grades": {
+            "NAHW": 11.0,
+            "LUGHA": 15.0,
+            "FIQH": 17.0,
+            "QURAN": 10.75
+          },
+          "excel_average": 12.76785714,
+          "excel_decision": "PASSED",
+          "excel_subject_decisions": {
+            "NAHW": "SATISFIED",
+            "LUGHA": "SATISFIED",
+            "FIQH": "SATISFIED",
+            "QURAN": "SATISFIED"
+          },
+          "excel_rank": 6
+        },
+        {
+          "row": 9,
+          "matricule": "24055",
+          "full_name_ar": "عيشة محمدن الشيخ",
+          "grades": {
+            "NAHW": 14.5,
+            "LUGHA": 15.5,
+            "FIQH": 17.25,
+            "QURAN": 7.0
+          },
+          "excel_average": 12.55357143,
+          "excel_decision": "PASSED",
+          "excel_subject_decisions": {
+            "NAHW": "SATISFIED",
+            "LUGHA": "SATISFIED",
+            "FIQH": "SATISFIED",
+            "QURAN": "SATISFIED"
+          },
+          "excel_rank": 7
+        },
+        {
+          "row": 10,
+          "matricule": "24067",
+          "full_name_ar": "فضيلة أحمدو أحمد",
+          "grades": {
+            "NAHW": 10.5,
+            "LUGHA": 14.75,
+            "FIQH": 13.75,
+            "QURAN": 12.5
+          },
+          "excel_average": 12.51785714,
+          "excel_decision": "PASSED",
+          "excel_subject_decisions": {
+            "NAHW": "SATISFIED",
+            "LUGHA": "SATISFIED",
+            "FIQH": "SATISFIED",
+            "QURAN": "SATISFIED"
+          },
+          "excel_rank": 8
+        },
+        {
+          "row": 11,
+          "matricule": "24058",
+          "full_name_ar": "ابتسام الذاكر",
+          "grades": {
+            "NAHW": 11.0,
+            "LUGHA": 16.5,
+            "FIQH": 15.0,
+            "QURAN": 9.0
+          },
+          "excel_average": 11.92857143,
+          "excel_decision": "PASSED",
+          "excel_subject_decisions": {
+            "NAHW": "SATISFIED",
+            "LUGHA": "SATISFIED",
+            "FIQH": "SATISFIED",
+            "QURAN": "SATISFIED"
+          },
+          "excel_rank": 9
+        },
+        {
+          "row": 12,
+          "matricule": "24070",
+          "full_name_ar": "فريدة مجاد",
+          "grades": {
+            "NAHW": 5.0,
+            "LUGHA": 13.25,
+            "FIQH": 10.0,
+            "QURAN": 16.0
+          },
+          "excel_average": 11.17857143,
+          "excel_decision": "RESIT",
+          "excel_subject_decisions": {
+            "NAHW": "NOT_SATISFIED",
+            "LUGHA": "SATISFIED",
+            "FIQH": "SATISFIED",
+            "QURAN": "SATISFIED"
+          },
+          "excel_rank": 10
+        },
+        {
+          "row": 13,
+          "matricule": "24068",
+          "full_name_ar": "آمي انتغري",
+          "grades": {
+            "NAHW": 11.5,
+            "LUGHA": 16.0,
+            "FIQH": 17.25,
+            "QURAN": 5.0
+          },
+          "excel_average": 11.05357143,
+          "excel_decision": "RESIT",
+          "excel_subject_decisions": {
+            "NAHW": "SATISFIED",
+            "LUGHA": "SATISFIED",
+            "FIQH": "SATISFIED",
+            "QURAN": "NOT_SATISFIED"
+          },
+          "excel_rank": 11
+        },
+        {
+          "row": 14,
+          "matricule": "24072",
+          "full_name_ar": "أمامه محمدن النيه",
+          "grades": {
+            "NAHW": 9.0,
+            "LUGHA": 11.5,
+            "FIQH": 12.5,
+            "QURAN": 11.0
+          },
+          "excel_average": 10.82142857,
+          "excel_decision": "PASSED",
+          "excel_subject_decisions": {
+            "NAHW": "SATISFIED",
+            "LUGHA": "SATISFIED",
+            "FIQH": "SATISFIED",
+            "QURAN": "SATISFIED"
+          },
+          "excel_rank": 12
+        },
+        {
+          "row": 15,
+          "matricule": "24069",
+          "full_name_ar": "عيشة  أمينو",
+          "grades": {
+            "NAHW": 6.5,
+            "LUGHA": 14.5,
+            "FIQH": 17.0,
+            "QURAN": 8.0
+          },
+          "excel_average": 10.42857143,
+          "excel_decision": "RESIT",
+          "excel_subject_decisions": {
+            "NAHW": "NOT_SATISFIED",
+            "LUGHA": "SATISFIED",
+            "FIQH": "SATISFIED",
+            "QURAN": "SATISFIED"
+          },
+          "excel_rank": 13
+        },
+        {
+          "row": 16,
+          "matricule": "24097",
+          "full_name_ar": "أمبيغية أمينو",
+          "grades": {
+            "NAHW": 3.5,
+            "LUGHA": 10.0,
+            "FIQH": 14.0,
+            "QURAN": 13.5
+          },
+          "excel_average": 10.25,
+          "excel_decision": "RESIT",
+          "excel_subject_decisions": {
+            "NAHW": "NOT_SATISFIED",
+            "LUGHA": "SATISFIED",
+            "FIQH": "SATISFIED",
+            "QURAN": "SATISFIED"
+          },
+          "excel_rank": 14
+        },
+        {
+          "row": 17,
+          "matricule": "24061",
+          "full_name_ar": "احبيبة منت الذاكر",
+          "grades": {
+            "NAHW": 5.0,
+            "LUGHA": 7.25,
+            "FIQH": 8.75,
+            "QURAN": 14.25
+          },
+          "excel_average": 9.428571429,
+          "excel_decision": "RESIT",
+          "excel_subject_decisions": {
+            "NAHW": "NOT_SATISFIED",
+            "LUGHA": "NOT_SATISFIED",
+            "FIQH": "NOT_SATISFIED",
+            "QURAN": "SATISFIED"
+          },
+          "excel_rank": 15
+        },
+        {
+          "row": 18,
+          "matricule": "24074",
+          "full_name_ar": "الرئيسة أحمدو أحمد",
+          "grades": {
+            "NAHW": 4.0,
+            "LUGHA": 12.5,
+            "FIQH": 12.75,
+            "QURAN": 7.0
+          },
+          "excel_average": 8.160714286,
+          "excel_decision": "RESIT",
+          "excel_subject_decisions": {
+            "NAHW": "NOT_SATISFIED",
+            "LUGHA": "SATISFIED",
+            "FIQH": "SATISFIED",
+            "QURAN": "NOT_SATISFIED"
+          },
+          "excel_rank": 16
+        },
+        {
+          "row": 19,
+          "matricule": "24062",
+          "full_name_ar": "حميدة الشيخ",
+          "grades": {
+            "NAHW": 7.0,
+            "LUGHA": 13.25,
+            "FIQH": 8.0,
+            "QURAN": 3.0
+          },
+          "excel_average": 6.678571429,
+          "excel_decision": "RESIT",
+          "excel_subject_decisions": {
+            "NAHW": "NOT_SATISFIED",
+            "LUGHA": "SATISFIED",
+            "FIQH": "NOT_SATISFIED",
+            "QURAN": "NOT_SATISFIED"
+          },
+          "excel_rank": 17
+        },
+        {
+          "row": 20,
+          "matricule": "24064",
+          "full_name_ar": "عيشة عالي",
+          "grades": {
+            "NAHW": null,
+            "LUGHA": null,
+            "FIQH": null,
+            "QURAN": 17.25
+          },
+          "excel_average": 6.160714286,
+          "excel_decision": "RESIT",
+          "excel_subject_decisions": {
+            "NAHW": "NOT_SATISFIED",
+            "LUGHA": "NOT_SATISFIED",
+            "FIQH": "NOT_SATISFIED",
+            "QURAN": "SATISFIED"
+          },
+          "excel_rank": 18
+        },
+        {
+          "row": 21,
+          "matricule": "24057",
+          "full_name_ar": "النياه الحسين",
+          "grades": {
+            "NAHW": null,
+            "LUGHA": null,
+            "FIQH": null,
+            "QURAN": null
+          },
+          "excel_average": 0.0,
+          "excel_decision": "RESIT",
+          "excel_subject_decisions": {
+            "NAHW": "NOT_SATISFIED",
+            "LUGHA": "NOT_SATISFIED",
+            "FIQH": "NOT_SATISFIED",
+            "QURAN": "NOT_SATISFIED"
+          },
+          "excel_rank": 19
+        },
+        {
+          "row": 22,
+          "matricule": "24065",
+          "full_name_ar": "زينب أحبلالة",
+          "grades": {
+            "NAHW": null,
+            "LUGHA": null,
+            "FIQH": null,
+            "QURAN": null
+          },
+          "excel_average": 0.0,
+          "excel_decision": "RESIT",
+          "excel_subject_decisions": {
+            "NAHW": "NOT_SATISFIED",
+            "LUGHA": "NOT_SATISFIED",
+            "FIQH": "NOT_SATISFIED",
+            "QURAN": "NOT_SATISFIED"
+          },
+          "excel_rank": 18
+        },
+        {
+          "row": 23,
+          "matricule": "24071",
+          "full_name_ar": "تانة الشيخ ولد بكيا",
+          "grades": {
+            "NAHW": null,
+            "LUGHA": null,
+            "FIQH": null,
+            "QURAN": null
+          },
+          "excel_average": 0.0,
+          "excel_decision": "RESIT",
+          "excel_subject_decisions": {
+            "NAHW": "NOT_SATISFIED",
+            "LUGHA": "NOT_SATISFIED",
+            "FIQH": "NOT_SATISFIED",
+            "QURAN": "NOT_SATISFIED"
+          },
+          "excel_rank": 18
+        },
+        {
+          "row": 24,
+          "matricule": "24073",
+          "full_name_ar": "اماه محمدالأمين أحمدو",
+          "grades": {
+            "NAHW": null,
+            "LUGHA": null,
+            "FIQH": null,
+            "QURAN": null
+          },
+          "excel_average": 0.0,
+          "excel_decision": "RESIT",
+          "excel_subject_decisions": {
+            "NAHW": "NOT_SATISFIED",
+            "LUGHA": "NOT_SATISFIED",
+            "FIQH": "NOT_SATISFIED",
+            "QURAN": "NOT_SATISFIED"
+          },
+          "excel_rank": 18
+        },
+        {
+          "row": 25,
+          "matricule": "24075",
+          "full_name_ar": "النياه محمدفال",
+          "grades": {
+            "NAHW": null,
+            "LUGHA": null,
+            "FIQH": null,
+            "QURAN": null
+          },
+          "excel_average": 0.0,
+          "excel_decision": "RESIT",
+          "excel_subject_decisions": {
+            "NAHW": "NOT_SATISFIED",
+            "LUGHA": "NOT_SATISFIED",
+            "FIQH": "NOT_SATISFIED",
+            "QURAN": "NOT_SATISFIED"
+          },
+          "excel_rank": 18
+        }
+      ]
+    },
+    {
+      "code": "HAFIZAT",
+      "name_ar": "الحافظات",
+      "coefficients": {
+        "NAHW": 4,
+        "LUGHA": 2,
+        "FIQH": 3,
+        "SIRA": 3,
+        "QURAN": 5
+      },
+      "students": [
+        {
+          "row": 2,
+          "matricule": "24026",
+          "full_name_ar": "أمينة محمدن ولد النيه",
+          "grades": {
+            "NAHW": 18.0,
+            "LUGHA": 18.5,
+            "FIQH": 18.0,
+            "SIRA": 18.25,
+            "QURAN": 19.0
+          },
+          "excel_average": 18.39705882,
+          "excel_decision": "PASSED",
+          "excel_subject_decisions": {
+            "NAHW": "SATISFIED",
+            "LUGHA": "SATISFIED",
+            "FIQH": "SATISFIED",
+            "SIRA": "SATISFIED",
+            "QURAN": "SATISFIED"
+          },
+          "excel_rank": 1
+        },
+        {
+          "row": 3,
+          "matricule": "24030",
+          "full_name_ar": "دعيه محمد",
+          "grades": {
+            "NAHW": 16.5,
+            "LUGHA": 18.5,
+            "FIQH": 18.5,
+            "SIRA": 15.0,
+            "QURAN": 17.5
+          },
+          "excel_average": 17.11764706,
+          "excel_decision": "PASSED",
+          "excel_subject_decisions": {
+            "NAHW": "SATISFIED",
+            "LUGHA": "SATISFIED",
+            "FIQH": "SATISFIED",
+            "SIRA": "SATISFIED",
+            "QURAN": "SATISFIED"
+          },
+          "excel_rank": 2
+        },
+        {
+          "row": 4,
+          "matricule": "24034",
+          "full_name_ar": "فاطمة السالك",
+          "grades": {
+            "NAHW": 17.75,
+            "LUGHA": 17.0,
+            "FIQH": 13.0,
+            "SIRA": 16.5,
+            "QURAN": 18.75
+          },
+          "excel_average": 16.89705882,
+          "excel_decision": "PASSED",
+          "excel_subject_decisions": {
+            "NAHW": "SATISFIED",
+            "LUGHA": "SATISFIED",
+            "FIQH": "SATISFIED",
+            "SIRA": "SATISFIED",
+            "QURAN": "SATISFIED"
+          },
+          "excel_rank": 3
+        },
+        {
+          "row": 5,
+          "matricule": "24027",
+          "full_name_ar": "صفية أدو",
+          "grades": {
+            "NAHW": 13.25,
+            "LUGHA": 18.0,
+            "FIQH": 17.0,
+            "SIRA": 16.25,
+            "QURAN": 19.0
+          },
+          "excel_average": 16.69117647,
+          "excel_decision": "PASSED",
+          "excel_subject_decisions": {
+            "NAHW": "SATISFIED",
+            "LUGHA": "SATISFIED",
+            "FIQH": "SATISFIED",
+            "SIRA": "SATISFIED",
+            "QURAN": "SATISFIED"
+          },
+          "excel_rank": 4
+        },
+        {
+          "row": 6,
+          "matricule": "24023",
+          "full_name_ar": "تانة اموه بديه",
+          "grades": {
+            "NAHW": 12.75,
+            "LUGHA": 16.0,
+            "FIQH": 15.75,
+            "SIRA": 16.0,
+            "QURAN": 19.0
+          },
+          "excel_average": 16.07352941,
+          "excel_decision": "PASSED",
+          "excel_subject_decisions": {
+            "NAHW": "SATISFIED",
+            "LUGHA": "SATISFIED",
+            "FIQH": "SATISFIED",
+            "SIRA": "SATISFIED",
+            "QURAN": "SATISFIED"
+          },
+          "excel_rank": 5
+        },
+        {
+          "row": 7,
+          "matricule": "24024",
+          "full_name_ar": "بشرى محمد",
+          "grades": {
+            "NAHW": 16.75,
+            "LUGHA": 18.5,
+            "FIQH": 17.75,
+            "SIRA": 18.0,
+            "QURAN": 12.0
+          },
+          "excel_average": 15.95588235,
+          "excel_decision": "PASSED",
+          "excel_subject_decisions": {
+            "NAHW": "SATISFIED",
+            "LUGHA": "SATISFIED",
+            "FIQH": "SATISFIED",
+            "SIRA": "SATISFIED",
+            "QURAN": "SATISFIED"
+          },
+          "excel_rank": 6
+        },
+        {
+          "row": 8,
+          "matricule": "24028",
+          "full_name_ar": "عيشة ماءالعينين أدو",
+          "grades": {
+            "NAHW": 13.0,
+            "LUGHA": 15.5,
+            "FIQH": 16.0,
+            "SIRA": 13.5,
+            "QURAN": 17.5
+          },
+          "excel_average": 15.23529412,
+          "excel_decision": "PASSED",
+          "excel_subject_decisions": {
+            "NAHW": "SATISFIED",
+            "LUGHA": "SATISFIED",
+            "FIQH": "SATISFIED",
+            "SIRA": "SATISFIED",
+            "QURAN": "SATISFIED"
+          },
+          "excel_rank": 7
+        },
+        {
+          "row": 9,
+          "matricule": "24036",
+          "full_name_ar": "امامه محفوظ ولد النيه",
+          "grades": {
+            "NAHW": 13.75,
+            "LUGHA": 14.0,
+            "FIQH": 14.0,
+            "SIRA": 16.5,
+            "QURAN": 16.75
+          },
+          "excel_average": 15.19117647,
+          "excel_decision": "PASSED",
+          "excel_subject_decisions": {
+            "NAHW": "SATISFIED",
+            "LUGHA": "SATISFIED",
+            "FIQH": "SATISFIED",
+            "SIRA": "SATISFIED",
+            "QURAN": "SATISFIED"
+          },
+          "excel_rank": 8
+        },
+        {
+          "row": 10,
+          "matricule": "24037",
+          "full_name_ar": "سناء محمد أدو",
+          "grades": {
+            "NAHW": 16.5,
+            "LUGHA": 13.5,
+            "FIQH": 13.0,
+            "SIRA": 16.5,
+            "QURAN": 14.25
+          },
+          "excel_average": 14.86764706,
+          "excel_decision": "PASSED",
+          "excel_subject_decisions": {
+            "NAHW": "SATISFIED",
+            "LUGHA": "SATISFIED",
+            "FIQH": "SATISFIED",
+            "SIRA": "SATISFIED",
+            "QURAN": "SATISFIED"
+          },
+          "excel_rank": 9
+        },
+        {
+          "row": 11,
+          "matricule": "24035",
+          "full_name_ar": "أماه السالك",
+          "grades": {
+            "NAHW": 15.0,
+            "LUGHA": 16.0,
+            "FIQH": 10.0,
+            "SIRA": 17.75,
+            "QURAN": 13.5
+          },
+          "excel_average": 14.27941176,
+          "excel_decision": "PASSED",
+          "excel_subject_decisions": {
+            "NAHW": "SATISFIED",
+            "LUGHA": "SATISFIED",
+            "FIQH": "SATISFIED",
+            "SIRA": "SATISFIED",
+            "QURAN": "SATISFIED"
+          },
+          "excel_rank": 10
+        },
+        {
+          "row": 12,
+          "matricule": "24033",
+          "full_name_ar": "فاطمة الذاكر",
+          "grades": {
+            "NAHW": 12.75,
+            "LUGHA": 15.5,
+            "FIQH": 12.25,
+            "SIRA": 5.0,
+            "QURAN": 18.5
+          },
+          "excel_average": 13.30882353,
+          "excel_decision": "RESIT",
+          "excel_subject_decisions": {
+            "NAHW": "SATISFIED",
+            "LUGHA": "SATISFIED",
+            "FIQH": "SATISFIED",
+            "SIRA": "NOT_SATISFIED",
+            "QURAN": "SATISFIED"
+          },
+          "excel_rank": 11
+        },
+        {
+          "row": 13,
+          "matricule": "24031",
+          "full_name_ar": "امامه أحمدو ولد التاه",
+          "grades": {
+            "NAHW": 10.0,
+            "LUGHA": 16.5,
+            "FIQH": 15.75,
+            "SIRA": 10.0,
+            "QURAN": 12.75
+          },
+          "excel_average": 12.58823529,
+          "excel_decision": "PASSED",
+          "excel_subject_decisions": {
+            "NAHW": "SATISFIED",
+            "LUGHA": "SATISFIED",
+            "FIQH": "SATISFIED",
+            "SIRA": "SATISFIED",
+            "QURAN": "SATISFIED"
+          },
+          "excel_rank": 12
+        },
+        {
+          "row": 14,
+          "matricule": "24025",
+          "full_name_ar": "امامه محمدن ولد حمود",
+          "grades": {
+            "NAHW": 7.25,
+            "LUGHA": 10.5,
+            "FIQH": 15.0,
+            "SIRA": 5.25,
+            "QURAN": 17.75
+          },
+          "excel_average": 11.73529412,
+          "excel_decision": "RESIT",
+          "excel_subject_decisions": {
+            "NAHW": "SATISFIED",
+            "LUGHA": "SATISFIED",
+            "FIQH": "SATISFIED",
+            "SIRA": "NOT_SATISFIED",
+            "QURAN": "SATISFIED"
+          },
+          "excel_rank": 13
+        },
+        {
+          "row": 15,
+          "matricule": "24029",
+          "full_name_ar": "مريم الشيخ اموه",
+          "grades": {
+            "NAHW": null,
+            "LUGHA": null,
+            "FIQH": null,
+            "SIRA": null,
+            "QURAN": null
+          },
+          "excel_average": 0.0,
+          "excel_decision": "RESIT",
+          "excel_subject_decisions": {
+            "NAHW": "NOT_SATISFIED",
+            "LUGHA": "NOT_SATISFIED",
+            "FIQH": "NOT_SATISFIED",
+            "SIRA": "NOT_SATISFIED",
+            "QURAN": "NOT_SATISFIED"
+          },
+          "excel_rank": 14
+        },
+        {
+          "row": 16,
+          "matricule": "24032",
+          "full_name_ar": "الهلالية منت الشيخ",
+          "grades": {
+            "NAHW": null,
+            "LUGHA": null,
+            "FIQH": null,
+            "SIRA": null,
+            "QURAN": null
+          },
+          "excel_average": 0.0,
+          "excel_decision": "RESIT",
+          "excel_subject_decisions": {
+            "NAHW": "NOT_SATISFIED",
+            "LUGHA": "NOT_SATISFIED",
+            "FIQH": "NOT_SATISFIED",
+            "SIRA": "NOT_SATISFIED",
+            "QURAN": "NOT_SATISFIED"
+          },
+          "excel_rank": 14
+        }
+      ]
+    },
+    {
+      "code": "MUTAMAYYIZAT",
+      "name_ar": "المتميزات",
+      "coefficients": {
+        "FIQH": 3,
+        "QURAN": 5
+      },
+      "students": [
+        {
+          "row": 2,
+          "matricule": "24078",
+          "full_name_ar": "منت بدي لمرابط",
+          "grades": {
+            "FIQH": 19.0,
+            "QURAN": 19.0
+          },
+          "excel_average": 19.0,
+          "excel_decision": "PASSED",
+          "excel_subject_decisions": {
+            "FIQH": "SATISFIED",
+            "QURAN": "SATISFIED"
+          },
+          "excel_rank": 1
+        },
+        {
+          "row": 3,
+          "matricule": "24076",
+          "full_name_ar": "غنيمة حمود",
+          "grades": {
+            "FIQH": 19.0,
+            "QURAN": 18.75
+          },
+          "excel_average": 18.84375,
+          "excel_decision": "PASSED",
+          "excel_subject_decisions": {
+            "FIQH": "SATISFIED",
+            "QURAN": "SATISFIED"
+          },
+          "excel_rank": 2
+        },
+        {
+          "row": 4,
+          "matricule": "24082",
+          "full_name_ar": "زينب محمدن النيه",
+          "grades": {
+            "FIQH": 18.5,
+            "QURAN": 19.0
+          },
+          "excel_average": 18.8125,
+          "excel_decision": "PASSED",
+          "excel_subject_decisions": {
+            "FIQH": "SATISFIED",
+            "QURAN": "SATISFIED"
+          },
+          "excel_rank": 3
+        },
+        {
+          "row": 5,
+          "matricule": "24079",
+          "full_name_ar": "صباح حمود",
+          "grades": {
+            "FIQH": 18.0,
+            "QURAN": 19.0
+          },
+          "excel_average": 18.625,
+          "excel_decision": "PASSED",
+          "excel_subject_decisions": {
+            "FIQH": "SATISFIED",
+            "QURAN": "SATISFIED"
+          },
+          "excel_rank": 4
+        },
+        {
+          "row": 6,
+          "matricule": "24080",
+          "full_name_ar": "تنجح حمود",
+          "grades": {
+            "FIQH": 18.0,
+            "QURAN": 18.5
+          },
+          "excel_average": 18.3125,
+          "excel_decision": "PASSED",
+          "excel_subject_decisions": {
+            "FIQH": "SATISFIED",
+            "QURAN": "SATISFIED"
+          },
+          "excel_rank": 5
+        },
+        {
+          "row": 7,
+          "matricule": "24086",
+          "full_name_ar": "فضيلة يوسف",
+          "grades": {
+            "FIQH": 16.0,
+            "QURAN": 17.5
+          },
+          "excel_average": 16.9375,
+          "excel_decision": "PASSED",
+          "excel_subject_decisions": {
+            "FIQH": "SATISFIED",
+            "QURAN": "SATISFIED"
+          },
+          "excel_rank": 6
+        },
+        {
+          "row": 8,
+          "matricule": "24084",
+          "full_name_ar": "الشفاء المولود",
+          "grades": {
+            "FIQH": 16.0,
+            "QURAN": 16.0
+          },
+          "excel_average": 16.0,
+          "excel_decision": "PASSED",
+          "excel_subject_decisions": {
+            "FIQH": "SATISFIED",
+            "QURAN": "SATISFIED"
+          },
+          "excel_rank": 7
+        },
+        {
+          "row": 9,
+          "matricule": "24089",
+          "full_name_ar": "حاجة سعيد",
+          "grades": {
+            "FIQH": 16.0,
+            "QURAN": 15.0
+          },
+          "excel_average": 15.375,
+          "excel_decision": "PASSED",
+          "excel_subject_decisions": {
+            "FIQH": "SATISFIED",
+            "QURAN": "SATISFIED"
+          },
+          "excel_rank": 8
+        },
+        {
+          "row": 10,
+          "matricule": "24077",
+          "full_name_ar": "خديجة أحبلالة",
+          "grades": {
+            "FIQH": 15.5,
+            "QURAN": 15.0
+          },
+          "excel_average": 15.1875,
+          "excel_decision": "PASSED",
+          "excel_subject_decisions": {
+            "FIQH": "SATISFIED",
+            "QURAN": "SATISFIED"
+          },
+          "excel_rank": 9
+        },
+        {
+          "row": 11,
+          "matricule": "24088",
+          "full_name_ar": "فاطمة أوبك",
+          "grades": {
+            "FIQH": 16.5,
+            "QURAN": 14.0
+          },
+          "excel_average": 14.9375,
+          "excel_decision": "PASSED",
+          "excel_subject_decisions": {
+            "FIQH": "SATISFIED",
+            "QURAN": "SATISFIED"
+          },
+          "excel_rank": 10
+        },
+        {
+          "row": 12,
+          "matricule": "24091",
+          "full_name_ar": "عيشة زيدان",
+          "grades": {
+            "FIQH": 10.0,
+            "QURAN": 16.5
+          },
+          "excel_average": 14.0625,
+          "excel_decision": "PASSED",
+          "excel_subject_decisions": {
+            "FIQH": "SATISFIED",
+            "QURAN": "SATISFIED"
+          },
+          "excel_rank": 11
+        },
+        {
+          "row": 13,
+          "matricule": "24090",
+          "full_name_ar": "ليلى سعيد",
+          "grades": {
+            "FIQH": 10.0,
+            "QURAN": 15.0
+          },
+          "excel_average": 13.125,
+          "excel_decision": "PASSED",
+          "excel_subject_decisions": {
+            "FIQH": "SATISFIED",
+            "QURAN": "SATISFIED"
+          },
+          "excel_rank": 12
+        },
+        {
+          "row": 14,
+          "matricule": "24097",
+          "full_name_ar": "تبراك اسليمان",
+          "grades": {
+            "FIQH": 10.0,
+            "QURAN": 14.0
+          },
+          "excel_average": 12.5,
+          "excel_decision": "PASSED",
+          "excel_subject_decisions": {
+            "FIQH": "SATISFIED",
+            "QURAN": "SATISFIED"
+          },
+          "excel_rank": 13
+        },
+        {
+          "row": 15,
+          "matricule": "24081",
+          "full_name_ar": "تانة أمين بديه",
+          "grades": {
+            "FIQH": null,
+            "QURAN": 19.0
+          },
+          "excel_average": 11.875,
+          "excel_decision": "RESIT",
+          "excel_subject_decisions": {
+            "FIQH": "NOT_SATISFIED",
+            "QURAN": "SATISFIED"
+          },
+          "excel_rank": 14
+        },
+        {
+          "row": 16,
+          "matricule": "24092",
+          "full_name_ar": "فرحة يهديه",
+          "grades": {
+            "FIQH": 10.0,
+            "QURAN": 10.0
+          },
+          "excel_average": 10.0,
+          "excel_decision": "PASSED",
+          "excel_subject_decisions": {
+            "FIQH": "SATISFIED",
+            "QURAN": "SATISFIED"
+          },
+          "excel_rank": 15
+        },
+        {
+          "row": 17,
+          "matricule": "24096",
+          "full_name_ar": "فاطمة طهمان",
+          "grades": {
+            "FIQH": 10.0,
+            "QURAN": 10.0
+          },
+          "excel_average": 10.0,
+          "excel_decision": "PASSED",
+          "excel_subject_decisions": {
+            "FIQH": "SATISFIED",
+            "QURAN": "SATISFIED"
+          },
+          "excel_rank": 15
+        },
+        {
+          "row": 18,
+          "matricule": "24083",
+          "full_name_ar": "فاطمة منت أدو",
+          "grades": {
+            "FIQH": null,
+            "QURAN": null
+          },
+          "excel_average": 0.0,
+          "excel_decision": "RESIT",
+          "excel_subject_decisions": {
+            "FIQH": "NOT_SATISFIED",
+            "QURAN": "NOT_SATISFIED"
+          },
+          "excel_rank": 16
+        },
+        {
+          "row": 19,
+          "matricule": "24085",
+          "full_name_ar": "مليكة المامي",
+          "grades": {
+            "FIQH": null,
+            "QURAN": null
+          },
+          "excel_average": 0.0,
+          "excel_decision": "RESIT",
+          "excel_subject_decisions": {
+            "FIQH": "NOT_SATISFIED",
+            "QURAN": "NOT_SATISFIED"
+          },
+          "excel_rank": 16
+        },
+        {
+          "row": 20,
+          "matricule": "24087",
+          "full_name_ar": "حاجة منت بلال",
+          "grades": {
+            "FIQH": null,
+            "QURAN": null
+          },
+          "excel_average": 0.0,
+          "excel_decision": "RESIT",
+          "excel_subject_decisions": {
+            "FIQH": "NOT_SATISFIED",
+            "QURAN": "NOT_SATISFIED"
+          },
+          "excel_rank": 16
+        },
+        {
+          "row": 21,
+          "matricule": "24093",
+          "full_name_ar": "مريم المامي",
+          "grades": {
+            "FIQH": null,
+            "QURAN": null
+          },
+          "excel_average": 0.0,
+          "excel_decision": "RESIT",
+          "excel_subject_decisions": {
+            "FIQH": "NOT_SATISFIED",
+            "QURAN": "NOT_SATISFIED"
+          },
+          "excel_rank": 16
+        },
+        {
+          "row": 22,
+          "matricule": "24094",
+          "full_name_ar": "الوالدة محمد عمر",
+          "grades": {
+            "FIQH": null,
+            "QURAN": null
+          },
+          "excel_average": 0.0,
+          "excel_decision": "RESIT",
+          "excel_subject_decisions": {
+            "FIQH": "NOT_SATISFIED",
+            "QURAN": "NOT_SATISFIED"
+          },
+          "excel_rank": 16
+        },
+        {
+          "row": 23,
+          "matricule": "24095",
+          "full_name_ar": "عيشة السالك امبارك",
+          "grades": {
+            "FIQH": null,
+            "QURAN": null
+          },
+          "excel_average": 0.0,
+          "excel_decision": "RESIT",
+          "excel_subject_decisions": {
+            "FIQH": "NOT_SATISFIED",
+            "QURAN": "NOT_SATISFIED"
+          },
+          "excel_rank": 16
+        }
+      ]
+    },
+    {
+      "code": "ALIMAT",
+      "name_ar": "عالمات المستقبل",
+      "coefficients": {
+        "MAHARIM": 3,
+        "AKHDARI": 3,
+        "ABQARI": 3,
+        "QURAN": 5
+      },
+      "students": [
+        {
+          "row": 2,
+          "matricule": "24003",
+          "full_name_ar": "دعيه  أدو",
+          "grades": {
+            "MAHARIM": 19.0,
+            "AKHDARI": 18.75,
+            "ABQARI": 18.75,
+            "QURAN": 19.0
+          },
+          "excel_average": 18.89285714,
+          "excel_decision": "PASSED",
+          "excel_subject_decisions": {
+            "MAHARIM": "SATISFIED",
+            "AKHDARI": "SATISFIED",
+            "ABQARI": "SATISFIED",
+            "QURAN": "SATISFIED"
+          },
+          "excel_rank": 1
+        },
+        {
+          "row": 3,
+          "matricule": "24006",
+          "full_name_ar": "أميمة الذاكر",
+          "grades": {
+            "MAHARIM": 18.75,
+            "AKHDARI": 18.5,
+            "ABQARI": 18.0,
+            "QURAN": 19.0
+          },
+          "excel_average": 18.625,
+          "excel_decision": "PASSED",
+          "excel_subject_decisions": {
+            "MAHARIM": "SATISFIED",
+            "AKHDARI": "SATISFIED",
+            "ABQARI": "SATISFIED",
+            "QURAN": "SATISFIED"
+          },
+          "excel_rank": 2
+        },
+        {
+          "row": 4,
+          "matricule": "24002",
+          "full_name_ar": "آمال الحسين",
+          "grades": {
+            "MAHARIM": 18.75,
+            "AKHDARI": 18.75,
+            "ABQARI": 19.0,
+            "QURAN": 17.5
+          },
+          "excel_average": 18.35714286,
+          "excel_decision": "PASSED",
+          "excel_subject_decisions": {
+            "MAHARIM": "SATISFIED",
+            "AKHDARI": "SATISFIED",
+            "ABQARI": "SATISFIED",
+            "QURAN": "SATISFIED"
+          },
+          "excel_rank": 3
+        },
+        {
+          "row": 5,
+          "matricule": "24007",
+          "full_name_ar": "عيشة منت حنبل",
+          "grades": {
+            "MAHARIM": 16.5,
+            "AKHDARI": 18.0,
+            "ABQARI": 19.0,
+            "QURAN": 19.0
+          },
+          "excel_average": 18.25,
+          "excel_decision": "PASSED",
+          "excel_subject_decisions": {
+            "MAHARIM": "SATISFIED",
+            "AKHDARI": "SATISFIED",
+            "ABQARI": "SATISFIED",
+            "QURAN": "SATISFIED"
+          },
+          "excel_rank": 4
+        },
+        {
+          "row": 6,
+          "matricule": "24005",
+          "full_name_ar": "ماماه دداه مناه",
+          "grades": {
+            "MAHARIM": 16.5,
+            "AKHDARI": 17.5,
+            "ABQARI": 17.25,
+            "QURAN": 19.0
+          },
+          "excel_average": 17.76785714,
+          "excel_decision": "PASSED",
+          "excel_subject_decisions": {
+            "MAHARIM": "SATISFIED",
+            "AKHDARI": "SATISFIED",
+            "ABQARI": "SATISFIED",
+            "QURAN": "SATISFIED"
+          },
+          "excel_rank": 5
+        },
+        {
+          "row": 7,
+          "matricule": "24015",
+          "full_name_ar": "ميمونة السجاد",
+          "grades": {
+            "MAHARIM": 18.5,
+            "AKHDARI": 14.25,
+            "ABQARI": 17.25,
+            "QURAN": 19.0
+          },
+          "excel_average": 17.5,
+          "excel_decision": "PASSED",
+          "excel_subject_decisions": {
+            "MAHARIM": "SATISFIED",
+            "AKHDARI": "SATISFIED",
+            "ABQARI": "SATISFIED",
+            "QURAN": "SATISFIED"
+          },
+          "excel_rank": 6
+        },
+        {
+          "row": 8,
+          "matricule": "24017",
+          "full_name_ar": "منت اباه تاتيه",
+          "grades": {
+            "MAHARIM": 16.0,
+            "AKHDARI": 16.75,
+            "ABQARI": 17.25,
+            "QURAN": 18.5
+          },
+          "excel_average": 17.32142857,
+          "excel_decision": "PASSED",
+          "excel_subject_decisions": {
+            "MAHARIM": "SATISFIED",
+            "AKHDARI": "SATISFIED",
+            "ABQARI": "SATISFIED",
+            "QURAN": "SATISFIED"
+          },
+          "excel_rank": 7
+        },
+        {
+          "row": 9,
+          "matricule": "24008",
+          "full_name_ar": "سلكه منت عبدي",
+          "grades": {
+            "MAHARIM": 14.5,
+            "AKHDARI": 12.0,
+            "ABQARI": 16.5,
+            "QURAN": 17.5
+          },
+          "excel_average": 15.46428571,
+          "excel_decision": "PASSED",
+          "excel_subject_decisions": {
+            "MAHARIM": "SATISFIED",
+            "AKHDARI": "SATISFIED",
+            "ABQARI": "SATISFIED",
+            "QURAN": "SATISFIED"
+          },
+          "excel_rank": 8
+        },
+        {
+          "row": 10,
+          "matricule": "24018",
+          "full_name_ar": "سناء حمود",
+          "grades": {
+            "MAHARIM": 17.0,
+            "AKHDARI": 10.0,
+            "ABQARI": 17.75,
+            "QURAN": 15.75
+          },
+          "excel_average": 15.21428571,
+          "excel_decision": "PASSED",
+          "excel_subject_decisions": {
+            "MAHARIM": "SATISFIED",
+            "AKHDARI": "SATISFIED",
+            "ABQARI": "SATISFIED",
+            "QURAN": "SATISFIED"
+          },
+          "excel_rank": 9
+        },
+        {
+          "row": 11,
+          "matricule": "24011",
+          "full_name_ar": "عيشة منت باباه",
+          "grades": {
+            "MAHARIM": 15.25,
+            "AKHDARI": 10.0,
+            "ABQARI": 7.5,
+            "QURAN": 16.5
+          },
+          "excel_average": 12.91071429,
+          "excel_decision": "PASSED",
+          "excel_subject_decisions": {
+            "MAHARIM": "SATISFIED",
+            "AKHDARI": "SATISFIED",
+            "ABQARI": "SATISFIED",
+            "QURAN": "SATISFIED"
+          },
+          "excel_rank": 10
+        },
+        {
+          "row": 12,
+          "matricule": "24012",
+          "full_name_ar": "تانة الخليل",
+          "grades": {
+            "MAHARIM": 10.0,
+            "AKHDARI": 10.0,
+            "ABQARI": null,
+            "QURAN": 18.75
+          },
+          "excel_average": 10.98214286,
+          "excel_decision": "RESIT",
+          "excel_subject_decisions": {
+            "MAHARIM": "SATISFIED",
+            "AKHDARI": "SATISFIED",
+            "ABQARI": "NOT_SATISFIED",
+            "QURAN": "SATISFIED"
+          },
+          "excel_rank": 11
+        },
+        {
+          "row": 13,
+          "matricule": "24010",
+          "full_name_ar": "أميرة المختار السجاد",
+          "grades": {
+            "MAHARIM": 13.25,
+            "AKHDARI": 13.0,
+            "ABQARI": 13.0,
+            "QURAN": 3.0
+          },
+          "excel_average": 9.482142857,
+          "excel_decision": "RESIT",
+          "excel_subject_decisions": {
+            "MAHARIM": "SATISFIED",
+            "AKHDARI": "SATISFIED",
+            "ABQARI": "SATISFIED",
+            "QURAN": "NOT_SATISFIED"
+          },
+          "excel_rank": 12
+        },
+        {
+          "row": 14,
+          "matricule": "24016",
+          "full_name_ar": "عيشة الخليفة الذاكر",
+          "grades": {
+            "MAHARIM": 13.5,
+            "AKHDARI": null,
+            "ABQARI": 12.0,
+            "QURAN": 10.5
+          },
+          "excel_average": 9.214285714,
+          "excel_decision": "RESIT",
+          "excel_subject_decisions": {
+            "MAHARIM": "SATISFIED",
+            "AKHDARI": "NOT_SATISFIED",
+            "ABQARI": "SATISFIED",
+            "QURAN": "SATISFIED"
+          },
+          "excel_rank": 13
+        },
+        {
+          "row": 15,
+          "matricule": "24013",
+          "full_name_ar": "حميدة الخليل",
+          "grades": {
+            "MAHARIM": null,
+            "AKHDARI": null,
+            "ABQARI": null,
+            "QURAN": 18.5
+          },
+          "excel_average": 6.607142857,
+          "excel_decision": "RESIT",
+          "excel_subject_decisions": {
+            "MAHARIM": "NOT_SATISFIED",
+            "AKHDARI": "NOT_SATISFIED",
+            "ABQARI": "NOT_SATISFIED",
+            "QURAN": "SATISFIED"
+          },
+          "excel_rank": 14
+        },
+        {
+          "row": 16,
+          "matricule": "24001",
+          "full_name_ar": "سناء الشيخ اموه",
+          "grades": {
+            "MAHARIM": null,
+            "AKHDARI": null,
+            "ABQARI": null,
+            "QURAN": null
+          },
+          "excel_average": 0.0,
+          "excel_decision": "RESIT",
+          "excel_subject_decisions": {
+            "MAHARIM": "NOT_SATISFIED",
+            "AKHDARI": "NOT_SATISFIED",
+            "ABQARI": "NOT_SATISFIED",
+            "QURAN": "NOT_SATISFIED"
+          },
+          "excel_rank": 15
+        },
+        {
+          "row": 17,
+          "matricule": "24004",
+          "full_name_ar": "عيشة منت أدو",
+          "grades": {
+            "MAHARIM": null,
+            "AKHDARI": null,
+            "ABQARI": null,
+            "QURAN": null
+          },
+          "excel_average": 0.0,
+          "excel_decision": "RESIT",
+          "excel_subject_decisions": {
+            "MAHARIM": "NOT_SATISFIED",
+            "AKHDARI": "NOT_SATISFIED",
+            "ABQARI": "NOT_SATISFIED",
+            "QURAN": "NOT_SATISFIED"
+          },
+          "excel_rank": 15
+        },
+        {
+          "row": 18,
+          "matricule": "24009",
+          "full_name_ar": "دعيه مجاد",
+          "grades": {
+            "MAHARIM": null,
+            "AKHDARI": null,
+            "ABQARI": null,
+            "QURAN": null
+          },
+          "excel_average": 0.0,
+          "excel_decision": "RESIT",
+          "excel_subject_decisions": {
+            "MAHARIM": "NOT_SATISFIED",
+            "AKHDARI": "NOT_SATISFIED",
+            "ABQARI": "NOT_SATISFIED",
+            "QURAN": "NOT_SATISFIED"
+          },
+          "excel_rank": 15
+        },
+        {
+          "row": 19,
+          "matricule": "24014",
+          "full_name_ar": "إيمان السجاد",
+          "grades": {
+            "MAHARIM": null,
+            "AKHDARI": null,
+            "ABQARI": null,
+            "QURAN": null
+          },
+          "excel_average": 0.0,
+          "excel_decision": "RESIT",
+          "excel_subject_decisions": {
+            "MAHARIM": "NOT_SATISFIED",
+            "AKHDARI": "NOT_SATISFIED",
+            "ABQARI": "NOT_SATISFIED",
+            "QURAN": "NOT_SATISFIED"
+          },
+          "excel_rank": 15
+        },
+        {
+          "row": 20,
+          "matricule": "24019",
+          "full_name_ar": "هندو النيه",
+          "grades": {
+            "MAHARIM": null,
+            "AKHDARI": null,
+            "ABQARI": null,
+            "QURAN": null
+          },
+          "excel_average": 0.0,
+          "excel_decision": "RESIT",
+          "excel_subject_decisions": {
+            "MAHARIM": "NOT_SATISFIED",
+            "AKHDARI": "NOT_SATISFIED",
+            "ABQARI": "NOT_SATISFIED",
+            "QURAN": "NOT_SATISFIED"
+          },
+          "excel_rank": 15
+        },
+        {
+          "row": 21,
+          "matricule": "24020",
+          "full_name_ar": "امام أيداه",
+          "grades": {
+            "MAHARIM": null,
+            "AKHDARI": null,
+            "ABQARI": null,
+            "QURAN": null
+          },
+          "excel_average": 0.0,
+          "excel_decision": "RESIT",
+          "excel_subject_decisions": {
+            "MAHARIM": "NOT_SATISFIED",
+            "AKHDARI": "NOT_SATISFIED",
+            "ABQARI": "NOT_SATISFIED",
+            "QURAN": "NOT_SATISFIED"
+          },
+          "excel_rank": 15
+        },
+        {
+          "row": 22,
+          "matricule": "24021",
+          "full_name_ar": "مريم اموه بديه",
+          "grades": {
+            "MAHARIM": null,
+            "AKHDARI": null,
+            "ABQARI": null,
+            "QURAN": null
+          },
+          "excel_average": 0.0,
+          "excel_decision": "RESIT",
+          "excel_subject_decisions": {
+            "MAHARIM": "NOT_SATISFIED",
+            "AKHDARI": "NOT_SATISFIED",
+            "ABQARI": "NOT_SATISFIED",
+            "QURAN": "NOT_SATISFIED"
+          },
+          "excel_rank": 15
+        },
+        {
+          "row": 23,
+          "matricule": "24022",
+          "full_name_ar": "رشاد أحمد حسن",
+          "grades": {
+            "MAHARIM": null,
+            "AKHDARI": null,
+            "ABQARI": null,
+            "QURAN": null
+          },
+          "excel_average": 0.0,
+          "excel_decision": "RESIT",
+          "excel_subject_decisions": {
+            "MAHARIM": "NOT_SATISFIED",
+            "AKHDARI": "NOT_SATISFIED",
+            "ABQARI": "NOT_SATISFIED",
+            "QURAN": "NOT_SATISFIED"
+          },
+          "excel_rank": 15
+        }
+      ]
+    }
+  ]
+}

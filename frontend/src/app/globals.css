@@ -1,0 +1,344 @@
+@import "tailwindcss";
+
+/*
+ * Identite visuelle alignee sur SIGA (C:\SIR\ISS_SIGA\frontend_iss) :
+ * meme palette, memes ombres, meme grammaire de composants — carte blanche
+ * sur fond gris clair, coins arrondis, ombres douces, vert institutionnel.
+ *
+ * Une seule difference structurelle : ici tout est en arabe et lu de droite
+ * a gauche. Le CSS n'utilise donc que des proprietes logiques
+ * (`margin-inline-start`, `border-inline-end`, `inset-inline-start`) ; aucune
+ * propriete directionnelle en dur, sinon la mise en page se retourne mal.
+ *
+ * Comme SIGA, le theme est clair uniquement.
+ */
+
+@theme {
+  /* --- Palette institutionnelle --- */
+  --color-primary: #006633;
+  --color-primary-lt: #008844;
+  --color-primary-dk: #004d24;
+
+  --color-secondary: #c82020;
+  --color-secondary-lt: #e03535;
+
+  --color-accent: #e5c018;
+  --color-accent-lt: #f5d340;
+
+  --color-dark: #0a0f1a;
+  --color-dark-soft: #1e293b;
+
+  --color-gris: #64748b;
+  --color-gris-lt: #94a3b8;
+  --color-light: #f8fafc;
+
+  /* --- Statuts --- */
+  --color-succes: #10b981;
+  --color-warning: #f59e0b;
+  --color-danger: #ef4444;
+  --color-info: #3b82f6;
+  --color-neutre: #6b7280;
+
+  /* --- Ombres --- */
+  --shadow-card: 0 8px 25px rgba(0, 0, 0, 0.08);
+  --shadow-card-lg: 0 16px 48px rgba(0, 0, 0, 0.12);
+  --shadow-glow-primary: 0 4px 20px rgba(0, 92, 47, 0.3);
+  --shadow-drawer: 5px 0 25px rgba(0, 0, 0, 0.15);
+
+  /* --- Typographie --- */
+  --font-sans: var(--police-arabe), "Segoe UI", system-ui, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+button,
+[role="button"],
+a {
+  cursor: pointer;
+}
+
+html {
+  color-scheme: light;
+}
+
+body {
+  background-color: #f8fafc;
+  color: #0a0f1a;
+  font-family: var(--police-arabe), "Segoe UI", system-ui, sans-serif;
+}
+
+/* --- Barres de defilement --- */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* --- Tableaux de donnees --- */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+.data-table thead tr {
+  background: #f8fafc;
+  border-bottom: 2px solid #e2e8f0;
+}
+.data-table thead th {
+  padding: 0.75rem 1rem;
+  font-weight: 600;
+  color: #64748b;
+  font-size: 0.75rem;
+  letter-spacing: 0.03em;
+  text-align: start;
+  white-space: nowrap;
+}
+.data-table thead th.centre,
+.data-table tbody td.centre {
+  text-align: center;
+}
+.data-table thead th.fin,
+.data-table tbody td.fin {
+  text-align: end;
+}
+.data-table tbody tr {
+  border-bottom: 1px solid #f1f5f9;
+  transition: background 0.15s;
+}
+.data-table tbody tr:hover {
+  background: #f8fafc;
+}
+.data-table tbody td {
+  padding: 0.875rem 1rem;
+  color: #1e293b;
+}
+.data-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+/*
+ * Les notes et les matricules restent en chiffres occidentaux, isoles du sens
+ * du texte : une note se recopie, l'ambiguite de lecture n'est pas acceptable.
+ */
+.chiffres {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+  direction: ltr;
+  unicode-bidi: isolate;
+  display: inline-block;
+}
+
+/* --- Champ de saisie de note --- */
+.champ-note {
+  inline-size: 100%;
+  /* Cible tactile : 44 px de haut sur mobile, resserree au-dela. */
+  padding-block: 0.625rem;
+  font-size: 1rem;
+  text-align: center;
+  border-radius: 0.5rem;
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  color: #1e293b;
+  font-variant-numeric: tabular-nums;
+  transition: border-color 0.15s;
+}
+
+.champ-note:focus-visible {
+  outline: 2px solid #006633;
+  outline-offset: 1px;
+  border-color: #006633;
+}
+
+.champ-note:disabled {
+  background: #f8fafc;
+  color: #94a3b8;
+  cursor: not-allowed;
+}
+
+.champ-note::-webkit-outer-spin-button,
+.champ-note::-webkit-inner-spin-button {
+  appearance: none;
+  margin: 0;
+}
+
+.champ-note[type="number"] {
+  appearance: textfield;
+}
+
+/* --- Champ de formulaire standard --- */
+.champ {
+  inline-size: 100%;
+  border-radius: 0.75rem;
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  padding: 0.625rem 0.875rem;
+  font-size: 0.875rem;
+  color: #1e293b;
+  transition: border-color 0.15s;
+}
+
+/* Reserve la place du bouton d'affichage, du cote de fin du champ. */
+.champ-mdp {
+  padding-inline-end: 2.75rem;
+}
+
+.champ:focus-visible {
+  outline: none;
+  border-color: #006633;
+  box-shadow: 0 0 0 3px rgba(0, 102, 51, 0.12);
+}
+
+@media (min-width: 640px) {
+  .champ-note {
+    padding-block: 0.375rem;
+    font-size: 0.875rem;
+  }
+}
+
+/*
+ * Sur iOS, un champ dont la police descend sous 16 px declenche un zoom
+ * automatique a la mise au point. On garde donc 16 px sur mobile.
+ */
+.champ {
+  font-size: 1rem;
+}
+
+@media (min-width: 640px) {
+  .champ {
+    font-size: 0.875rem;
+  }
+}
+
+/* --------------------------------------------------------------------------
+ * Animation de reussite
+ *
+ * Tout est en CSS pur, sans dependance ni JavaScript : la carte est rendue
+ * cote serveur, et une animation qui exigerait du script retarderait son
+ * apparition.
+ *
+ * Les confettis et le reflet tournent en boucle ; l'apparition de la carte et
+ * le surgissement du disque ne jouent qu'une fois — les rejouer sans fin
+ * donnerait le mal de mer plutot qu'une impression de fete.
+ * ----------------------------------------------------------------------- */
+
+@keyframes carte-apparition {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.carte-apparition {
+  animation: carte-apparition 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes pastille-pop {
+  0% {
+    transform: scale(0.4);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.08);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.pastille-pop {
+  animation: pastille-pop 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) 0.25s both;
+}
+
+@keyframes confetti-chute {
+  0% {
+    transform: translate3d(0, -20px, 0) rotate(0deg);
+    opacity: 0;
+  }
+  12% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate3d(var(--derive, 0), 560px, 0) rotate(var(--tour, 540deg));
+    opacity: 0;
+  }
+}
+
+.confetti {
+  position: absolute;
+  inset-block-start: 0;
+  inline-size: 7px;
+  block-size: 13px;
+  border-radius: 2px;
+  pointer-events: none;
+  animation: confetti-chute var(--duree, 2.6s) linear var(--attente, 0s)
+    infinite;
+}
+
+@keyframes badge-brillance {
+  0% {
+    transform: translateX(-120%);
+  }
+  /* Le balayage occupe le premier tiers ; le reste du cycle laisse
+     respirer, sinon le reflet devient un clignotement. */
+  35%,
+  100% {
+    transform: translateX(220%);
+  }
+}
+
+.badge-reussite {
+  position: relative;
+  overflow: hidden;
+}
+
+.badge-reussite::after {
+  content: "";
+  position: absolute;
+  inset-block: 0;
+  inline-size: 45%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.55),
+    transparent
+  );
+  animation: badge-brillance 3.2s ease-in-out 0.7s infinite;
+}
+
+/*
+ * Certaines personnes desactivent les animations au niveau du systeme, pour
+ * des raisons vestibulaires. On respecte ce reglage : la carte s'affiche
+ * telle quelle, sans mouvement.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .carte-apparition,
+  .pastille-pop,
+  .confetti,
+  .badge-reussite::after {
+    animation: none;
+  }
+  .confetti {
+    display: none;
+  }
+}
+
+*:focus-visible {
+  outline-color: #006633;
+}

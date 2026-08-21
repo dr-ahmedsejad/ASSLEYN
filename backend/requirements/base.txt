@@ -1,0 +1,23 @@
+# --- Coeur ---
+Django==5.2.6
+djangorestframework==3.16.1
+django-cors-headers==4.7.0
+drf-spectacular==0.28.0
+django-filter==25.1
+
+# --- Configuration ---
+django-environ==0.12.0
+
+# --- Securite ---
+argon2-cffi==25.1.0          # hachage des mots de passe (Argon2id)
+django-axes==8.0.0           # verrouillage apres echecs de connexion
+django-otp==1.6.1            # 2FA TOTP pour les comptes administrateurs
+qrcode==8.2                  # QR code d'enrolement 2FA
+django-csp==4.0              # Content-Security-Policy
+
+# --- Base de donnees ---
+psycopg[binary]==3.2.9       # PostgreSQL (production)
+
+# --- Taches asynchrones ---
+celery==5.5.3
+redis==6.4.0

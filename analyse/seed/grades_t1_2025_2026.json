@@ -1,0 +1,2906 @@
+[
+  {
+    "matricule": "24040",
+    "section": "MURABBIYAT",
+    "subject": "NAHW",
+    "term": 1,
+    "value": 17.5,
+    "absent": false
+  },
+  {
+    "matricule": "24040",
+    "section": "MURABBIYAT",
+    "subject": "LUGHA",
+    "term": 1,
+    "value": 16.0,
+    "absent": false
+  },
+  {
+    "matricule": "24040",
+    "section": "MURABBIYAT",
+    "subject": "FIQH",
+    "term": 1,
+    "value": 18.5,
+    "absent": false
+  },
+  {
+    "matricule": "24040",
+    "section": "MURABBIYAT",
+    "subject": "QURAN",
+    "term": 1,
+    "value": 18.75,
+    "absent": false
+  },
+  {
+    "matricule": "24038",
+    "section": "MURABBIYAT",
+    "subject": "NAHW",
+    "term": 1,
+    "value": 18.0,
+    "absent": false
+  },
+  {
+    "matricule": "24038",
+    "section": "MURABBIYAT",
+    "subject": "LUGHA",
+    "term": 1,
+    "value": 18.0,
+    "absent": false
+  },
+  {
+    "matricule": "24038",
+    "section": "MURABBIYAT",
+    "subject": "FIQH",
+    "term": 1,
+    "value": 18.25,
+    "absent": false
+  },
+  {
+    "matricule": "24038",
+    "section": "MURABBIYAT",
+    "subject": "QURAN",
+    "term": 1,
+    "value": 17.5,
+    "absent": false
+  },
+  {
+    "matricule": "24050",
+    "section": "MURABBIYAT",
+    "subject": "NAHW",
+    "term": 1,
+    "value": 12.5,
+    "absent": false
+  },
+  {
+    "matricule": "24050",
+    "section": "MURABBIYAT",
+    "subject": "LUGHA",
+    "term": 1,
+    "value": 15.0,
+    "absent": false
+  },
+  {
+    "matricule": "24050",
+    "section": "MURABBIYAT",
+    "subject": "FIQH",
+    "term": 1,
+    "value": 15.5,
+    "absent": false
+  },
+  {
+    "matricule": "24050",
+    "section": "MURABBIYAT",
+    "subject": "QURAN",
+    "term": 1,
+    "value": 16.75,
+    "absent": false
+  },
+  {
+    "matricule": "24046",
+    "section": "MURABBIYAT",
+    "subject": "NAHW",
+    "term": 1,
+    "value": 12.0,
+    "absent": false
+  },
+  {
+    "matricule": "24046",
+    "section": "MURABBIYAT",
+    "subject": "LUGHA",
+    "term": 1,
+    "value": 15.0,
+    "absent": false
+  },
+  {
+    "matricule": "24046",
+    "section": "MURABBIYAT",
+    "subject": "FIQH",
+    "term": 1,
+    "value": 14.0,
+    "absent": false
+  },
+  {
+    "matricule": "24046",
+    "section": "MURABBIYAT",
+    "subject": "QURAN",
+    "term": 1,
+    "value": 17.0,
+    "absent": false
+  },
+  {
+    "matricule": "24045",
+    "section": "MURABBIYAT",
+    "subject": "NAHW",
+    "term": 1,
+    "value": 11.0,
+    "absent": false
+  },
+  {
+    "matricule": "24045",
+    "section": "MURABBIYAT",
+    "subject": "LUGHA",
+    "term": 1,
+    "value": 15.5,
+    "absent": false
+  },
+  {
+    "matricule": "24045",
+    "section": "MURABBIYAT",
+    "subject": "FIQH",
+    "term": 1,
+    "value": 16.0,
+    "absent": false
+  },
+  {
+    "matricule": "24045",
+    "section": "MURABBIYAT",
+    "subject": "QURAN",
+    "term": 1,
+    "value": 16.0,
+    "absent": false
+  },
+  {
+    "matricule": "24044",
+    "section": "MURABBIYAT",
+    "subject": "NAHW",
+    "term": 1,
+    "value": 11.0,
+    "absent": false
+  },
+  {
+    "matricule": "24044",
+    "section": "MURABBIYAT",
+    "subject": "LUGHA",
+    "term": 1,
+    "value": 15.75,
+    "absent": false
+  },
+  {
+    "matricule": "24044",
+    "section": "MURABBIYAT",
+    "subject": "FIQH",
+    "term": 1,
+    "value": 13.0,
+    "absent": false
+  },
+  {
+    "matricule": "24044",
+    "section": "MURABBIYAT",
+    "subject": "QURAN",
+    "term": 1,
+    "value": 17.25,
+    "absent": false
+  },
+  {
+    "matricule": "24043",
+    "section": "MURABBIYAT",
+    "subject": "NAHW",
+    "term": 1,
+    "value": 12.0,
+    "absent": false
+  },
+  {
+    "matricule": "24043",
+    "section": "MURABBIYAT",
+    "subject": "LUGHA",
+    "term": 1,
+    "value": 18.75,
+    "absent": false
+  },
+  {
+    "matricule": "24043",
+    "section": "MURABBIYAT",
+    "subject": "FIQH",
+    "term": 1,
+    "value": 17.5,
+    "absent": false
+  },
+  {
+    "matricule": "24043",
+    "section": "MURABBIYAT",
+    "subject": "QURAN",
+    "term": 1,
+    "value": 12.25,
+    "absent": false
+  },
+  {
+    "matricule": "24047",
+    "section": "MURABBIYAT",
+    "subject": "NAHW",
+    "term": 1,
+    "value": 11.5,
+    "absent": false
+  },
+  {
+    "matricule": "24047",
+    "section": "MURABBIYAT",
+    "subject": "LUGHA",
+    "term": 1,
+    "value": 14.5,
+    "absent": false
+  },
+  {
+    "matricule": "24047",
+    "section": "MURABBIYAT",
+    "subject": "FIQH",
+    "term": 1,
+    "value": 12.0,
+    "absent": false
+  },
+  {
+    "matricule": "24047",
+    "section": "MURABBIYAT",
+    "subject": "QURAN",
+    "term": 1,
+    "value": 16.0,
+    "absent": false
+  },
+  {
+    "matricule": "24042",
+    "section": "MURABBIYAT",
+    "subject": "NAHW",
+    "term": 1,
+    "value": 10.0,
+    "absent": false
+  },
+  {
+    "matricule": "24042",
+    "section": "MURABBIYAT",
+    "subject": "LUGHA",
+    "term": 1,
+    "value": 11.0,
+    "absent": false
+  },
+  {
+    "matricule": "24042",
+    "section": "MURABBIYAT",
+    "subject": "FIQH",
+    "term": 1,
+    "value": 17.0,
+    "absent": false
+  },
+  {
+    "matricule": "24042",
+    "section": "MURABBIYAT",
+    "subject": "QURAN",
+    "term": 1,
+    "value": 10.5,
+    "absent": false
+  },
+  {
+    "matricule": "24049",
+    "section": "MURABBIYAT",
+    "subject": "NAHW",
+    "term": 1,
+    "value": 4.0,
+    "absent": false
+  },
+  {
+    "matricule": "24049",
+    "section": "MURABBIYAT",
+    "subject": "LUGHA",
+    "term": 1,
+    "value": 14.5,
+    "absent": false
+  },
+  {
+    "matricule": "24049",
+    "section": "MURABBIYAT",
+    "subject": "FIQH",
+    "term": 1,
+    "value": 15.5,
+    "absent": false
+  },
+  {
+    "matricule": "24049",
+    "section": "MURABBIYAT",
+    "subject": "QURAN",
+    "term": 1,
+    "value": 14.5,
+    "absent": false
+  },
+  {
+    "matricule": "24052",
+    "section": "MURABBIYAT",
+    "subject": "NAHW",
+    "term": 1,
+    "value": null,
+    "absent": true
+  },
+  {
+    "matricule": "24052",
+    "section": "MURABBIYAT",
+    "subject": "LUGHA",
+    "term": 1,
+    "value": 7.75,
+    "absent": false
+  },
+  {
+    "matricule": "24052",
+    "section": "MURABBIYAT",
+    "subject": "FIQH",
+    "term": 1,
+    "value": 13.5,
+    "absent": false
+  },
+  {
+    "matricule": "24052",
+    "section": "MURABBIYAT",
+    "subject": "QURAN",
+    "term": 1,
+    "value": 16.0,
+    "absent": false
+  },
+  {
+    "matricule": "24048",
+    "section": "MURABBIYAT",
+    "subject": "NAHW",
+    "term": 1,
+    "value": null,
+    "absent": true
+  },
+  {
+    "matricule": "24048",
+    "section": "MURABBIYAT",
+    "subject": "LUGHA",
+    "term": 1,
+    "value": 4.75,
+    "absent": false
+  },
+  {
+    "matricule": "24048",
+    "section": "MURABBIYAT",
+    "subject": "FIQH",
+    "term": 1,
+    "value": 8.0,
+    "absent": false
+  },
+  {
+    "matricule": "24048",
+    "section": "MURABBIYAT",
+    "subject": "QURAN",
+    "term": 1,
+    "value": 11.75,
+    "absent": false
+  },
+  {
+    "matricule": "24051",
+    "section": "MURABBIYAT",
+    "subject": "NAHW",
+    "term": 1,
+    "value": 4.0,
+    "absent": false
+  },
+  {
+    "matricule": "24051",
+    "section": "MURABBIYAT",
+    "subject": "LUGHA",
+    "term": 1,
+    "value": 3.25,
+    "absent": false
+  },
+  {
+    "matricule": "24051",
+    "section": "MURABBIYAT",
+    "subject": "FIQH",
+    "term": 1,
+    "value": 12.0,
+    "absent": false
+  },
+  {
+    "matricule": "24051",
+    "section": "MURABBIYAT",
+    "subject": "QURAN",
+    "term": 1,
+    "value": null,
+    "absent": true
+  },
+  {
+    "matricule": "24039",
+    "section": "MURABBIYAT",
+    "subject": "NAHW",
+    "term": 1,
+    "value": null,
+    "absent": true
+  },
+  {
+    "matricule": "24039",
+    "section": "MURABBIYAT",
+    "subject": "LUGHA",
+    "term": 1,
+    "value": null,
+    "absent": true
+  },
+  {
+    "matricule": "24039",
+    "section": "MURABBIYAT",
+    "subject": "FIQH",
+    "term": 1,
+    "value": null,
+    "absent": true
+  },
+  {
+    "matricule": "24039",
+    "section": "MURABBIYAT",
+    "subject": "QURAN",
+    "term": 1,
+    "value": null,
+    "absent": true
+  },
+  {
+    "matricule": "24041",
+    "section": "MURABBIYAT",
+    "subject": "NAHW",
+    "term": 1,
+    "value": null,
+    "absent": true
+  },
+  {
+    "matricule": "24041",
+    "section": "MURABBIYAT",
+    "subject": "LUGHA",
+    "term": 1,
+    "value": null,
+    "absent": true
+  },
+  {
+    "matricule": "24041",
+    "section": "MURABBIYAT",
+    "subject": "FIQH",
+    "term": 1,
+    "value": null,
+    "absent": true
+  },
+  {
+    "matricule": "24041",
+    "section": "MURABBIYAT",
+    "subject": "QURAN",
+    "term": 1,
+    "value": null,
+    "absent": true
+  },
+  {
+    "matricule": "24060",
+    "section": "HAFIDAT",
+    "subject": "NAHW",
+    "term": 1,
+    "value": 17.0,
+    "absent": false
+  },
+  {
+    "matricule": "24060",
+    "section": "HAFIDAT",
+    "subject": "LUGHA",
+    "term": 1,
+    "value": 17.0,
+    "absent": false
+  },
+  {
+    "matricule": "24060",
+    "section": "HAFIDAT",
+    "subject": "FIQH",
+    "term": 1,
+    "value": 15.5,
+    "absent": false
+  },
+  {
+    "matricule": "24060",
+    "section": "HAFIDAT",
+    "subject": "QURAN",
+    "term": 1,
+    "value": 19.0,
+    "absent": false
+  },
+  {
+    "matricule": "24054",
+    "section": "HAFIDAT",
+    "subject": "NAHW",
+    "term": 1,
+    "value": 17.0,
+    "absent": false
+  },
+  {
+    "matricule": "24054",
+    "section": "HAFIDAT",
+    "subject": "LUGHA",
+    "term": 1,
+    "value": 18.0,
+    "absent": false
+  },
+  {
+    "matricule": "24054",
+    "section": "HAFIDAT",
+    "subject": "FIQH",
+    "term": 1,
+    "value": 17.0,
+    "absent": false
+  },
+  {
+    "matricule": "24054",
+    "section": "HAFIDAT",
+    "subject": "QURAN",
+    "term": 1,
+    "value": 16.5,
+    "absent": false
+  },
+  {
+    "matricule": "24056",
+    "section": "HAFIDAT",
+    "subject": "NAHW",
+    "term": 1,
+    "value": 18.0,
+    "absent": false
+  },
+  {
+    "matricule": "24056",
+    "section": "HAFIDAT",
+    "subject": "LUGHA",
+    "term": 1,
+    "value": 15.0,
+    "absent": false
+  },
+  {
+    "matricule": "24056",
+    "section": "HAFIDAT",
+    "subject": "FIQH",
+    "term": 1,
+    "value": 15.75,
+    "absent": false
+  },
+  {
+    "matricule": "24056",
+    "section": "HAFIDAT",
+    "subject": "QURAN",
+    "term": 1,
+    "value": 15.5,
+    "absent": false
+  },
+  {
+    "matricule": "24059",
+    "section": "HAFIDAT",
+    "subject": "NAHW",
+    "term": 1,
+    "value": 15.0,
+    "absent": false
+  },
+  {
+    "matricule": "24059",
+    "section": "HAFIDAT",
+    "subject": "LUGHA",
+    "term": 1,
+    "value": 16.0,
+    "absent": false
+  },
+  {
+    "matricule": "24059",
+    "section": "HAFIDAT",
+    "subject": "FIQH",
+    "term": 1,
+    "value": 15.75,
+    "absent": false
+  },
+  {
+    "matricule": "24059",
+    "section": "HAFIDAT",
+    "subject": "QURAN",
+    "term": 1,
+    "value": 17.5,
+    "absent": false
+  },
+  {
+    "matricule": "24063",
+    "section": "HAFIDAT",
+    "subject": "NAHW",
+    "term": 1,
+    "value": 17.0,
+    "absent": false
+  },
+  {
+    "matricule": "24063",
+    "section": "HAFIDAT",
+    "subject": "LUGHA",
+    "term": 1,
+    "value": 16.0,
+    "absent": false
+  },
+  {
+    "matricule": "24063",
+    "section": "HAFIDAT",
+    "subject": "FIQH",
+    "term": 1,
+    "value": 14.5,
+    "absent": false
+  },
+  {
+    "matricule": "24063",
+    "section": "HAFIDAT",
+    "subject": "QURAN",
+    "term": 1,
+    "value": 16.0,
+    "absent": false
+  },
+  {
+    "matricule": "24066",
+    "section": "HAFIDAT",
+    "subject": "NAHW",
+    "term": 1,
+    "value": 12.0,
+    "absent": false
+  },
+  {
+    "matricule": "24066",
+    "section": "HAFIDAT",
+    "subject": "LUGHA",
+    "term": 1,
+    "value": 17.75,
+    "absent": false
+  },
+  {
+    "matricule": "24066",
+    "section": "HAFIDAT",
+    "subject": "FIQH",
+    "term": 1,
+    "value": 15.75,
+    "absent": false
+  },
+  {
+    "matricule": "24066",
+    "section": "HAFIDAT",
+    "subject": "QURAN",
+    "term": 1,
+    "value": 9.75,
+    "absent": false
+  },
+  {
+    "matricule": "24053",
+    "section": "HAFIDAT",
+    "subject": "NAHW",
+    "term": 1,
+    "value": 11.0,
+    "absent": false
+  },
+  {
+    "matricule": "24053",
+    "section": "HAFIDAT",
+    "subject": "LUGHA",
+    "term": 1,
+    "value": 15.0,
+    "absent": false
+  },
+  {
+    "matricule": "24053",
+    "section": "HAFIDAT",
+    "subject": "FIQH",
+    "term": 1,
+    "value": 17.0,
+    "absent": false
+  },
+  {
+    "matricule": "24053",
+    "section": "HAFIDAT",
+    "subject": "QURAN",
+    "term": 1,
+    "value": 10.75,
+    "absent": false
+  },
+  {
+    "matricule": "24055",
+    "section": "HAFIDAT",
+    "subject": "NAHW",
+    "term": 1,
+    "value": 14.5,
+    "absent": false
+  },
+  {
+    "matricule": "24055",
+    "section": "HAFIDAT",
+    "subject": "LUGHA",
+    "term": 1,
+    "value": 15.5,
+    "absent": false
+  },
+  {
+    "matricule": "24055",
+    "section": "HAFIDAT",
+    "subject": "FIQH",
+    "term": 1,
+    "value": 17.25,
+    "absent": false
+  },
+  {
+    "matricule": "24055",
+    "section": "HAFIDAT",
+    "subject": "QURAN",
+    "term": 1,
+    "value": 7.0,
+    "absent": false
+  },
+  {
+    "matricule": "24067",
+    "section": "HAFIDAT",
+    "subject": "NAHW",
+    "term": 1,
+    "value": 10.5,
+    "absent": false
+  },
+  {
+    "matricule": "24067",
+    "section": "HAFIDAT",
+    "subject": "LUGHA",
+    "term": 1,
+    "value": 14.75,
+    "absent": false
+  },
+  {
+    "matricule": "24067",
+    "section": "HAFIDAT",
+    "subject": "FIQH",
+    "term": 1,
+    "value": 13.75,
+    "absent": false
+  },
+  {
+    "matricule": "24067",
+    "section": "HAFIDAT",
+    "subject": "QURAN",
+    "term": 1,
+    "value": 12.5,
+    "absent": false
+  },
+  {
+    "matricule": "24058",
+    "section": "HAFIDAT",
+    "subject": "NAHW",
+    "term": 1,
+    "value": 11.0,
+    "absent": false
+  },
+  {
+    "matricule": "24058",
+    "section": "HAFIDAT",
+    "subject": "LUGHA",
+    "term": 1,
+    "value": 16.5,
+    "absent": false
+  },
+  {
+    "matricule": "24058",
+    "section": "HAFIDAT",
+    "subject": "FIQH",
+    "term": 1,
+    "value": 15.0,
+    "absent": false
+  },
+  {
+    "matricule": "24058",
+    "section": "HAFIDAT",
+    "subject": "QURAN",
+    "term": 1,
+    "value": 9.0,
+    "absent": false
+  },
+  {
+    "matricule": "24070",
+    "section": "HAFIDAT",
+    "subject": "NAHW",
+    "term": 1,
+    "value": 5.0,
+    "absent": false
+  },
+  {
+    "matricule": "24070",
+    "section": "HAFIDAT",
+    "subject": "LUGHA",
+    "term": 1,
+    "value": 13.25,
+    "absent": false
+  },
+  {
+    "matricule": "24070",
+    "section": "HAFIDAT",
+    "subject": "FIQH",
+    "term": 1,
+    "value": 10.0,
+    "absent": false
+  },
+  {
+    "matricule": "24070",
+    "section": "HAFIDAT",
+    "subject": "QURAN",
+    "term": 1,
+    "value": 16.0,
+    "absent": false
+  },
+  {
+    "matricule": "24068",
+    "section": "HAFIDAT",
+    "subject": "NAHW",
+    "term": 1,
+    "value": 11.5,
+    "absent": false
+  },
+  {
+    "matricule": "24068",
+    "section": "HAFIDAT",
+    "subject": "LUGHA",
+    "term": 1,
+    "value": 16.0,
+    "absent": false
+  },
+  {
+    "matricule": "24068",
+    "section": "HAFIDAT",
+    "subject": "FIQH",
+    "term": 1,
+    "value": 17.25,
+    "absent": false
+  },
+  {
+    "matricule": "24068",
+    "section": "HAFIDAT",
+    "subject": "QURAN",
+    "term": 1,
+    "value": 5.0,
+    "absent": false
+  },
+  {
+    "matricule": "24072",
+    "section": "HAFIDAT",
+    "subject": "NAHW",
+    "term": 1,
+    "value": 9.0,
+    "absent": false
+  },
+  {
+    "matricule": "24072",
+    "section": "HAFIDAT",
+    "subject": "LUGHA",
+    "term": 1,
+    "value": 11.5,
+    "absent": false
+  },
+  {
+    "matricule": "24072",
+    "section": "HAFIDAT",
+    "subject": "FIQH",
+    "term": 1,
+    "value": 12.5,
+    "absent": false
+  },
+  {
+    "matricule": "24072",
+    "section": "HAFIDAT",
+    "subject": "QURAN",
+    "term": 1,
+    "value": 11.0,
+    "absent": false
+  },
+  {
+    "matricule": "24069",
+    "section": "HAFIDAT",
+    "subject": "NAHW",
+    "term": 1,
+    "value": 6.5,
+    "absent": false
+  },
+  {
+    "matricule": "24069",
+    "section": "HAFIDAT",
+    "subject": "LUGHA",
+    "term": 1,
+    "value": 14.5,
+    "absent": false
+  },
+  {
+    "matricule": "24069",
+    "section": "HAFIDAT",
+    "subject": "FIQH",
+    "term": 1,
+    "value": 17.0,
+    "absent": false
+  },
+  {
+    "matricule": "24069",
+    "section": "HAFIDAT",
+    "subject": "QURAN",
+    "term": 1,
+    "value": 8.0,
+    "absent": false
+  },
+  {
+    "matricule": "24097",
+    "section": "HAFIDAT",
+    "subject": "NAHW",
+    "term": 1,
+    "value": 3.5,
+    "absent": false
+  },
+  {
+    "matricule": "24097",
+    "section": "HAFIDAT",
+    "subject": "LUGHA",
+    "term": 1,
+    "value": 10.0,
+    "absent": false
+  },
+  {
+    "matricule": "24097",
+    "section": "HAFIDAT",
+    "subject": "FIQH",
+    "term": 1,
+    "value": 14.0,
+    "absent": false
+  },
+  {
+    "matricule": "24097",
+    "section": "HAFIDAT",
+    "subject": "QURAN",
+    "term": 1,
+    "value": 13.5,
+    "absent": false
+  },
+  {
+    "matricule": "24061",
+    "section": "HAFIDAT",
+    "subject": "NAHW",
+    "term": 1,
+    "value": 5.0,
+    "absent": false
+  },
+  {
+    "matricule": "24061",
+    "section": "HAFIDAT",
+    "subject": "LUGHA",
+    "term": 1,
+    "value": 7.25,
+    "absent": false
+  },
+  {
+    "matricule": "24061",
+    "section": "HAFIDAT",
+    "subject": "FIQH",
+    "term": 1,
+    "value": 8.75,
+    "absent": false
+  },
+  {
+    "matricule": "24061",
+    "section": "HAFIDAT",
+    "subject": "QURAN",
+    "term": 1,
+    "value": 14.25,
+    "absent": false
+  },
+  {
+    "matricule": "24074",
+    "section": "HAFIDAT",
+    "subject": "NAHW",
+    "term": 1,
+    "value": 4.0,
+    "absent": false
+  },
+  {
+    "matricule": "24074",
+    "section": "HAFIDAT",
+    "subject": "LUGHA",
+    "term": 1,
+    "value": 12.5,
+    "absent": false
+  },
+  {
+    "matricule": "24074",
+    "section": "HAFIDAT",
+    "subject": "FIQH",
+    "term": 1,
+    "value": 12.75,
+    "absent": false
+  },
+  {
+    "matricule": "24074",
+    "section": "HAFIDAT",
+    "subject": "QURAN",
+    "term": 1,
+    "value": 7.0,
+    "absent": false
+  },
+  {
+    "matricule": "24062",
+    "section": "HAFIDAT",
+    "subject": "NAHW",
+    "term": 1,
+    "value": 7.0,
+    "absent": false
+  },
+  {
+    "matricule": "24062",
+    "section": "HAFIDAT",
+    "subject": "LUGHA",
+    "term": 1,
+    "value": 13.25,
+    "absent": false
+  },
+  {
+    "matricule": "24062",
+    "section": "HAFIDAT",
+    "subject": "FIQH",
+    "term": 1,
+    "value": 8.0,
+    "absent": false
+  },
+  {
+    "matricule": "24062",
+    "section": "HAFIDAT",
+    "subject": "QURAN",
+    "term": 1,
+    "value": 3.0,
+    "absent": false
+  },
+  {
+    "matricule": "24064",
+    "section": "HAFIDAT",
+    "subject": "NAHW",
+    "term": 1,
+    "value": null,
+    "absent": true
+  },
+  {
+    "matricule": "24064",
+    "section": "HAFIDAT",
+    "subject": "LUGHA",
+    "term": 1,
+    "value": null,
+    "absent": true
+  },
+  {
+    "matricule": "24064",
+    "section": "HAFIDAT",
+    "subject": "FIQH",
+    "term": 1,
+    "value": null,
+    "absent": true
+  },
+  {
+    "matricule": "24064",
+    "section": "HAFIDAT",
+    "subject": "QURAN",
+    "term": 1,
+    "value": 17.25,
+    "absent": false
+  },
+  {
+    "matricule": "24057",
+    "section": "HAFIDAT",
+    "subject": "NAHW",
+    "term": 1,
+    "value": null,
+    "absent": true
+  },
+  {
+    "matricule": "24057",
+    "section": "HAFIDAT",
+    "subject": "LUGHA",
+    "term": 1,
+    "value": null,
+    "absent": true
+  },
+  {
+    "matricule": "24057",
+    "section": "HAFIDAT",
+    "subject": "FIQH",
+    "term": 1,
+    "value": null,
+    "absent": true
+  },
+  {
+    "matricule": "24057",
+    "section": "HAFIDAT",
+    "subject": "QURAN",
+    "term": 1,
+    "value": null,
+    "absent": true
+  },
+  {
+    "matricule": "24065",
+    "section": "HAFIDAT",
+    "subject": "NAHW",
+    "term": 1,
+    "value": null,
+    "absent": true
+  },
+  {
+    "matricule": "24065",
+    "section": "HAFIDAT",
+    "subject": "LUGHA",
+    "term": 1,
+    "value": null,
+    "absent": true
+  },
+  {
+    "matricule": "24065",
+    "section": "HAFIDAT",
+    "subject": "FIQH",
+    "term": 1,
+    "value": null,
+    "absent": true
+  },
+  {
+    "matricule": "24065",
+    "section": "HAFIDAT",
+    "subject": "QURAN",
+    "term": 1,
+    "value": null,
+    "absent": true
+  },
+  {
+    "matricule": "24071",
+    "section": "HAFIDAT",
+    "subject": "NAHW",
+    "term": 1,
+    "value": null,
+    "absent": true
+  },
+  {
+    "matricule": "24071",
+    "section": "HAFIDAT",
+    "subject": "LUGHA",
+    "term": 1,
+    "value": null,
+    "absent": true
+  },
+  {
+    "matricule": "24071",
+    "section": "HAFIDAT",
+    "subject": "FIQH",
+    "term": 1,
+    "value": null,
+    "absent": true
+  },
+  {
+    "matricule": "24071",
+    "section": "HAFIDAT",
+    "subject": "QURAN",
+    "term": 1,
+    "value": null,
+    "absent": true
+  },
+  {
+    "matricule": "24073",
+    "section": "HAFIDAT",
+    "subject": "NAHW",
+    "term": 1,
+    "value": null,
+    "absent": true
+  },
+  {
+    "matricule": "24073",
+    "section": "HAFIDAT",
+    "subject": "LUGHA",
+    "term": 1,
+    "value": null,
+    "absent": true
+  },
+  {
+    "matricule": "24073",
+    "section": "HAFIDAT",
+    "subject": "FIQH",
+    "term": 1,
+    "value": null,
+    "absent": true
+  },
+  {
+    "matricule": "24073",
+    "section": "HAFIDAT",
+    "subject": "QURAN",
+    "term": 1,
+    "value": null,
+    "absent": true
+  },
+  {
+    "matricule": "24075",
+    "section": "HAFIDAT",
+    "subject": "NAHW",
+    "term": 1,
+    "value": null,
+    "absent": true
+  },
+  {
+    "matricule": "24075",
+    "section": "HAFIDAT",
+    "subject": "LUGHA",
+    "term": 1,
+    "value": null,
+    "absent": true
+  },
+  {
+    "matricule": "24075",
+    "section": "HAFIDAT",
+    "subject": "FIQH",
+    "term": 1,
+    "value": null,
+    "absent": true
+  },
+  {
+    "matricule": "24075",
+    "section": "HAFIDAT",
+    "subject": "QURAN",
+    "term": 1,
+    "value": null,
+    "absent": true
+  },
+  {
+    "matricule": "24026",
+    "section": "HAFIZAT",
+    "subject": "NAHW",
+    "term": 1,
+    "value": 18.0,
+    "absent": false
+  },
+  {
+    "matricule": "24026",
+    "section": "HAFIZAT",
+    "subject": "LUGHA",
+    "term": 1,
+    "value": 18.5,
+    "absent": false
+  },
+  {
+    "matricule": "24026",
+    "section": "HAFIZAT",
+    "subject": "FIQH",
+    "term": 1,
+    "value": 18.0,
+    "absent": false
+  },
+  {
+    "matricule": "24026",
+    "section": "HAFIZAT",
+    "subject": "SIRA",
+    "term": 1,
+    "value": 18.25,
+    "absent": false
+  },
+  {
+    "matricule": "24026",
+    "section": "HAFIZAT",
+    "subject": "QURAN",
+    "term": 1,
+    "value": 19.0,
+    "absent": false
+  },
+  {
+    "matricule": "24030",
+    "section": "HAFIZAT",
+    "subject": "NAHW",
+    "term": 1,
+    "value": 16.5,
+    "absent": false
+  },
+  {
+    "matricule": "24030",
+    "section": "HAFIZAT",
+    "subject": "LUGHA",
+    "term": 1,
+    "value": 18.5,
+    "absent": false
+  },
+  {
+    "matricule": "24030",
+    "section": "HAFIZAT",
+    "subject": "FIQH",
+    "term": 1,
+    "value": 18.5,
+    "absent": false
+  },
+  {
+    "matricule": "24030",
+    "section": "HAFIZAT",
+    "subject": "SIRA",
+    "term": 1,
+    "value": 15.0,
+    "absent": false
+  },
+  {
+    "matricule": "24030",
+    "section": "HAFIZAT",
+    "subject": "QURAN",
+    "term": 1,
+    "value": 17.5,
+    "absent": false
+  },
+  {
+    "matricule": "24034",
+    "section": "HAFIZAT",
+    "subject": "NAHW",
+    "term": 1,
+    "value": 17.75,
+    "absent": false
+  },
+  {
+    "matricule": "24034",
+    "section": "HAFIZAT",
+    "subject": "LUGHA",
+    "term": 1,
+    "value": 17.0,
+    "absent": false
+  },
+  {
+    "matricule": "24034",
+    "section": "HAFIZAT",
+    "subject": "FIQH",
+    "term": 1,
+    "value": 13.0,
+    "absent": false
+  },
+  {
+    "matricule": "24034",
+    "section": "HAFIZAT",
+    "subject": "SIRA",
+    "term": 1,
+    "value": 16.5,
+    "absent": false
+  },
+  {
+    "matricule": "24034",
+    "section": "HAFIZAT",
+    "subject": "QURAN",
+    "term": 1,
+    "value": 18.75,
+    "absent": false
+  },
+  {
+    "matricule": "24027",
+    "section": "HAFIZAT",
+    "subject": "NAHW",
+    "term": 1,
+    "value": 13.25,
+    "absent": false
+  },
+  {
+    "matricule": "24027",
+    "section": "HAFIZAT",
+    "subject": "LUGHA",
+    "term": 1,
+    "value": 18.0,
+    "absent": false
+  },
+  {
+    "matricule": "24027",
+    "section": "HAFIZAT",
+    "subject": "FIQH",
+    "term": 1,
+    "value": 17.0,
+    "absent": false
+  },
+  {
+    "matricule": "24027",
+    "section": "HAFIZAT",
+    "subject": "SIRA",
+    "term": 1,
+    "value": 16.25,
+    "absent": false
+  },
+  {
+    "matricule": "24027",
+    "section": "HAFIZAT",
+    "subject": "QURAN",
+    "term": 1,
+    "value": 19.0,
+    "absent": false
+  },
+  {
+    "matricule": "24023",
+    "section": "HAFIZAT",
+    "subject": "NAHW",
+    "term": 1,
+    "value": 12.75,
+    "absent": false
+  },
+  {
+    "matricule": "24023",
+    "section": "HAFIZAT",
+    "subject": "LUGHA",
+    "term": 1,
+    "value": 16.0,
+    "absent": false
+  },
+  {
+    "matricule": "24023",
+    "section": "HAFIZAT",
+    "subject": "FIQH",
+    "term": 1,
+    "value": 15.75,
+    "absent": false
+  },
+  {
+    "matricule": "24023",
+    "section": "HAFIZAT",
+    "subject": "SIRA",
+    "term": 1,
+    "value": 16.0,
+    "absent": false
+  },
+  {
+    "matricule": "24023",
+    "section": "HAFIZAT",
+    "subject": "QURAN",
+    "term": 1,
+    "value": 19.0,
+    "absent": false
+  },
+  {
+    "matricule": "24024",
+    "section": "HAFIZAT",
+    "subject": "NAHW",
+    "term": 1,
+    "value": 16.75,
+    "absent": false
+  },
+  {
+    "matricule": "24024",
+    "section": "HAFIZAT",
+    "subject": "LUGHA",
+    "term": 1,
+    "value": 18.5,
+    "absent": false
+  },
+  {
+    "matricule": "24024",
+    "section": "HAFIZAT",
+    "subject": "FIQH",
+    "term": 1,
+    "value": 17.75,
+    "absent": false
+  },
+  {
+    "matricule": "24024",
+    "section": "HAFIZAT",
+    "subject": "SIRA",
+    "term": 1,
+    "value": 18.0,
+    "absent": false
+  },
+  {
+    "matricule": "24024",
+    "section": "HAFIZAT",
+    "subject": "QURAN",
+    "term": 1,
+    "value": 12.0,
+    "absent": false
+  },
+  {
+    "matricule": "24028",
+    "section": "HAFIZAT",
+    "subject": "NAHW",
+    "term": 1,
+    "value": 13.0,
+    "absent": false
+  },
+  {
+    "matricule": "24028",
+    "section": "HAFIZAT",
+    "subject": "LUGHA",
+    "term": 1,
+    "value": 15.5,
+    "absent": false
+  },
+  {
+    "matricule": "24028",
+    "section": "HAFIZAT",
+    "subject": "FIQH",
+    "term": 1,
+    "value": 16.0,
+    "absent": false
+  },
+  {
+    "matricule": "24028",
+    "section": "HAFIZAT",
+    "subject": "SIRA",
+    "term": 1,
+    "value": 13.5,
+    "absent": false
+  },
+  {
+    "matricule": "24028",
+    "section": "HAFIZAT",
+    "subject": "QURAN",
+    "term": 1,
+    "value": 17.5,
+    "absent": false
+  },
+  {
+    "matricule": "24036",
+    "section": "HAFIZAT",
+    "subject": "NAHW",
+    "term": 1,
+    "value": 13.75,
+    "absent": false
+  },
+  {
+    "matricule": "24036",
+    "section": "HAFIZAT",
+    "subject": "LUGHA",
+    "term": 1,
+    "value": 14.0,
+    "absent": false
+  },
+  {
+    "matricule": "24036",
+    "section": "HAFIZAT",
+    "subject": "FIQH",
+    "term": 1,
+    "value": 14.0,
+    "absent": false
+  },
+  {
+    "matricule": "24036",
+    "section": "HAFIZAT",
+    "subject": "SIRA",
+    "term": 1,
+    "value": 16.5,
+    "absent": false
+  },
+  {
+    "matricule": "24036",
+    "section": "HAFIZAT",
+    "subject": "QURAN",
+    "term": 1,
+    "value": 16.75,
+    "absent": false
+  },
+  {
+    "matricule": "24037",
+    "section": "HAFIZAT",
+    "subject": "NAHW",
+    "term": 1,
+    "value": 16.5,
+    "absent": false
+  },
+  {
+    "matricule": "24037",
+    "section": "HAFIZAT",
+    "subject": "LUGHA",
+    "term": 1,
+    "value": 13.5,
+    "absent": false
+  },
+  {
+    "matricule": "24037",
+    "section": "HAFIZAT",
+    "subject": "FIQH",
+    "term": 1,
+    "value": 13.0,
+    "absent": false
+  },
+  {
+    "matricule": "24037",
+    "section": "HAFIZAT",
+    "subject": "SIRA",
+    "term": 1,
+    "value": 16.5,
+    "absent": false
+  },
+  {
+    "matricule": "24037",
+    "section": "HAFIZAT",
+    "subject": "QURAN",
+    "term": 1,
+    "value": 14.25,
+    "absent": false
+  },
+  {
+    "matricule": "24035",
+    "section": "HAFIZAT",
+    "subject": "NAHW",
+    "term": 1,
+    "value": 15.0,
+    "absent": false
+  },
+  {
+    "matricule": "24035",
+    "section": "HAFIZAT",
+    "subject": "LUGHA",
+    "term": 1,
+    "value": 16.0,
+    "absent": false
+  },
+  {
+    "matricule": "24035",
+    "section": "HAFIZAT",
+    "subject": "FIQH",
+    "term": 1,
+    "value": 10.0,
+    "absent": false
+  },
+  {
+    "matricule": "24035",
+    "section": "HAFIZAT",
+    "subject": "SIRA",
+    "term": 1,
+    "value": 17.75,
+    "absent": false
+  },
+  {
+    "matricule": "24035",
+    "section": "HAFIZAT",
+    "subject": "QURAN",
+    "term": 1,
+    "value": 13.5,
+    "absent": false
+  },
+  {
+    "matricule": "24033",
+    "section": "HAFIZAT",
+    "subject": "NAHW",
+    "term": 1,
+    "value": 12.75,
+    "absent": false
+  },
+  {
+    "matricule": "24033",
+    "section": "HAFIZAT",
+    "subject": "LUGHA",
+    "term": 1,
+    "value": 15.5,
+    "absent": false
+  },
+  {
+    "matricule": "24033",
+    "section": "HAFIZAT",
+    "subject": "FIQH",
+    "term": 1,
+    "value": 12.25,
+    "absent": false
+  },
+  {
+    "matricule": "24033",
+    "section": "HAFIZAT",
+    "subject": "SIRA",
+    "term": 1,
+    "value": 5.0,
+    "absent": false
+  },
+  {
+    "matricule": "24033",
+    "section": "HAFIZAT",
+    "subject": "QURAN",
+    "term": 1,
+    "value": 18.5,
+    "absent": false
+  },
+  {
+    "matricule": "24031",
+    "section": "HAFIZAT",
+    "subject": "NAHW",
+    "term": 1,
+    "value": 10.0,
+    "absent": false
+  },
+  {
+    "matricule": "24031",
+    "section": "HAFIZAT",
+    "subject": "LUGHA",
+    "term": 1,
+    "value": 16.5,
+    "absent": false
+  },
+  {
+    "matricule": "24031",
+    "section": "HAFIZAT",
+    "subject": "FIQH",
+    "term": 1,
+    "value": 15.75,
+    "absent": false
+  },
+  {
+    "matricule": "24031",
+    "section": "HAFIZAT",
+    "subject": "SIRA",
+    "term": 1,
+    "value": 10.0,
+    "absent": false
+  },
+  {
+    "matricule": "24031",
+    "section": "HAFIZAT",
+    "subject": "QURAN",
+    "term": 1,
+    "value": 12.75,
+    "absent": false
+  },
+  {
+    "matricule": "24025",
+    "section": "HAFIZAT",
+    "subject": "NAHW",
+    "term": 1,
+    "value": 7.25,
+    "absent": false
+  },
+  {
+    "matricule": "24025",
+    "section": "HAFIZAT",
+    "subject": "LUGHA",
+    "term": 1,
+    "value": 10.5,
+    "absent": false
+  },
+  {
+    "matricule": "24025",
+    "section": "HAFIZAT",
+    "subject": "FIQH",
+    "term": 1,
+    "value": 15.0,
+    "absent": false
+  },
+  {
+    "matricule": "24025",
+    "section": "HAFIZAT",
+    "subject": "SIRA",
+    "term": 1,
+    "value": 5.25,
+    "absent": false
+  },
+  {
+    "matricule": "24025",
+    "section": "HAFIZAT",
+    "subject": "QURAN",
+    "term": 1,
+    "value": 17.75,
+    "absent": false
+  },
+  {
+    "matricule": "24029",
+    "section": "HAFIZAT",
+    "subject": "NAHW",
+    "term": 1,
+    "value": null,
+    "absent": true
+  },
+  {
+    "matricule": "24029",
+    "section": "HAFIZAT",
+    "subject": "LUGHA",
+    "term": 1,
+    "value": null,
+    "absent": true
+  },
+  {
+    "matricule": "24029",
+    "section": "HAFIZAT",
+    "subject": "FIQH",
+    "term": 1,
+    "value": null,
+    "absent": true
+  },
+  {
+    "matricule": "24029",
+    "section": "HAFIZAT",
+    "subject": "SIRA",
+    "term": 1,
+    "value": null,
+    "absent": true
+  },
+  {
+    "matricule": "24029",
+    "section": "HAFIZAT",
+    "subject": "QURAN",
+    "term": 1,
+    "value": null,
+    "absent": true
+  },
+  {
+    "matricule": "24032",
+    "section": "HAFIZAT",
+    "subject": "NAHW",
+    "term": 1,
+    "value": null,
+    "absent": true
+  },
+  {
+    "matricule": "24032",
+    "section": "HAFIZAT",
+    "subject": "LUGHA",
+    "term": 1,
+    "value": null,
+    "absent": true
+  },
+  {
+    "matricule": "24032",
+    "section": "HAFIZAT",
+    "subject": "FIQH",
+    "term": 1,
+    "value": null,
+    "absent": true
+  },
+  {
+    "matricule": "24032",
+    "section": "HAFIZAT",
+    "subject": "SIRA",
+    "term": 1,
+    "value": null,
+    "absent": true
+  },
+  {
+    "matricule": "24032",
+    "section": "HAFIZAT",
+    "subject": "QURAN",
+    "term": 1,
+    "value": null,
+    "absent": true
+  },
+  {
+    "matricule": "24078",
+    "section": "MUTAMAYYIZAT",
+    "subject": "FIQH",
+    "term": 1,
+    "value": 19.0,
+    "absent": false
+  },
+  {
+    "matricule": "24078",
+    "section": "MUTAMAYYIZAT",
+    "subject": "QURAN",
+    "term": 1,
+    "value": 19.0,
+    "absent": false
+  },
+  {
+    "matricule": "24076",
+    "section": "MUTAMAYYIZAT",
+    "subject": "FIQH",
+    "term": 1,
+    "value": 19.0,
+    "absent": false
+  },
+  {
+    "matricule": "24076",
+    "section": "MUTAMAYYIZAT",
+    "subject": "QURAN",
+    "term": 1,
+    "value": 18.75,
+    "absent": false
+  },
+  {
+    "matricule": "24082",
+    "section": "MUTAMAYYIZAT",
+    "subject": "FIQH",
+    "term": 1,
+    "value": 18.5,
+    "absent": false
+  },
+  {
+    "matricule": "24082",
+    "section": "MUTAMAYYIZAT",
+    "subject": "QURAN",
+    "term": 1,
+    "value": 19.0,
+    "absent": false
+  },
+  {
+    "matricule": "24079",
+    "section": "MUTAMAYYIZAT",
+    "subject": "FIQH",
+    "term": 1,
+    "value": 18.0,
+    "absent": false
+  },
+  {
+    "matricule": "24079",
+    "section": "MUTAMAYYIZAT",
+    "subject": "QURAN",
+    "term": 1,
+    "value": 19.0,
+    "absent": false
+  },
+  {
+    "matricule": "24080",
+    "section": "MUTAMAYYIZAT",
+    "subject": "FIQH",
+    "term": 1,
+    "value": 18.0,
+    "absent": false
+  },
+  {
+    "matricule": "24080",
+    "section": "MUTAMAYYIZAT",
+    "subject": "QURAN",
+    "term": 1,
+    "value": 18.5,
+    "absent": false
+  },
+  {
+    "matricule": "24086",
+    "section": "MUTAMAYYIZAT",
+    "subject": "FIQH",
+    "term": 1,
+    "value": 16.0,
+    "absent": false
+  },
+  {
+    "matricule": "24086",
+    "section": "MUTAMAYYIZAT",
+    "subject": "QURAN",
+    "term": 1,
+    "value": 17.5,
+    "absent": false
+  },
+  {
+    "matricule": "24084",
+    "section": "MUTAMAYYIZAT",
+    "subject": "FIQH",
+    "term": 1,
+    "value": 16.0,
+    "absent": false
+  },
+  {
+    "matricule": "24084",
+    "section": "MUTAMAYYIZAT",
+    "subject": "QURAN",
+    "term": 1,
+    "value": 16.0,
+    "absent": false
+  },
+  {
+    "matricule": "24089",
+    "section": "MUTAMAYYIZAT",
+    "subject": "FIQH",
+    "term": 1,
+    "value": 16.0,
+    "absent": false
+  },
+  {
+    "matricule": "24089",
+    "section": "MUTAMAYYIZAT",
+    "subject": "QURAN",
+    "term": 1,
+    "value": 15.0,
+    "absent": false
+  },
+  {
+    "matricule": "24077",
+    "section": "MUTAMAYYIZAT",
+    "subject": "FIQH",
+    "term": 1,
+    "value": 15.5,
+    "absent": false
+  },
+  {
+    "matricule": "24077",
+    "section": "MUTAMAYYIZAT",
+    "subject": "QURAN",
+    "term": 1,
+    "value": 15.0,
+    "absent": false
+  },
+  {
+    "matricule": "24088",
+    "section": "MUTAMAYYIZAT",
+    "subject": "FIQH",
+    "term": 1,
+    "value": 16.5,
+    "absent": false
+  },
+  {
+    "matricule": "24088",
+    "section": "MUTAMAYYIZAT",
+    "subject": "QURAN",
+    "term": 1,
+    "value": 14.0,
+    "absent": false
+  },
+  {
+    "matricule": "24091",
+    "section": "MUTAMAYYIZAT",
+    "subject": "FIQH",
+    "term": 1,
+    "value": 10.0,
+    "absent": false
+  },
+  {
+    "matricule": "24091",
+    "section": "MUTAMAYYIZAT",
+    "subject": "QURAN",
+    "term": 1,
+    "value": 16.5,
+    "absent": false
+  },
+  {
+    "matricule": "24090",
+    "section": "MUTAMAYYIZAT",
+    "subject": "FIQH",
+    "term": 1,
+    "value": 10.0,
+    "absent": false
+  },
+  {
+    "matricule": "24090",
+    "section": "MUTAMAYYIZAT",
+    "subject": "QURAN",
+    "term": 1,
+    "value": 15.0,
+    "absent": false
+  },
+  {
+    "matricule": "24097",
+    "section": "MUTAMAYYIZAT",
+    "subject": "FIQH",
+    "term": 1,
+    "value": 10.0,
+    "absent": false
+  },
+  {
+    "matricule": "24097",
+    "section": "MUTAMAYYIZAT",
+    "subject": "QURAN",
+    "term": 1,
+    "value": 14.0,
+    "absent": false
+  },
+  {
+    "matricule": "24081",
+    "section": "MUTAMAYYIZAT",
+    "subject": "FIQH",
+    "term": 1,
+    "value": null,
+    "absent": true
+  },
+  {
+    "matricule": "24081",
+    "section": "MUTAMAYYIZAT",
+    "subject": "QURAN",
+    "term": 1,
+    "value": 19.0,
+    "absent": false
+  },
+  {
+    "matricule": "24092",
+    "section": "MUTAMAYYIZAT",
+    "subject": "FIQH",
+    "term": 1,
+    "value": 10.0,
+    "absent": false
+  },
+  {
+    "matricule": "24092",
+    "section": "MUTAMAYYIZAT",
+    "subject": "QURAN",
+    "term": 1,
+    "value": 10.0,
+    "absent": false
+  },
+  {
+    "matricule": "24096",
+    "section": "MUTAMAYYIZAT",
+    "subject": "FIQH",
+    "term": 1,
+    "value": 10.0,
+    "absent": false
+  },
+  {
+    "matricule": "24096",
+    "section": "MUTAMAYYIZAT",
+    "subject": "QURAN",
+    "term": 1,
+    "value": 10.0,
+    "absent": false
+  },
+  {
+    "matricule": "24083",
+    "section": "MUTAMAYYIZAT",
+    "subject": "FIQH",
+    "term": 1,
+    "value": null,
+    "absent": true
+  },
+  {
+    "matricule": "24083",
+    "section": "MUTAMAYYIZAT",
+    "subject": "QURAN",
+    "term": 1,
+    "value": null,
+    "absent": true
+  },
+  {
+    "matricule": "24085",
+    "section": "MUTAMAYYIZAT",
+    "subject": "FIQH",
+    "term": 1,
+    "value": null,
+    "absent": true
+  },
+  {
+    "matricule": "24085",
+    "section": "MUTAMAYYIZAT",
+    "subject": "QURAN",
+    "term": 1,
+    "value": null,
+    "absent": true
+  },
+  {
+    "matricule": "24087",
+    "section": "MUTAMAYYIZAT",
+    "subject": "FIQH",
+    "term": 1,
+    "value": null,
+    "absent": true
+  },
+  {
+    "matricule": "24087",
+    "section": "MUTAMAYYIZAT",
+    "subject": "QURAN",
+    "term": 1,
+    "value": null,
+    "absent": true
+  },
+  {
+    "matricule": "24093",
+    "section": "MUTAMAYYIZAT",
+    "subject": "FIQH",
+    "term": 1,
+    "value": null,
+    "absent": true
+  },
+  {
+    "matricule": "24093",
+    "section": "MUTAMAYYIZAT",
+    "subject": "QURAN",
+    "term": 1,
+    "value": null,
+    "absent": true
+  },
+  {
+    "matricule": "24094",
+    "section": "MUTAMAYYIZAT",
+    "subject": "FIQH",
+    "term": 1,
+    "value": null,
+    "absent": true
+  },
+  {
+    "matricule": "24094",
+    "section": "MUTAMAYYIZAT",
+    "subject": "QURAN",
+    "term": 1,
+    "value": null,
+    "absent": true
+  },
+  {
+    "matricule": "24095",
+    "section": "MUTAMAYYIZAT",
+    "subject": "FIQH",
+    "term": 1,
+    "value": null,
+    "absent": true
+  },
+  {
+    "matricule": "24095",
+    "section": "MUTAMAYYIZAT",
+    "subject": "QURAN",
+    "term": 1,
+    "value": null,
+    "absent": true
+  },
+  {
+    "matricule": "24003",
+    "section": "ALIMAT",
+    "subject": "MAHARIM",
+    "term": 1,
+    "value": 19.0,
+    "absent": false
+  },
+  {
+    "matricule": "24003",
+    "section": "ALIMAT",
+    "subject": "AKHDARI",
+    "term": 1,
+    "value": 18.75,
+    "absent": false
+  },
+  {
+    "matricule": "24003",
+    "section": "ALIMAT",
+    "subject": "ABQARI",
+    "term": 1,
+    "value": 18.75,
+    "absent": false
+  },
+  {
+    "matricule": "24003",
+    "section": "ALIMAT",
+    "subject": "QURAN",
+    "term": 1,
+    "value": 19.0,
+    "absent": false
+  },
+  {
+    "matricule": "24006",
+    "section": "ALIMAT",
+    "subject": "MAHARIM",
+    "term": 1,
+    "value": 18.75,
+    "absent": false
+  },
+  {
+    "matricule": "24006",
+    "section": "ALIMAT",
+    "subject": "AKHDARI",
+    "term": 1,
+    "value": 18.5,
+    "absent": false
+  },
+  {
+    "matricule": "24006",
+    "section": "ALIMAT",
+    "subject": "ABQARI",
+    "term": 1,
+    "value": 18.0,
+    "absent": false
+  },
+  {
+    "matricule": "24006",
+    "section": "ALIMAT",
+    "subject": "QURAN",
+    "term": 1,
+    "value": 19.0,
+    "absent": false
+  },
+  {
+    "matricule": "24002",
+    "section": "ALIMAT",
+    "subject": "MAHARIM",
+    "term": 1,
+    "value": 18.75,
+    "absent": false
+  },
+  {
+    "matricule": "24002",
+    "section": "ALIMAT",
+    "subject": "AKHDARI",
+    "term": 1,
+    "value": 18.75,
+    "absent": false
+  },
+  {
+    "matricule": "24002",
+    "section": "ALIMAT",
+    "subject": "ABQARI",
+    "term": 1,
+    "value": 19.0,
+    "absent": false
+  },
+  {
+    "matricule": "24002",
+    "section": "ALIMAT",
+    "subject": "QURAN",
+    "term": 1,
+    "value": 17.5,
+    "absent": false
+  },
+  {
+    "matricule": "24007",
+    "section": "ALIMAT",
+    "subject": "MAHARIM",
+    "term": 1,
+    "value": 16.5,
+    "absent": false
+  },
+  {
+    "matricule": "24007",
+    "section": "ALIMAT",
+    "subject": "AKHDARI",
+    "term": 1,
+    "value": 18.0,
+    "absent": false
+  },
+  {
+    "matricule": "24007",
+    "section": "ALIMAT",
+    "subject": "ABQARI",
+    "term": 1,
+    "value": 19.0,
+    "absent": false
+  },
+  {
+    "matricule": "24007",
+    "section": "ALIMAT",
+    "subject": "QURAN",
+    "term": 1,
+    "value": 19.0,
+    "absent": false
+  },
+  {
+    "matricule": "24005",
+    "section": "ALIMAT",
+    "subject": "MAHARIM",
+    "term": 1,
+    "value": 16.5,
+    "absent": false
+  },
+  {
+    "matricule": "24005",
+    "section": "ALIMAT",
+    "subject": "AKHDARI",
+    "term": 1,
+    "value": 17.5,
+    "absent": false
+  },
+  {
+    "matricule": "24005",
+    "section": "ALIMAT",
+    "subject": "ABQARI",
+    "term": 1,
+    "value": 17.25,
+    "absent": false
+  },
+  {
+    "matricule": "24005",
+    "section": "ALIMAT",
+    "subject": "QURAN",
+    "term": 1,
+    "value": 19.0,
+    "absent": false
+  },
+  {
+    "matricule": "24015",
+    "section": "ALIMAT",
+    "subject": "MAHARIM",
+    "term": 1,
+    "value": 18.5,
+    "absent": false
+  },
+  {
+    "matricule": "24015",
+    "section": "ALIMAT",
+    "subject": "AKHDARI",
+    "term": 1,
+    "value": 14.25,
+    "absent": false
+  },
+  {
+    "matricule": "24015",
+    "section": "ALIMAT",
+    "subject": "ABQARI",
+    "term": 1,
+    "value": 17.25,
+    "absent": false
+  },
+  {
+    "matricule": "24015",
+    "section": "ALIMAT",
+    "subject": "QURAN",
+    "term": 1,
+    "value": 19.0,
+    "absent": false
+  },
+  {
+    "matricule": "24017",
+    "section": "ALIMAT",
+    "subject": "MAHARIM",
+    "term": 1,
+    "value": 16.0,
+    "absent": false
+  },
+  {
+    "matricule": "24017",
+    "section": "ALIMAT",
+    "subject": "AKHDARI",
+    "term": 1,
+    "value": 16.75,
+    "absent": false
+  },
+  {
+    "matricule": "24017",
+    "section": "ALIMAT",
+    "subject": "ABQARI",
+    "term": 1,
+    "value": 17.25,
+    "absent": false
+  },
+  {
+    "matricule": "24017",
+    "section": "ALIMAT",
+    "subject": "QURAN",
+    "term": 1,
+    "value": 18.5,
+    "absent": false
+  },
+  {
+    "matricule": "24008",
+    "section": "ALIMAT",
+    "subject": "MAHARIM",
+    "term": 1,
+    "value": 14.5,
+    "absent": false
+  },
+  {
+    "matricule": "24008",
+    "section": "ALIMAT",
+    "subject": "AKHDARI",
+    "term": 1,
+    "value": 12.0,
+    "absent": false
+  },
+  {
+    "matricule": "24008",
+    "section": "ALIMAT",
+    "subject": "ABQARI",
+    "term": 1,
+    "value": 16.5,
+    "absent": false
+  },
+  {
+    "matricule": "24008",
+    "section": "ALIMAT",
+    "subject": "QURAN",
+    "term": 1,
+    "value": 17.5,
+    "absent": false
+  },
+  {
+    "matricule": "24018",
+    "section": "ALIMAT",
+    "subject": "MAHARIM",
+    "term": 1,
+    "value": 17.0,
+    "absent": false
+  },
+  {
+    "matricule": "24018",
+    "section": "ALIMAT",
+    "subject": "AKHDARI",
+    "term": 1,
+    "value": 10.0,
+    "absent": false
+  },
+  {
+    "matricule": "24018",
+    "section": "ALIMAT",
+    "subject": "ABQARI",
+    "term": 1,
+    "value": 17.75,
+    "absent": false
+  },
+  {
+    "matricule": "24018",
+    "section": "ALIMAT",
+    "subject": "QURAN",
+    "term": 1,
+    "value": 15.75,
+    "absent": false
+  },
+  {
+    "matricule": "24011",
+    "section": "ALIMAT",
+    "subject": "MAHARIM",
+    "term": 1,
+    "value": 15.25,
+    "absent": false
+  },
+  {
+    "matricule": "24011",
+    "section": "ALIMAT",
+    "subject": "AKHDARI",
+    "term": 1,
+    "value": 10.0,
+    "absent": false
+  },
+  {
+    "matricule": "24011",
+    "section": "ALIMAT",
+    "subject": "ABQARI",
+    "term": 1,
+    "value": 7.5,
+    "absent": false
+  },
+  {
+    "matricule": "24011",
+    "section": "ALIMAT",
+    "subject": "QURAN",
+    "term": 1,
+    "value": 16.5,
+    "absent": false
+  },
+  {
+    "matricule": "24012",
+    "section": "ALIMAT",
+    "subject": "MAHARIM",
+    "term": 1,
+    "value": 10.0,
+    "absent": false
+  },
+  {
+    "matricule": "24012",
+    "section": "ALIMAT",
+    "subject": "AKHDARI",
+    "term": 1,
+    "value": 10.0,
+    "absent": false
+  },
+  {
+    "matricule": "24012",
+    "section": "ALIMAT",
+    "subject": "ABQARI",
+    "term": 1,
+    "value": null,
+    "absent": true
+  },
+  {
+    "matricule": "24012",
+    "section": "ALIMAT",
+    "subject": "QURAN",
+    "term": 1,
+    "value": 18.75,
+    "absent": false
+  },
+  {
+    "matricule": "24010",
+    "section": "ALIMAT",
+    "subject": "MAHARIM",
+    "term": 1,
+    "value": 13.25,
+    "absent": false
+  },
+  {
+    "matricule": "24010",
+    "section": "ALIMAT",
+    "subject": "AKHDARI",
+    "term": 1,
+    "value": 13.0,
+    "absent": false
+  },
+  {
+    "matricule": "24010",
+    "section": "ALIMAT",
+    "subject": "ABQARI",
+    "term": 1,
+    "value": 13.0,
+    "absent": false
+  },
+  {
+    "matricule": "24010",
+    "section": "ALIMAT",
+    "subject": "QURAN",
+    "term": 1,
+    "value": 3.0,
+    "absent": false
+  },
+  {
+    "matricule": "24016",
+    "section": "ALIMAT",
+    "subject": "MAHARIM",
+    "term": 1,
+    "value": 13.5,
+    "absent": false
+  },
+  {
+    "matricule": "24016",
+    "section": "ALIMAT",
+    "subject": "AKHDARI",
+    "term": 1,
+    "value": null,
+    "absent": true
+  },
+  {
+    "matricule": "24016",
+    "section": "ALIMAT",
+    "subject": "ABQARI",
+    "term": 1,
+    "value": 12.0,
+    "absent": false
+  },
+  {
+    "matricule": "24016",
+    "section": "ALIMAT",
+    "subject": "QURAN",
+    "term": 1,
+    "value": 10.5,
+    "absent": false
+  },
+  {
+    "matricule": "24013",
+    "section": "ALIMAT",
+    "subject": "MAHARIM",
+    "term": 1,
+    "value": null,
+    "absent": true
+  },
+  {
+    "matricule": "24013",
+    "section": "ALIMAT",
+    "subject": "AKHDARI",
+    "term": 1,
+    "value": null,
+    "absent": true
+  },
+  {
+    "matricule": "24013",
+    "section": "ALIMAT",
+    "subject": "ABQARI",
+    "term": 1,
+    "value": null,
+    "absent": true
+  },
+  {
+    "matricule": "24013",
+    "section": "ALIMAT",
+    "subject": "QURAN",
+    "term": 1,
+    "value": 18.5,
+    "absent": false
+  },
+  {
+    "matricule": "24001",
+    "section": "ALIMAT",
+    "subject": "MAHARIM",
+    "term": 1,
+    "value": null,
+    "absent": true
+  },
+  {
+    "matricule": "24001",
+    "section": "ALIMAT",
+    "subject": "AKHDARI",
+    "term": 1,
+    "value": null,
+    "absent": true
+  },
+  {
+    "matricule": "24001",
+    "section": "ALIMAT",
+    "subject": "ABQARI",
+    "term": 1,
+    "value": null,
+    "absent": true
+  },
+  {
+    "matricule": "24001",
+    "section": "ALIMAT",
+    "subject": "QURAN",
+    "term": 1,
+    "value": null,
+    "absent": true
+  },
+  {
+    "matricule": "24004",
+    "section": "ALIMAT",
+    "subject": "MAHARIM",
+    "term": 1,
+    "value": null,
+    "absent": true
+  },
+  {
+    "matricule": "24004",
+    "section": "ALIMAT",
+    "subject": "AKHDARI",
+    "term": 1,
+    "value": null,
+    "absent": true
+  },
+  {
+    "matricule": "24004",
+    "section": "ALIMAT",
+    "subject": "ABQARI",
+    "term": 1,
+    "value": null,
+    "absent": true
+  },
+  {
+    "matricule": "24004",
+    "section": "ALIMAT",
+    "subject": "QURAN",
+    "term": 1,
+    "value": null,
+    "absent": true
+  },
+  {
+    "matricule": "24009",
+    "section": "ALIMAT",
+    "subject": "MAHARIM",
+    "term": 1,
+    "value": null,
+    "absent": true
+  },
+  {
+    "matricule": "24009",
+    "section": "ALIMAT",
+    "subject": "AKHDARI",
+    "term": 1,
+    "value": null,
+    "absent": true
+  },
+  {
+    "matricule": "24009",
+    "section": "ALIMAT",
+    "subject": "ABQARI",
+    "term": 1,
+    "value": null,
+    "absent": true
+  },
+  {
+    "matricule": "24009",
+    "section": "ALIMAT",
+    "subject": "QURAN",
+    "term": 1,
+    "value": null,
+    "absent": true
+  },
+  {
+    "matricule": "24014",
+    "section": "ALIMAT",
+    "subject": "MAHARIM",
+    "term": 1,
+    "value": null,
+    "absent": true
+  },
+  {
+    "matricule": "24014",
+    "section": "ALIMAT",
+    "subject": "AKHDARI",
+    "term": 1,
+    "value": null,
+    "absent": true
+  },
+  {
+    "matricule": "24014",
+    "section": "ALIMAT",
+    "subject": "ABQARI",
+    "term": 1,
+    "value": null,
+    "absent": true
+  },
+  {
+    "matricule": "24014",
+    "section": "ALIMAT",
+    "subject": "QURAN",
+    "term": 1,
+    "value": null,
+    "absent": true
+  },
+  {
+    "matricule": "24019",
+    "section": "ALIMAT",
+    "subject": "MAHARIM",
+    "term": 1,
+    "value": null,
+    "absent": true
+  },
+  {
+    "matricule": "24019",
+    "section": "ALIMAT",
+    "subject": "AKHDARI",
+    "term": 1,
+    "value": null,
+    "absent": true
+  },
+  {
+    "matricule": "24019",
+    "section": "ALIMAT",
+    "subject": "ABQARI",
+    "term": 1,
+    "value": null,
+    "absent": true
+  },
+  {
+    "matricule": "24019",
+    "section": "ALIMAT",
+    "subject": "QURAN",
+    "term": 1,
+    "value": null,
+    "absent": true
+  },
+  {
+    "matricule": "24020",
+    "section": "ALIMAT",
+    "subject": "MAHARIM",
+    "term": 1,
+    "value": null,
+    "absent": true
+  },
+  {
+    "matricule": "24020",
+    "section": "ALIMAT",
+    "subject": "AKHDARI",
+    "term": 1,
+    "value": null,
+    "absent": true
+  },
+  {
+    "matricule": "24020",
+    "section": "ALIMAT",
+    "subject": "ABQARI",
+    "term": 1,
+    "value": null,
+    "absent": true
+  },
+  {
+    "matricule": "24020",
+    "section": "ALIMAT",
+    "subject": "QURAN",
+    "term": 1,
+    "value": null,
+    "absent": true
+  },
+  {
+    "matricule": "24021",
+    "section": "ALIMAT",
+    "subject": "MAHARIM",
+    "term": 1,
+    "value": null,
+    "absent": true
+  },
+  {
+    "matricule": "24021",
+    "section": "ALIMAT",
+    "subject": "AKHDARI",
+    "term": 1,
+    "value": null,
+    "absent": true
+  },
+  {
+    "matricule": "24021",
+    "section": "ALIMAT",
+    "subject": "ABQARI",
+    "term": 1,
+    "value": null,
+    "absent": true
+  },
+  {
+    "matricule": "24021",
+    "section": "ALIMAT",
+    "subject": "QURAN",
+    "term": 1,
+    "value": null,
+    "absent": true
+  },
+  {
+    "matricule": "24022",
+    "section": "ALIMAT",
+    "subject": "MAHARIM",
+    "term": 1,
+    "value": null,
+    "absent": true
+  },
+  {
+    "matricule": "24022",
+    "section": "ALIMAT",
+    "subject": "AKHDARI",
+    "term": 1,
+    "value": null,
+    "absent": true
+  },
+  {
+    "matricule": "24022",
+    "section": "ALIMAT",
+    "subject": "ABQARI",
+    "term": 1,
+    "value": null,
+    "absent": true
+  },
+  {
+    "matricule": "24022",
+    "section": "ALIMAT",
+    "subject": "QURAN",
+    "term": 1,
+    "value": null,
+    "absent": true
+  }
+]

@@ -1,0 +1,75 @@
+{
+  "_commentaire": [
+    "Programme du deuxieme فصل de 2025-2026, tel que transmis par l'institut.",
+    "Les codes de matiere sont des identifiants techniques stables ; le nom",
+    "arabe est ce qui s'affiche. QURAN, LUGHA et SIRA reprennent les matieres",
+    "deja au catalogue (القرآن الكريم، اللغة، السيرة النبوية).",
+    "Le قسم المتميزات n'a pas encore de programme pour ce فصل."
+  ],
+  "year": "2025-2026",
+  "semester": 2,
+
+  "subjects": [
+    { "code": "KAFAF", "name_ar": "الكفاف" },
+    { "code": "GHAZAWAT", "name_ar": "الغزوات" },
+    { "code": "SAWM", "name_ar": "الصوم" },
+    { "code": "HAWADITH", "name_ar": "حوادث السنين" },
+    { "code": "BUROR", "name_ar": "البرور" },
+    { "code": "AJURRUMIYYA", "name_ar": "الآجرومية" },
+    { "code": "IBN_ASHUR", "name_ar": "ابن عاشور" }
+  ],
+
+  "programmes": [
+    {
+      "section": "ALIMAT",
+      "_nom": "عالمات المستقبل",
+      "matieres": [
+        { "subject": "QURAN", "coefficient": 5 },
+        { "subject": "AKHDARI", "coefficient": 4 },
+        { "subject": "ABQARI", "coefficient": 4 },
+        { "subject": "SIRA", "coefficient": 3 },
+        { "subject": "MAHARIM", "coefficient": 3 }
+      ]
+    },
+    {
+      "section": "HAFIZAT",
+      "_nom": "الحافظات",
+      "matieres": [
+        { "subject": "QURAN", "coefficient": 5 },
+        { "subject": "KAFAF", "coefficient": 4 },
+        { "subject": "SAWM", "coefficient": 4 },
+        { "subject": "GHAZAWAT", "coefficient": 3 },
+        { "subject": "HAWADITH", "coefficient": 3 },
+        { "subject": "BUROR", "coefficient": 3 },
+        { "subject": "AJURRUMIYYA", "coefficient": 2 },
+        { "subject": "LUGHA", "coefficient": 2 }
+      ]
+    },
+    {
+      "section": "MURABBIYAT",
+      "_nom": "المربيات",
+      "matieres": [
+        { "subject": "QURAN", "coefficient": 5 },
+        { "subject": "IBN_ASHUR", "coefficient": 4 },
+        { "subject": "SAWM", "coefficient": 4 },
+        { "subject": "BUROR", "coefficient": 3 },
+        { "subject": "SIRA", "coefficient": 3 },
+        { "subject": "AJURRUMIYYA", "coefficient": 2 },
+        { "subject": "LUGHA", "coefficient": 2 }
+      ]
+    },
+    {
+      "section": "HAFIDAT",
+      "_nom": "حفيدات عائشة",
+      "matieres": [
+        { "subject": "QURAN", "coefficient": 5 },
+        { "subject": "IBN_ASHUR", "coefficient": 4 },
+        { "subject": "SAWM", "coefficient": 4 },
+        { "subject": "BUROR", "coefficient": 3 },
+        { "subject": "SIRA", "coefficient": 3 },
+        { "subject": "AJURRUMIYYA", "coefficient": 2 },
+        { "subject": "LUGHA", "coefficient": 2 }
+      ]
+    }
+  ]
+}

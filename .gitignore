@@ -1,0 +1,57 @@
+# Secrets et configuration locale
+# ------------------------------------------------------------------
+# La cle Django, les identifiants de base et l'adresse de l'API vivent
+# ici : ces fichiers ne doivent jamais partir sur un depot.
+.env
+.env.local
+.env.*.local
+*.local
+
+# Bases de donnees locales
+# ------------------------------------------------------------------
+# La base de developpement contient les dossiers reels des etudiantes.
+*.sqlite3
+*.sqlite3-journal
+*.db
+
+# Identifiants distribues
+# ------------------------------------------------------------------
+# `create_student_accounts --output` produit un CSV de mots de passe en
+# clair, destine a etre imprime puis detruit.
+comptes*.csv
+
+# Dependances
+node_modules/
+.venv/
+venv/
+
+# Artefacts de construction
+.next/
+out/
+build/
+dist/
+staticfiles/
+media/
+*.tsbuildinfo
+
+# Caches
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.eslintcache
+.coverage
+htmlcov/
+
+# Journaux
+*.log
+npm-debug.log*
+yarn-error.log*
+
+# Systeme et editeurs
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp

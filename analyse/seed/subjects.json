@@ -1,0 +1,34 @@
+[
+  {
+    "code": "NAHW",
+    "name_ar": "النحو"
+  },
+  {
+    "code": "LUGHA",
+    "name_ar": "اللغة"
+  },
+  {
+    "code": "FIQH",
+    "name_ar": "الفقه"
+  },
+  {
+    "code": "QURAN",
+    "name_ar": "القرآن الكريم"
+  },
+  {
+    "code": "SIRA",
+    "name_ar": "السيرة النبوية"
+  },
+  {
+    "code": "MAHARIM",
+    "name_ar": "محارم اللسان"
+  },
+  {
+    "code": "AKHDARI",
+    "name_ar": "الأخضري"
+  },
+  {
+    "code": "ABQARI",
+    "name_ar": "العبقري"
+  }
+]
