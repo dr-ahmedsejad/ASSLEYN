@@ -355,6 +355,7 @@ def recompute_semester(
         )
     }
 
+    traites: list[SemesterResult] = []
     for result in results:
         enrollment = enrollment_by_id[result.student_key]
         decision_calculee = result.decision.value
@@ -389,6 +390,8 @@ def recompute_semester(
             },
         )
 
+        traites.append(semester_result)
+
         for outcome in result.subjects:
             curriculum = curriculum_by_id[outcome.subject_code]
             SubjectResult.objects.update_or_create(
@@ -402,6 +405,25 @@ def recompute_semester(
                     "coefficient": outcome.coefficient,
                     "decision": _SUBJECT_DECISION_MAP[outcome.decision],
                 },
+            )
+
+    # Resultats de matiere devenus etrangers au programme.
+    #
+    # Deux situations les produisent : une matiere retiree du programme, et une
+    # etudiante qui change de قسم en cours d'annee — son releve porterait alors
+    # les matieres des deux programmes. `update_or_create` ne pouvait pas les
+    # voir : il ne visite que les matieres du programme courant.
+    if traites:
+        perimes = SubjectResult.objects.filter(semester_result__in=traites).exclude(
+            curriculum__in=curricula
+        )
+        supprimes = perimes.delete()[0]
+        if supprimes:
+            logger.info(
+                "Recalcul %s / %s : %d resultat(s) de matiere hors programme retire(s)",
+                section.name_ar,
+                semester,
+                supprimes,
             )
 
     logger.info(
