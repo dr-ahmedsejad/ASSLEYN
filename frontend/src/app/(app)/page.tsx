@@ -11,6 +11,7 @@ import {
 
 import { ReleveEtudiante } from "@/components/ReleveEtudiante";
 import {
+  Alerte,
   BadgeEtat,
   Carte,
   Indicateur,
@@ -55,15 +56,37 @@ export default async function PageAccueil() {
 /* ------------------------------------------------------------------ */
 
 async function AccueilEtudiante() {
-  const releve = await apiRequest<{
-    semesters: SemesterResult[];
-    annual: AnnualResult[];
-  }>("/results/me/");
+  // Le releve ne contient que les فصول **publies** : un فصل en cours de
+  // saisie ne doit pas fuiter. L'absence, seule, laisse une etudiante devant
+  // un ecran qui ne montre qu'un فصل sans lui dire pourquoi — on nomme donc
+  // ceux qui restent a venir.
+  const [releve, fusul] = await Promise.all([
+    apiRequest<{ semesters: SemesterResult[]; annual: AnnualResult[] }>(
+      "/results/me/",
+    ),
+    apiRequest<Paginated<Semester>>("/semesters/").catch(() => null),
+  ]);
+
+  const publies = new Set(releve.semesters.map((s) => s.semester_number));
+  const aVenir = (fusul?.results ?? [])
+    .filter((f) => f.state !== "PUBLISHED" && !publies.has(f.number))
+    .map((f) => f.number)
+    .sort();
 
   return (
     <div className="space-y-5">
       <h1 className="text-xl font-bold text-dark">نتائجي</h1>
+
       <ReleveEtudiante semestres={releve.semesters} annuels={releve.annual} />
+
+      {aVenir.length > 0 ? (
+        <Alerte ton="info">
+          {aVenir.length === 1 ? "الفصل" : "الفصول"}{" "}
+          <span className="chiffres font-semibold">{aVenir.join(" و ")}</span>{" "}
+          لم {aVenir.length === 1 ? "يُنشر" : "تُنشر"} بعد. ستظهر النتيجة هنا
+          فور اعتمادها من الإدارة.
+        </Alerte>
+      ) : null}
     </div>
   );
 }

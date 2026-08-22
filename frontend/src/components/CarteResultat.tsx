@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { Award, Medal, Trophy } from "lucide-react";
+import { Award, Star, Trophy } from "lucide-react";
 
 import type { AnnualResult, SemesterResult } from "@/lib/types";
 
@@ -35,6 +35,15 @@ interface Podium {
   texte: string;
 }
 
+/*
+ * Aucune de ces icones ne porte de chiffre.
+ *
+ * C'est une contrainte, pas un gout : la `Medal` de lucide a un « 1 » grave
+ * dans son dessin. Posee sur la deuxieme place, elle affichait une medaille
+ * d'argent frappee du chiffre 1 — l'image contredisait le texte juste en
+ * dessous. Trois silhouettes distinctes, et le rang ecrit une seule fois, dans
+ * la pastille.
+ */
 const PODIUM: Record<number, Podium> = {
   1: {
     Icone: Trophy,
@@ -43,13 +52,13 @@ const PODIUM: Record<number, Podium> = {
     texte: "#7a6300",
   },
   2: {
-    Icone: Medal,
+    Icone: Award,
     libelle: "المرتبة الثانية",
     fond: "linear-gradient(135deg,#9aa5b1,#d7dee6)",
     texte: "#3f4a56",
   },
   3: {
-    Icone: Award,
+    Icone: Star,
     libelle: "المرتبة الثالثة",
     fond: "linear-gradient(135deg,#c07b3a,#e3ab72)",
     texte: "#5c3512",
@@ -106,18 +115,30 @@ export function CarteResultat({
         {distinction ? (
           <>
             <div
-              className={`flex h-24 w-24 items-center justify-center rounded-full shadow-card ${
+              className={`relative flex h-24 w-24 items-center justify-center rounded-full shadow-card ${
                 reussie ? "pastille-pop" : ""
               }`}
               style={{ background: distinction.fond }}
             >
               <distinction.Icone size={44} style={{ color: distinction.texte }} />
+
+              {/* Le rang, en chiffre, sur la medaille elle-meme : l'image et
+                  le texte ne peuvent plus se contredire. */}
+              <span
+                className="chiffres absolute -bottom-1 flex h-7 w-7 items-center justify-center rounded-full border-2 border-white text-sm font-extrabold leading-none shadow-card"
+                style={{ background: distinction.texte, color: "#ffffff" }}
+              >
+                {resultat.rank}
+              </span>
             </div>
             <p
               className="mt-3 rounded-full px-4 py-1 text-sm font-bold"
               style={{ background: distinction.fond, color: distinction.texte }}
             >
-              {distinction.libelle}
+              {distinction.libelle}{" "}
+              <span className="chiffres font-extrabold">
+                من {resultat.cohort_size}
+              </span>
             </p>
           </>
         ) : (
@@ -142,20 +163,11 @@ export function CarteResultat({
         {nom}
       </p>
 
-      {/* Chiffres cles. Le rang n'est repris ici que si le disque affiche une
-          distinction a sa place ; sinon il y figure deja. */}
-      <div
-        className={`mt-5 grid gap-3 px-5 ${
-          distinction ? "grid-cols-2" : "grid-cols-1"
-        }`}
-      >
+      {/* Le rang ne figure pas ici : il est deja sur la medaille, et son
+          effectif dans le libelle juste dessous. Le repeter une troisieme
+          fois encombrerait une carte qui doit tenir dans une capture. */}
+      <div className="mt-5 grid grid-cols-1 gap-3 px-5">
         <Bloc libelle="المعدل" valeur={resultat.average_display} accentue />
-        {distinction ? (
-          <Bloc
-            libelle="الرتبة"
-            valeur={`${resultat.rank} / ${resultat.cohort_size}`}
-          />
-        ) : null}
       </div>
 
       {annuel ? (
