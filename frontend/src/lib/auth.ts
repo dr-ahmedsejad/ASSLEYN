@@ -19,7 +19,8 @@ import {
   IS_PRODUCTION,
   SESSION_COOKIE,
 } from "@/lib/config";
-import { ApiError, apiRequest } from "@/lib/api";
+import { ApiError, apiRequest, authHeaders } from "@/lib/api";
+import { verifierMotDePasse } from "@/lib/politique-mot-de-passe";
 
 export interface FormState {
   error?: string;
@@ -152,21 +153,45 @@ export async function changerMotDePasse(
   const nouveau = String(donnees.get("new_password") ?? "");
   const confirmation = String(donnees.get("confirm_password") ?? "");
 
+  // Verifie ici plutot que de laisser le navigateur le faire : son message
+  // natif s'affiche dans la langue de son interface, pas dans celle de
+  // l'application.
+  const refus = verifierMotDePasse(nouveau);
+  if (refus) return { error: refus };
+
   if (nouveau !== confirmation) {
     return { error: "كلمتا السر غير متطابقتين." };
   }
 
-  try {
-    await apiRequest("/auth/change-password/", {
+  // Requete directe plutot que `apiRequest` : Django recycle la cle de session
+  // au changement de mot de passe (`update_session_auth_hash`) et renvoie un
+  // nouveau cookie. `apiRequest` ne lit pas les cookies de reponse ; le BFF
+  // gardait donc l'ancienne session, et l'etudiante se retrouvait a l'ecran de
+  // connexion juste apres avoir choisi son mot de passe — au moment meme de sa
+  // premiere ouverture de session.
+  const entetes = await authHeaders("POST");
+  entetes.set("Content-Type", "application/json");
+  entetes.set("Accept", "application/json");
+
+  const response = await fetch(
+    `${API_BASE_URL}${API_PREFIX}/auth/change-password/`,
+    {
       method: "POST",
-      body: { current_password: actuel, new_password: nouveau },
-    });
-  } catch (erreur) {
-    if (erreur instanceof ApiError) {
-      return { error: erreur.messages[0] ?? "تعذر تغيير كلمة السر." };
-    }
-    throw erreur;
+      headers: entetes,
+      body: JSON.stringify({
+        current_password: actuel,
+        new_password: nouveau,
+      }),
+      cache: "no-store",
+    },
+  );
+
+  if (!response.ok) {
+    const corps = await response.json().catch(() => null);
+    const messages = new ApiError(response.status, corps).messages;
+    return { error: messages[0] ?? "تعذر تغيير كلمة السر." };
   }
 
+  await adopterCookies(response);
   redirect("/");
 }

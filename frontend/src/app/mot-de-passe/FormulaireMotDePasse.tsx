@@ -5,6 +5,7 @@ import { useFormStatus } from "react-dom";
 
 import { ChampMotDePasse } from "@/components/ChampMotDePasse";
 import { changerMotDePasse, type FormState } from "@/lib/auth";
+import { AIDE_MOT_DE_PASSE } from "@/lib/politique-mot-de-passe";
 
 const ETAT_INITIAL: FormState = {};
 
@@ -39,9 +40,14 @@ export function FormulaireMotDePasse() {
           nom={champ.nom}
           libelle={champ.libelle}
           autoComplete={champ.auto}
-          longueurMinimale={champ.nom === "current_password" ? undefined : 12}
         />
       ))}
+
+      {/* Pas de `minLength` sur le champ : la validation native du navigateur
+          afficherait son message dans la langue de son interface, au milieu
+          d'un ecran arabe. La regle est rappelee ici, et verifiee — en arabe —
+          par l'action et par le serveur. */}
+      <p className="text-xs leading-relaxed text-gris">{AIDE_MOT_DE_PASSE}</p>
 
       {etat.error ? (
         <p

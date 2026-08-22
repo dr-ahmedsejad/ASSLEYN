@@ -133,12 +133,15 @@ PASSWORD_HASHERS = [
 #     nom d'utilisateur — ce qui est exactement la regle retenue.
 # CommonPasswordValidator reste : il ne coute rien et ecarte « 12345678 »,
 # la chaine la plus essayee au monde.
+# Les messages sont les notres, pas ceux de Django : son catalogue arabe laisse
+# le message de longueur en anglais, ce qui donnait « This password is too
+# short » sur un ecran entierement arabe.
 AUTH_PASSWORD_VALIDATORS = [
     {
-        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
+        "NAME": "apps.accounts.validators.LongueurMinimale",
         "OPTIONS": {"min_length": 8},
     },
-    {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
+    {"NAME": "apps.accounts.validators.PasTropCourant"},
 ]
 
 AUTHENTICATION_BACKENDS = ["django.contrib.auth.backends.ModelBackend"]

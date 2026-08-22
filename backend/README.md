@@ -133,7 +133,14 @@ n'accorde que cinq essais. C'est cette barrière-là qui tient, pas la longueur.
 Deux validateurs de Django sont volontairement absents : `NumericPassword`
 refuserait les mots de passe numériques, et `UserAttributeSimilarity`
 refuserait un mot de passe dérivé du nom d'utilisateur — ce qui est exactement
-la règle retenue. `CommonPassword` reste : il écarte `12345678`.
+la règle retenue. La règle « pas trop courant » reste : elle écarte `12345678`.
+
+Les deux validateurs en vigueur sont **les nôtres**
+(`apps/accounts/validators.py`), et non ceux de Django. Son catalogue arabe
+traduit bien « mot de passe trop courant » mais laisse le message de longueur
+en anglais — il passe par `ngettext`, dont la forme plurielle manque. Une
+étudiante lisait donc « This password is too short » sur un écran entièrement
+arabe.
 
 ### Ouverture d'un compte
 

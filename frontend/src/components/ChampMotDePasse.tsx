@@ -14,18 +14,21 @@ import { Eye, EyeOff } from "lucide-react";
  *
  * La bascule est purement locale : rien n'est memorise, chaque champ repart
  * masque.
+ *
+ * Aucune contrainte `minLength` ici : la validation native du navigateur
+ * affiche son refus dans la langue de son interface, ce qui poserait un
+ * message anglais ou francais au milieu d'un ecran arabe. La regle vit dans
+ * `lib/politique-mot-de-passe.ts`, et le serveur seul fait foi.
  */
 export function ChampMotDePasse({
   nom,
   libelle,
   autoComplete,
-  longueurMinimale,
   autoFocus,
 }: {
   nom: string;
   libelle: string;
   autoComplete: string;
-  longueurMinimale?: number;
   autoFocus?: boolean;
 }) {
   const [visible, setVisible] = useState(false);
@@ -46,7 +49,6 @@ export function ChampMotDePasse({
           name={nom}
           type={visible ? "text" : "password"}
           required
-          minLength={longueurMinimale}
           autoComplete={autoComplete}
           autoFocus={autoFocus}
           className="champ champ-mdp"

@@ -6,6 +6,7 @@ import { Check, Copy, GraduationCap, UserPlus, Users } from "lucide-react";
 
 import { ChampMotDePasse } from "@/components/ChampMotDePasse";
 import { creerCompte, type ResultatCreation } from "@/lib/comptes-actions";
+import { AIDE_MOT_DE_PASSE } from "@/lib/politique-mot-de-passe";
 import { Alerte, Carte } from "./ui";
 
 const ETAT_INITIAL: ResultatCreation = {};
@@ -210,7 +211,6 @@ export function CreationCompte() {
               nom="password"
               libelle="كلمة السر"
               autoComplete="new-password"
-              longueurMinimale={8}
             />
 
             <div>
@@ -247,8 +247,7 @@ export function CreationCompte() {
           </div>
 
           <p className="text-xs leading-relaxed text-gris">
-            ثمانية رموز على الأقل لكلمة السر، والأرقام وحدها مقبولة. سيُطلب من
-            صاحب الحساب تغييرها عند أول دخول.
+            {AIDE_MOT_DE_PASSE} سيُطلب من صاحب الحساب تغييرها عند أول دخول.
           </p>
 
           {etat.erreur ? (

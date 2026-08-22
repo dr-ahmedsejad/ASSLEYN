@@ -8,6 +8,7 @@ import {
   reinitialiserMotDePasse,
   type ResultatReinitialisation,
 } from "@/lib/securite-actions";
+import { AIDE_MOT_DE_PASSE } from "@/lib/politique-mot-de-passe";
 
 const ETAT_INITIAL: ResultatReinitialisation = {};
 
@@ -135,7 +136,6 @@ export function ReinitialisationMotDePasse({
           name="new_password"
           dir="ltr"
           defaultValue={suggestion}
-          minLength={8}
           placeholder="اتركيه فارغا لتوليد كلمة تلقائية"
           aria-label="كلمة السر الجديدة"
           className="champ max-w-xs"
@@ -157,9 +157,8 @@ export function ReinitialisationMotDePasse({
       ) : null}
 
       <p className="mt-2 text-xs leading-relaxed text-gris">
-        ثمانية رموز على الأقل. الأرقام وحدها مقبولة — كلمة السر الأولى للطالبة
-        هي رقمها مكتوبا مرتين. سيُطلب تغييرها عند أول دخول، ويُفتح الحساب إن كان
-        مقفلا.
+        {AIDE_MOT_DE_PASSE} كلمة السر الأولى للطالبة هي رقمها مكتوبا مرتين.
+        سيُطلب تغييرها عند أول دخول، ويُفتح الحساب إن كان مقفلا.
       </p>
     </form>
   );
