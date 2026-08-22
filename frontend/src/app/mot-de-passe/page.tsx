@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 
+import { Alerte, Carte } from "@/components/ui";
 import { getCurrentUser } from "@/lib/api";
 import { FormulaireMotDePasse } from "./FormulaireMotDePasse";
 
@@ -12,26 +13,22 @@ export default async function PageMotDePasse() {
   const premiereConnexion = utilisateur.must_change_password;
 
   return (
-    <main className="flex flex-1 items-center justify-center px-4 py-12">
-      <div className="w-full max-w-sm">
-        <h1 className="mb-2 text-center text-xl font-bold text-dark">
-          تغيير كلمة السر
-        </h1>
+    <div className="space-y-5">
+      <h1 className="text-xl font-bold text-dark">تغيير كلمة السر</h1>
 
+      <div className="max-w-sm">
         {premiereConnexion ? (
-          <p className="mb-6 rounded-xl border border-yellow-200 bg-yellow-50 px-3.5 py-2.5 text-center text-sm text-yellow-700">
-            كلمة السر الحالية مؤقتة. يجب تغييرها قبل متابعة الاستخدام.
-          </p>
-        ) : (
-          <p className="mb-6 text-center text-sm text-gris">
-            اختاري كلمة سر لا تقل عن اثني عشر حرفا.
-          </p>
-        )}
+          <div className="mb-4">
+            <Alerte ton="warning">
+              كلمة السر الحالية مؤقتة. يجب تغييرها قبل متابعة الاستخدام.
+            </Alerte>
+          </div>
+        ) : null}
 
-        <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-card">
+        <Carte>
           <FormulaireMotDePasse />
-        </div>
+        </Carte>
       </div>
-    </main>
+    </div>
   );
 }

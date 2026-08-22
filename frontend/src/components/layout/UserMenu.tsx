@@ -8,18 +8,6 @@ import { deconnexion } from "@/lib/auth";
 import type { CurrentUser } from "@/lib/types";
 
 /**
- * Premier mot du nom complet.
- *
- * Un salut se fait par le prenom : « مرحبا دعيه », pas « مرحبا دعيه أدو ». Les
- * noms d'ici comptent souvent trois ou quatre parties, et le bandeau doit
- * rester lisible sur un telephone. Le nom entier reste visible en depliant le
- * menu.
- */
-function prenom(nomComplet: string): string {
-  return nomComplet.trim().split(/\s+/)[0] || nomComplet;
-}
-
-/**
  * Menu de profil : salut, role, changement de mot de passe, deconnexion.
  *
  * Le salut est ici, et non dans le titre de la barre : c'est le bloc qui
@@ -65,9 +53,17 @@ export default function UserMenu({ user }: { user: CurrentUser }) {
         aria-haspopup="menu"
         className="flex items-center gap-2.5 rounded-xl px-2 py-1.5 transition-colors hover:bg-gray-50"
       >
-        <div className="flex min-w-0 flex-col items-start">
-          <p className="max-w-36 truncate text-xs font-semibold leading-tight text-dark">
-            مرحبا <span className="text-primary">{prenom(user.full_name_ar)}</span>
+        {/* Colonne centree : le role se lit sous le nom, aligne sur son
+            milieu — deux lignes qui designent la meme personne. */}
+        <div className="flex min-w-0 flex-col items-center">
+          {/* Le nom entier, pas seulement le prenom. La largeur est bornee et
+              le nom tronque plutot que de pousser la barre : les noms d'ici
+              comptent souvent trois ou quatre parties. */}
+          <p
+            className="max-w-40 truncate text-xs font-semibold leading-tight text-dark sm:max-w-64"
+            title={user.full_name_ar}
+          >
+            مرحبا <span className="text-primary">{user.full_name_ar}</span>
           </p>
           <span
             className="mt-0.5 inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-semibold"
