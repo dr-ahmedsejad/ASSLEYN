@@ -1,6 +1,5 @@
 "use client";
 
-import { Suspense } from "react";
 import { Menu } from "lucide-react";
 
 import type { CurrentUser, Semester } from "@/lib/types";
@@ -18,9 +17,6 @@ interface Props {
 
 /**
  * Barre du haut : ouverture mobile, repli desktop, contexte de travail, profil.
- *
- * Le selecteur de فصل est enveloppe dans un `Suspense` : il lit les parametres
- * d'URL, ce qui impose une frontiere de suspension au rendu statique.
  */
 export default function Topbar({
   user,
@@ -55,9 +51,7 @@ export default function Topbar({
 
       <div className="flex flex-1 items-center justify-end gap-2 sm:flex-none sm:gap-3">
         {user.role === "STUDENT" ? null : (
-          <Suspense fallback={null}>
-            <SelecteurFasl fusul={fusul} courant={faslCourant} />
-          </Suspense>
+          <SelecteurFasl fusul={fusul} courant={faslCourant} />
         )}
         <UserMenu user={user} />
       </div>

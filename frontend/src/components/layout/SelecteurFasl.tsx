@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, useTransition } from "react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Check, ChevronDown } from "lucide-react";
 
 import { choisirFasl } from "@/lib/contexte-actions";
@@ -15,6 +15,12 @@ import type { Semester } from "@/lib/types";
  * de contexte retire le `fasl` de l'URL courante — sans quoi la page
  * continuerait d'afficher l'ancien. Les autres filtres (قسم, دورة) sont
  * conserves.
+ *
+ * Aucun `useSearchParams` ici, et c'est deliberé : il imposerait une
+ * frontiere de suspension, qui restait en attente sans jamais se resoudre sur
+ * les pages lisant elles-memes leurs parametres d'URL — resultats, saisie,
+ * structure. Le selecteur y disparaissait purement et simplement, c'est-a-dire
+ * partout ou il sert.
  */
 export default function SelecteurFasl({
   fusul,
@@ -25,7 +31,6 @@ export default function SelecteurFasl({
 }) {
   const router = useRouter();
   const pathname = usePathname();
-  const searchParams = useSearchParams();
 
   const [ouvert, setOuvert] = useState(false);
   const [enCours, demarrer] = useTransition();
@@ -59,7 +64,14 @@ export default function SelecteurFasl({
     demarrer(async () => {
       await choisirFasl(String(fasl.id));
 
-      const params = new URLSearchParams(searchParams.toString());
+      // Les filtres courants sont lus sur l'adresse du navigateur, et non
+      // par `useSearchParams`. Ce dernier obligerait a envelopper le
+      // selecteur dans une frontiere de suspension — laquelle restait en
+      // attente indefiniment sur toute page qui lit elle-meme ses parametres
+      // d'URL : le selecteur disparaissait alors des ecrans ou il sert. Ici
+      // le clic a deja eu lieu, le navigateur est donc la source la plus
+      // directe.
+      const params = new URLSearchParams(window.location.search);
       // On retire ce qui appartient a un فصل precis : le garder ferait
       // revenir l'ancien فصل par la bande, puisqu'un parametre explicite
       // prime sur le contexte.

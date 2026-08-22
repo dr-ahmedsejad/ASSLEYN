@@ -19,7 +19,12 @@ import {
   COOKIES_SECURE,
   SESSION_COOKIE,
 } from "@/lib/config";
-import { ApiError, apiRequest, authHeaders } from "@/lib/api";
+import {
+  adresseClient,
+  ApiError,
+  apiRequest,
+  authHeaders,
+} from "@/lib/api";
 import { verifierMotDePasse } from "@/lib/politique-mot-de-passe";
 
 export interface FormState {
@@ -83,6 +88,10 @@ export async function connexion(
     return { error: "تعذر الاتصال بالخادم. حاول مرة أخرى." };
   }
 
+  // L'adresse du visiteur doit accompagner la connexion : c'est la requete
+  // meme que le journal est cense tracer.
+  const adresse = await adresseClient();
+
   const response = await fetch(`${API_BASE_URL}${API_PREFIX}/auth/login/`, {
     method: "POST",
     headers: {
@@ -91,6 +100,7 @@ export async function connexion(
       cookie: `${CSRF_COOKIE}=${csrf}`,
       Origin: API_BASE_URL,
       Referer: API_BASE_URL,
+      ...(adresse ? { "X-Forwarded-For": adresse } : {}),
     },
     body: JSON.stringify({ username, password }),
     cache: "no-store",

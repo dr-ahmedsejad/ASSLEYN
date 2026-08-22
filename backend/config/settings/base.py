@@ -225,6 +225,11 @@ REST_FRAMEWORK = {
         "rest_framework.throttling.AnonRateThrottle",
         "rest_framework.throttling.UserRateThrottle",
     ],
+    # Un seul relais devant Django : Nginx. Sans ce reglage, DRF compte le
+    # debit sur REMOTE_ADDR — l'adresse du conteneur Next, identique pour tout
+    # le monde a cause du BFF — et le plafond de connexion s'appliquait donc a
+    # l'institut entier plutot qu'a chaque poste.
+    "NUM_PROXIES": 1,
     "DEFAULT_THROTTLE_RATES": {
         "anon": "30/min",
         "user": "600/hour",

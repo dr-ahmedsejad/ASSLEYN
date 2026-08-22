@@ -42,6 +42,20 @@ audit = logging.getLogger("asleyn.audit")
 
 
 def _client_ip(request: Request) -> str:
+    """
+    Adresse du visiteur, et non celle du conteneur qui relaie.
+
+    Le chemin d'une requete est : navigateur → Nginx → serveur Next → Django.
+    `REMOTE_ADDR` designe donc toujours le conteneur Next. Il faut remonter la
+    chaine :
+
+    - Nginx pose `X-Forwarded-For` avec l'adresse **qu'il a observee**, en
+      ecrasant ce que le client aurait pu declarer (cf. deploy/nginx*.conf) ;
+    - le serveur Next la retransmet telle quelle (cf. lib/api.ts).
+
+    Une seule valeur circule donc, non falsifiable. `REMOTE_ADDR` ne sert plus
+    que pour un appel direct a l'API, sans relais — le cas du developpement.
+    """
     forwarded = request.META.get("HTTP_X_FORWARDED_FOR", "")
     if forwarded:
         return forwarded.split(",")[0].strip()

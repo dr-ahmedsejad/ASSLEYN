@@ -12,7 +12,7 @@
 
 import "server-only";
 
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 
 import {
   API_BASE_URL,
@@ -51,6 +51,28 @@ function buildUrl(path: string): string {
   return `${API_BASE_URL}${API_PREFIX}${clean}`;
 }
 
+/**
+ * Adresse de la personne qui consulte, telle que Nginx l'a observee.
+ *
+ * Indispensable a cause du BFF : c'est le serveur Next qui appelle Django, si
+ * bien que Django voit l'adresse du conteneur Next et non celle du visiteur.
+ * Sans ce relais, le journal des connexions inscrivait la meme adresse pour
+ * tout le monde, et le plafond de debit s'appliquait a l'institut entier
+ * plutot qu'a chaque poste.
+ *
+ * `x-real-ip` est prefere : Nginx le pose lui-meme, il ne contient qu'une
+ * valeur, et le client ne peut pas l'inventer — les trois variantes de
+ * configuration ecrasent ces deux en-tetes au lieu d'y ajouter.
+ */
+export async function adresseClient(): Promise<string | null> {
+  const entrantes = await headers();
+  const reelle = entrantes.get("x-real-ip");
+  if (reelle) return reelle.trim();
+
+  const chaine = entrantes.get("x-forwarded-for");
+  return chaine ? (chaine.split(",")[0]?.trim() ?? null) : null;
+}
+
 /** En-tetes d'authentification construits a partir des cookies de la requete. */
 export async function authHeaders(method: string): Promise<Headers> {
   const jar = await cookies();
@@ -72,6 +94,12 @@ export async function authHeaders(method: string): Promise<Headers> {
     headers.set("Origin", API_BASE_URL);
     headers.set("Referer", API_BASE_URL);
   }
+
+  // Sans cela, Django journalise l'adresse du conteneur Next pour tout le
+  // monde. Une seule valeur est transmise, celle que Nginx a observee.
+  const adresse = await adresseClient();
+  if (adresse) headers.set("X-Forwarded-For", adresse);
+
   return headers;
 }
 
