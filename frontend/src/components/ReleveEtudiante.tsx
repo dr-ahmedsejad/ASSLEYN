@@ -1,7 +1,11 @@
 import Link from "next/link";
 import { Share2 } from "lucide-react";
 
-import type { AnnualResult, SemesterResult } from "@/lib/types";
+import type {
+  AnnualResult,
+  SemesterResult,
+  SubjectResult,
+} from "@/lib/types";
 
 import { estEvalue } from "@/lib/evaluation";
 
@@ -20,6 +24,22 @@ import {
  * Le rang est affiche avec l'effectif — « 3 من 24 » est lisible, « 3 » seul ne
  * dit rien. Le classement nominatif complet n'est en revanche pas expose.
  */
+/**
+ * Matieres du plus lourd ضارب au plus leger.
+ *
+ * C'est l'ordre dans lequel une etudiante lit son releve : la matiere qui
+ * pese cinq sur quatorze decide de sa moyenne bien plus que celle qui pese
+ * trois, et doit donc se presenter la premiere.
+ *
+ * A ضارب egal, l'ordre du programme est conserve — `sort` est stable, et cet
+ * ordre-la est celui que l'etablissement a fixe.
+ */
+function parCoefficient(matieres: SubjectResult[]): SubjectResult[] {
+  return [...matieres].sort(
+    (a, b) => Number(b.coefficient) - Number(a.coefficient),
+  );
+}
+
 export function ReleveEtudiante({
   semestres,
   annuels,
@@ -102,7 +122,7 @@ export function ReleveEtudiante({
                 </tr>
               </thead>
               <tbody>
-                {resultat.subject_results.map((matiere) => (
+                {parCoefficient(resultat.subject_results).map((matiere) => (
                   <tr key={matiere.subject_code}>
                     <td className="font-medium">{matiere.subject_name}</td>
                     <td className="centre">
