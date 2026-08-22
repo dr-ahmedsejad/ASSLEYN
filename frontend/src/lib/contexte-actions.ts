@@ -4,7 +4,7 @@ import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
 
 import { FASL_COOKIE } from "@/lib/contexte";
-import { IS_PRODUCTION } from "@/lib/config";
+import { COOKIES_SECURE } from "@/lib/config";
 
 /**
  * Memorise le فصل sur lequel l'utilisateur travaille.
@@ -21,7 +21,11 @@ export async function choisirFasl(faslId: string): Promise<void> {
   const jar = await cookies();
   jar.set(FASL_COOKIE, faslId, {
     httpOnly: true,
-    secure: IS_PRODUCTION,
+    // `COOKIES_SECURE`, et non `IS_PRODUCTION` : derriere un serveur en clair,
+    // un cookie marque `Secure` n'est tout simplement pas conserve par le
+    // navigateur. Le choix de فصل n'etait alors jamais memorise, et
+    // l'application retombait indefiniment sur le premier فصل.
+    secure: COOKIES_SECURE,
     sameSite: "strict",
     path: "/",
     maxAge: 60 * 60 * 24 * 365,
