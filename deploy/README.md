@@ -59,7 +59,7 @@ Sauvegarde automatique — une ligne de `crontab -e` :
 
 ---
 
-## Deux variantes de mise en ligne
+## Trois variantes de mise en ligne
 
 **Domaine public** (défaut, `nginx.conf`). Le certificat est émis sur l'hôte,
 avant le premier démarrage :
@@ -81,9 +81,27 @@ Le renouvellement passe ensuite par `certbot-webroot/`, sans interruption.
 puis, dans `.env` : `DOMAIN=192.168.1.50` et
 `ASLEYN_NGINX_CONF=./nginx.lan.conf`.
 
-HTTPS reste indispensable même en local : la session Django est marquée
-`Secure`, et un navigateur ne renvoie pas un cookie `Secure` sur une page en
-clair. En HTTP simple, personne ne resterait connecté.
+**En clair, sans TLS** (`nginx.http.conf`), pour un serveur joint par son
+adresse IP quand on accepte sciemment le risque. Trois lignes vont ensemble
+dans `.env` — séparées, personne ne reste connecté :
+
+```
+ASLEYN_NGINX_CONF=./nginx.http.conf
+DJANGO_HTTPS=False
+COOKIES_SECURE=false
+```
+
+Ce que cela coûte, sans détour : les mots de passe et les cookies de session
+circulent **lisibles** entre le téléphone d'une étudiante et le serveur.
+Quiconque se trouve sur le trajet — un opérateur, un point d'accès Wi-Fi
+partagé — peut lire un mot de passe et se faire passer pour son titulaire.
+Aucun réglage de cette pile ne corrige cela ; seul le chiffrement du transport
+le peut, et `setup-lan` le fournit pour une commande de plus.
+
+C'est pour cette raison que les cookies sont marqués `Secure` par défaut : un
+navigateur ne renvoie pas un cookie `Secure` sur une page en clair, si bien que
+la pile refuse de fonctionner en HTTP tant qu'on ne l'a pas explicitement
+demandé. Le défaut protège ; l'exception se déclare.
 
 ---
 
@@ -124,7 +142,16 @@ et Docker déclarerait le service en panne.
 ## Ports
 
 Par défaut 80 et 443. Si la machine héberge déjà une autre application, poser
-`HTTP_PORT` et `HTTPS_PORT` dans `.env` suffit — rien d'autre à changer.
+`HTTP_PORT` et `HTTPS_PORT` dans `.env` suffit.
+
+**Un port non standard oblige à déclarer l'origine publique.** Django compare
+l'origine d'une requête en écriture *avec le port* : sur `http://203.0.113.10:2121`,
+une origine annoncée `http://203.0.113.10` ne correspond pas, et la connexion
+échoue sur un refus CSRF dès le premier essai. D'où :
+
+```
+PUBLIC_ORIGINS=http://203.0.113.10:2121
+```
 
 Adminer n'est pas démarré par défaut. `docker compose --profile admin up -d`
 l'expose sur `127.0.0.1:8092` uniquement : pour l'atteindre, un tunnel SSH

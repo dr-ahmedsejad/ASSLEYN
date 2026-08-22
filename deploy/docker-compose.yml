@@ -117,12 +117,24 @@ services:
       # Django compare le nom d'hote seul, sans le port. `backend` y figure
       # parce que Nginx et le serveur Next appellent le conteneur par ce nom.
       DJANGO_ALLOWED_HOSTS: ${DOMAIN},localhost,127.0.0.1,backend
+      # Vrai par defaut, et cela doit le rester : c'est le seul reglage qui
+      # empeche un mot de passe de circuler en clair. Le passer a False n'a
+      # qu'un usage — un serveur joint par son IP, ou aucune autorite ne
+      # delivre de certificat — et suppose ASLEYN_NGINX_CONF=./nginx.http.conf
+      # ainsi que COOKIES_SECURE=false cote frontend.
+      DJANGO_HTTPS: ${DJANGO_HTTPS:-True}
       # Le mot de passe est alphanumerique (cf. deploy.sh) : un « @ » ou un
       # « / » devrait etre encode ici, et se perdrait silencieusement.
       DATABASE_URL: postgres://${DB_USER:-asleyn}:${DB_PASSWORD}@db:5432/${DB_NAME:-asleyn}
       REDIS_URL: redis://redis:6379/2
-      CORS_ALLOWED_ORIGINS: https://${DOMAIN},http://${DOMAIN}
-      CSRF_TRUSTED_ORIGINS: https://${DOMAIN},http://${DOMAIN}
+      # Origines publiques, **port compris**. Django compare l'origine d'une
+      # requete en ecriture avec le port : servir l'application sur un port
+      # autre que 80 ou 443 sans le declarer ici ferait echouer toute
+      # connexion sur un refus CSRF, au premier essai. Le defaut convient a
+      # une mise en ligne sur les ports standards ; sinon, poser
+      # PUBLIC_ORIGINS=http://203.0.113.10:2121 dans le .env.
+      CORS_ALLOWED_ORIGINS: ${PUBLIC_ORIGINS:-https://${DOMAIN},http://${DOMAIN}}
+      CSRF_TRUSTED_ORIGINS: ${PUBLIC_ORIGINS:-https://${DOMAIN},http://${DOMAIN}}
       AUDIT_LOG_PATH: /app/logs/audit.log
       # Pas de worker Celery dans cette pile : les rares taches differees
       # s'executent dans le processus appelant. Ajouter un service worker le
@@ -149,6 +161,10 @@ services:
       # Lue a l'execution, cote serveur uniquement. Le navigateur ne voit
       # jamais cette adresse, et ne peut donc pas joindre Django directement.
       API_BASE_URL: http://backend:8010
+      # Reglage jumeau de DJANGO_HTTPS. Un cookie marque `Secure` n'est pas
+      # envoye sur une page en clair : le laisser vrai derriere un serveur en
+      # HTTP empecherait toute connexion.
+      COOKIES_SECURE: ${COOKIES_SECURE:-true}
 
   # ─── Reverse proxy Nginx ─────────────────────────────────────────
   nginx:

@@ -16,7 +16,7 @@ import {
   API_BASE_URL,
   API_PREFIX,
   CSRF_COOKIE,
-  IS_PRODUCTION,
+  COOKIES_SECURE,
   SESSION_COOKIE,
 } from "@/lib/config";
 import { ApiError, apiRequest, authHeaders } from "@/lib/api";
@@ -49,7 +49,7 @@ async function adopterCookies(response: Response): Promise<void> {
       // Le cookie CSRF doit rester lisible par le serveur Next uniquement :
       // le navigateur n'en a pas besoin puisqu'il ne parle pas a Django.
       httpOnly: true,
-      secure: IS_PRODUCTION,
+      secure: COOKIES_SECURE,
       sameSite: "strict",
       path: "/",
     });

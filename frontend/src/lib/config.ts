@@ -17,3 +17,19 @@ export const SESSION_COOKIE = "asleyn_sid";
 export const CSRF_COOKIE = "csrftoken";
 
 export const IS_PRODUCTION = process.env.NODE_ENV === "production";
+
+/**
+ * Marque `Secure` sur les cookies poses par le BFF.
+ *
+ * Vrai en production par defaut. Un cookie `Secure` n'est pas envoye sur une
+ * page en clair : le laisser vrai derriere un serveur en HTTP empecherait
+ * toute connexion — personne ne resterait authentifie.
+ *
+ * `COOKIES_SECURE=false` n'a donc qu'un usage : un serveur joint en clair, ou
+ * l'on accepte sciemment que les cookies de session circulent lisibles. Le
+ * reglage jumeau cote Django est `DJANGO_HTTPS`.
+ */
+export const COOKIES_SECURE =
+  process.env.COOKIES_SECURE === undefined
+    ? IS_PRODUCTION
+    : process.env.COOKIES_SECURE !== "false";
