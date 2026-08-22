@@ -2,6 +2,7 @@ import { KeyRound, LockKeyhole, ShieldAlert, UserCheck } from "lucide-react";
 
 import { LigneCompte } from "@/components/LigneCompte";
 import { Pagination } from "@/components/Pagination";
+import { RechercheInstantanee } from "@/components/RechercheInstantanee";
 import { Refus } from "@/components/Refus";
 import { Carte, OngletLien, Onglets, Vide } from "@/components/ui";
 import { apiRequest } from "@/lib/api";
@@ -98,25 +99,14 @@ export default async function PageComptes({
       <h1 className="text-xl font-bold text-dark">الحسابات</h1>
 
       <Carte titre="البحث">
-        <form method="get" className="mb-4 flex flex-wrap items-center gap-2">
-          {role ? <input type="hidden" name="role" value={role} /> : null}
-          {etat ? <input type="hidden" name="etat" value={etat} /> : null}
-          <input
-            type="search"
-            name="q"
-            defaultValue={recherche}
+        <div className="mb-4">
+          <RechercheInstantanee
+            chemin="/comptes"
+            valeurInitiale={recherche}
             placeholder="الاسم أو رقم الطالبة أو اسم المستخدم"
-            aria-label="بحث"
-            className="champ max-w-sm"
+            autres={{ role, etat }}
           />
-          <button
-            type="submit"
-            className="rounded-xl px-4 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90"
-            style={{ background: "linear-gradient(135deg,#006633,#008844)" }}
-          >
-            بحث
-          </button>
-        </form>
+        </div>
 
         <div className="space-y-3">
           <Onglets

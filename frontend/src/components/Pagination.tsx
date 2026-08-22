@@ -77,7 +77,7 @@ export function Pagination({
                 key={p}
                 href={href(p)}
                 aria-current={p === page ? "page" : undefined}
-                className={`chiffres flex h-7 w-7 items-center justify-center rounded-lg text-xs font-medium transition-colors ${
+                className={`chiffres flex h-7 w-7 items-center justify-center rounded-lg text-xs font-medium leading-none transition-colors ${
                   p === page
                     ? "text-white"
                     : "border border-gray-200 text-gris hover:bg-gray-50"
@@ -118,7 +118,7 @@ function LienFleche({
   children: React.ReactNode;
 }) {
   const style =
-    "flex h-7 w-7 items-center justify-center rounded-lg border border-gray-200 transition-colors";
+    "flex h-7 w-7 items-center justify-center rounded-lg border border-gray-200 leading-none transition-colors";
 
   if (desactive) {
     return (

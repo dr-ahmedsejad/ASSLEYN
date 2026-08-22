@@ -131,12 +131,24 @@ body {
  * Les notes et les matricules restent en chiffres occidentaux, isoles du sens
  * du texte : une note se recopie, l'ambiguite de lecture n'est pas acceptable.
  */
+/*
+ * Chiffres occidentaux dans un texte arabe.
+ *
+ * `unicode-bidi: isolate` empeche l'algorithme bidirectionnel de reordonner
+ * ce qui entoure le nombre : sans lui, « 15/26 » devient « 26/15 » des qu'un
+ * mot arabe le precede.
+ *
+ * Pas de `display` ici. La classe se pose souvent sur un element qui est deja
+ * une boite flex — une pastille de pagination, un rang dans un classement — et
+ * imposer `inline-block` ecraserait ce `flex` : le centrage cesserait
+ * d'operer, sans que rien ne le signale. `isolate` fonctionne sur un element
+ * inline comme sur un bloc.
+ */
 .chiffres {
   font-variant-numeric: tabular-nums;
   font-feature-settings: "tnum";
   direction: ltr;
   unicode-bidi: isolate;
-  display: inline-block;
 }
 
 /* --- Champ de saisie de note --- */

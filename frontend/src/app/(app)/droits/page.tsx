@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { CreationCompte } from "@/components/CreationCompte";
@@ -63,7 +64,7 @@ export default async function PageDroits({
 
       <CreationCompte />
 
-      <Carte titre="البحث عن مستخدم">
+      <Carte titre="البحث عن موظف">
         <form method="get" className="flex flex-wrap items-center gap-2">
           <input
             type="search"
@@ -81,6 +82,31 @@ export default async function PageDroits({
             بحث
           </button>
         </form>
+
+        {/* Cette page ne montre que le personnel : les droits d'une etudiante
+            tiennent a son statut, il n'y a rien a lui deleguer. Le dire, et
+            surtout dire ou aller — sans quoi on cherche une etudiante dans une
+            liste qui ne la contiendra jamais. */}
+        <div className="mt-4">
+          <Alerte ton="info">
+            هذه الصفحة تعرض <strong>الموظفين فقط</strong> — صلاحيات الطالبة
+            تأتي من صفتها، فلا شيء يُسند إليها هنا.
+            <br />
+            لإيجاد طالبة، أو لتغيير كلمة سر أي حساب،{" "}
+            <Link
+              href={
+                recherche
+                  ? `/comptes?q=${encodeURIComponent(recherche)}`
+                  : "/comptes"
+              }
+              className="font-semibold underline"
+            >
+              افتح صفحة الحسابات
+              {recherche ? ` بالبحث عن « ${recherche} »` : ""}
+            </Link>
+            .
+          </Alerte>
+        </div>
       </Carte>
 
       <MatriceParRole matrice={matrice} />

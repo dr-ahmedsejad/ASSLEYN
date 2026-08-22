@@ -273,7 +273,7 @@ export default async function PageSecurite({
             {stats.top_etudiantes.map((etudiante, index) => (
               <li key={etudiante.username} className="flex items-center gap-3">
                 <span
-                  className={`chiffres flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-xs font-bold ${
+                  className={`chiffres flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-xs font-bold leading-none ${
                     index < 3
                       ? "text-white"
                       : "border border-gray-200 bg-white text-gris"
