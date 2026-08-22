@@ -173,6 +173,118 @@ def test_apres_deblocage_les_echecs_recomptent(api, etudiante, admin_user) -> No
 
 
 # --------------------------------------------------------------------------
+# Isolation : un compte bloque n'en bloque aucun autre
+# --------------------------------------------------------------------------
+
+
+@pytest.fixture
+def camarade(db) -> User:
+    """Une seconde etudiante, du meme قسم et derriere la meme sortie internet."""
+    user = User.objects.create_user(
+        username="24061", password="2406124061", full_name_ar="عيشة منت باباه"
+    )
+    user.role = Role.STUDENT
+    user.save(update_fields=["role"])
+    return user
+
+
+@pytest.mark.django_db
+def test_le_blocage_n_atteint_que_le_compte_vise(api, etudiante, camarade) -> None:
+    """
+    Le point le plus important de toute la mecanique.
+
+    Bloquer un compte ne doit rien fermer a personne d'autre — surtout pas
+    depuis la meme adresse : l'institut sort par une seule connexion internet,
+    et toutes les etudiantes consultent leurs resultats depuis ce reseau.
+    """
+    _echouer(api, 5, username="24060")
+    assert verrouillage.verrou_actif("24060") is not None
+
+    reponse = _connexion(api, "24061", "2406124061")
+
+    assert reponse.status_code == status.HTTP_200_OK
+    assert reponse.data["username"] == "24061"
+    assert verrouillage.verrou_actif("24061") is None
+
+
+@pytest.mark.django_db
+def test_toute_une_classe_passe_pendant_qu_un_compte_est_bloque(api, etudiante) -> None:
+    """Le meme point, a l'echelle ou il se pose vraiment : depuis une seule IP."""
+    _echouer(api, 5, username="24060")
+
+    for numero in range(24062, 24082):
+        matricule = str(numero)
+        compte = User.objects.create_user(
+            username=matricule, password=matricule * 2, full_name_ar=f"طالبة {numero}"
+        )
+        compte.role = Role.STUDENT
+        compte.save(update_fields=["role"])
+
+        reponse = api.post(
+            reverse("auth-login"),
+            {"username": matricule, "password": matricule * 2},
+            format="json",
+            REMOTE_ADDR="41.188.1.2",
+        )
+        assert reponse.status_code == status.HTTP_200_OK, matricule
+
+    # Et le compte vise, lui, reste ferme.
+    assert verrouillage.verrou_actif("24060") is not None
+    assert Lockout.objects.count() == 1
+
+
+@pytest.mark.django_db
+def test_les_echecs_ne_se_melangent_pas_entre_comptes(api, etudiante, camarade) -> None:
+    """Quatre erreurs chacune ne bloquent personne : les compteurs sont separes."""
+    _echouer(api, 4, username="24060")
+    _echouer(api, 4, username="24061")
+
+    assert verrouillage.echecs_consecutifs("24060") == 4
+    assert verrouillage.echecs_consecutifs("24061") == 4
+    assert Lockout.objects.count() == 0
+
+
+@pytest.mark.django_db
+def test_le_blocage_suit_le_compte_et_non_l_adresse(api, etudiante) -> None:
+    """
+    Changer de reseau ne contourne pas le blocage.
+
+    C'est le revers du choix precedent : puisque le verrou porte sur le compte,
+    il le suit partout — telephone, domicile, etablissement.
+    """
+    for _ in range(5):
+        api.post(
+            reverse("auth-login"),
+            {"username": "24060", "password": "faux"},
+            format="json",
+            REMOTE_ADDR="41.188.1.2",
+        )
+
+    depuis_ailleurs = api.post(
+        reverse("auth-login"),
+        {"username": "24060", "password": MOT_DE_PASSE},
+        format="json",
+        REMOTE_ADDR="196.20.9.9",
+    )
+
+    assert depuis_ailleurs.status_code == status.HTTP_423_LOCKED
+
+
+@pytest.mark.django_db
+def test_le_deblocage_d_un_compte_ne_touche_pas_les_autres(
+    api, etudiante, camarade, admin_user
+) -> None:
+    _echouer(api, 5, username="24060")
+    _echouer(api, 5, username="24061")
+    assert Lockout.objects.filter(released_at__isnull=True).count() == 2
+
+    verrouillage.deverrouiller(verrouillage.verrou_actif("24060"), par=admin_user)
+
+    assert verrouillage.verrou_actif("24060") is None
+    assert verrouillage.verrou_actif("24061") is not None
+
+
+# --------------------------------------------------------------------------
 # Journal
 # --------------------------------------------------------------------------
 
