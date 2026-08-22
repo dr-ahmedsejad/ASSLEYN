@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 
+import { CreationCompte } from "@/components/CreationCompte";
 import { DroitsIndividuels, MatriceParRole } from "@/components/GestionDroits";
 import { Alerte, Carte } from "@/components/ui";
 import { apiRequest, getCurrentUser } from "@/lib/api";
@@ -59,6 +60,8 @@ export default async function PageDroits({
   return (
     <div className="space-y-5">
       <h1 className="text-xl font-bold text-dark">الأدوار والصلاحيات</h1>
+
+      <CreationCompte />
 
       <Carte titre="البحث عن مستخدم">
         <form method="get" className="flex flex-wrap items-center gap-2">

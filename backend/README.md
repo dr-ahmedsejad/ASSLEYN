@@ -135,6 +135,30 @@ refuserait les mots de passe numériques, et `UserAttributeSimilarity`
 refuserait un mot de passe dérivé du nom d'utilisateur — ce qui est exactement
 la règle retenue. `CommonPassword` reste : il écarte `12345678`.
 
+### Ouverture d'un compte
+
+`POST /rbac/utilisateurs/`. Le **nom complet est saisi**, jamais déduit de
+l'identifiant : `sejad` est une chaîne technique, et la translittérer en arabe
+produit une orthographe que l'intéressé ne reconnaît pas comme la sienne.
+
+Deux chemins, parce que ce sont deux gestes différents :
+
+- **Personnel** — identifiant, nom complet, mot de passe, rôle. Les quatre sont
+  obligatoires ; l'identifiant est comparé sans tenir compte de la casse.
+- **Étudiante** — un matricule suffit. Le nom vient de son dossier et n'est pas
+  retapé : deux orthographes pour une même personne, c'est une personne de
+  trop. L'identifiant est le matricule, le mot de passe initial le matricule
+  écrit deux fois. Un nom envoyé avec le matricule est ignoré.
+
+Le mot de passe posé par l'administration est provisoire quelle que soit sa
+qualité — il a transité par une autre personne — et son remplacement est imposé
+à la première connexion.
+
+`PATCH /rbac/utilisateurs/{id}/` corrige un nom après coup, nécessaire parce que
+les premiers comptes ont été ouverts sans champ de nom. Pour une étudiante, la
+correction suit jusqu'à son dossier : le compte et le dossier ne peuvent pas
+porter deux noms différents.
+
 ### Verrouillage progressif
 
 `apps/accounts/verrouillage.py`. Cinq échecs ferment le compte **5 minutes** ;
@@ -168,6 +192,8 @@ jamais Django directement, il n'y a pas de page vue côté API à compter.
 
 | Route | Permission |
 |---|---|
+| `POST /rbac/utilisateurs/` | `comptes.gerer` |
+| `PATCH /rbac/utilisateurs/{id}/` | `comptes.gerer` |
 | `GET /securite/journal/` | `journal.consulter` |
 | `GET /securite/statistiques/` | `journal.consulter` |
 | `GET /securite/verrous/` | `comptes.gerer` |

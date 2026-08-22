@@ -20,7 +20,15 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from apps.accounts.models import Role, RolePermission, User, UserPermission
+from django.contrib.auth import password_validation
+
+from apps.accounts.models import (
+    Role,
+    RolePermission,
+    Student,
+    User,
+    UserPermission,
+)
 from apps.accounts.rbac import CATEGORIES, Permission, est_verrouillee
 from apps.common.permissions import PeutGererComptes
 
@@ -191,15 +199,151 @@ def _etat_permissions(utilisateur: User) -> list[dict]:
     return lignes
 
 
+class CreationCompteSerializer(serializers.Serializer):
+    """
+    Ouverture d'un compte.
+
+    Le nom complet est **saisi**, jamais deduit de l'identifiant. Un
+    identifiant est une chaine technique — `sejad`, `ahmed` — et le
+    translitterer en arabe produit une orthographe approximative que
+    l'interieresse ne reconnait pas comme la sienne.
+
+    Pour une etudiante, le nom existe deja dans son dossier : on le reprend
+    tel quel plutot que de le retaper, au risque d'une seconde orthographe.
+    """
+
+    #: Rattachement a un dossier d'etudiante. Present, il fournit a lui seul
+    #: l'identifiant, le nom et le mot de passe initial.
+    matricule = serializers.CharField(required=False, allow_blank=True)
+
+    username = serializers.CharField(required=False, allow_blank=True, max_length=150)
+    full_name_ar = serializers.CharField(required=False, allow_blank=True, max_length=150)
+    password = serializers.CharField(
+        required=False, allow_blank=True, style={"input_type": "password"}
+    )
+    role = serializers.ChoiceField(choices=Role.choices, required=False)
+    phone = serializers.CharField(required=False, allow_blank=True, max_length=30)
+
+    def validate(self, attrs: dict) -> dict:
+        matricule = (attrs.get("matricule") or "").strip()
+
+        if matricule:
+            etudiante = Student.objects.filter(matricule=matricule).first()
+            if etudiante is None:
+                raise ValidationError({"matricule": "لا توجد طالبة بهذا الرقم."})
+            if etudiante.user_id is not None:
+                raise ValidationError({"matricule": "لهذه الطالبة حساب مسبقا."})
+
+            attrs["etudiante"] = etudiante
+            attrs["username"] = matricule
+            attrs["full_name_ar"] = etudiante.full_name_ar
+            attrs["role"] = Role.STUDENT
+            # Regle de l'etablissement : le matricule ecrit deux fois.
+            attrs["password"] = (attrs.get("password") or "").strip() or matricule * 2
+        else:
+            attrs["etudiante"] = None
+            if attrs.get("role") == Role.STUDENT:
+                raise ValidationError(
+                    {"matricule": "حساب الطالبة يُنشأ من ملفها: أدخل رقم الطالبة."}
+                )
+            requis = {
+                "username": "اسم المستخدم مطلوب.",
+                "full_name_ar": "الاسم الكامل مطلوب.",
+                "password": "كلمة السر مطلوبة.",
+                "role": "الدور مطلوب.",
+            }
+            manquants = {
+                champ: message
+                for champ, message in requis.items()
+                if not str(attrs.get(champ) or "").strip()
+            }
+            if manquants:
+                raise ValidationError(manquants)
+
+        attrs["username"] = attrs["username"].strip()
+        attrs["full_name_ar"] = attrs["full_name_ar"].strip()
+
+        if User.objects.filter(username__iexact=attrs["username"]).exists():
+            raise ValidationError({"username": "اسم المستخدم مستعمل."})
+
+        return attrs
+
+    def validate_password(self, value: str) -> str:
+        # Le mot de passe rattache a un matricule est valide dans `validate`,
+        # ou l'on connait le compte vise. Ici on ne verifie que ce qui est
+        # saisi librement.
+        if value:
+            password_validation.validate_password(value)
+        return value
+
+
+class IdentiteSerializer(serializers.Serializer):
+    """Identite d'un compte, modifiable apres coup."""
+
+    full_name_ar = serializers.CharField(max_length=150, required=False)
+    phone = serializers.CharField(max_length=30, required=False, allow_blank=True)
+
+    def validate_full_name_ar(self, value: str) -> str:
+        nom = value.strip()
+        if not nom:
+            raise ValidationError("الاسم الكامل مطلوب.")
+        return nom
+
+
 class UtilisateursDroitsView(APIView):
     """
     Personnes auxquelles on peut confier une capacite individuelle.
 
-    Les etudiantes sont exclues : leurs droits tiennent a leur statut, pas a
-    une delegation.
+    Les etudiantes sont exclues de la **liste** : leurs droits tiennent a leur
+    statut, pas a une delegation. Elles peuvent en revanche etre creees ici,
+    a partir de leur dossier.
     """
 
     permission_classes = [PeutGererComptes]
+
+    @extend_schema(request=CreationCompteSerializer, responses={201: None})
+    def post(self, request: Request) -> Response:
+        serializer = CreationCompteSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        donnees = serializer.validated_data
+
+        with transaction.atomic():
+            utilisateur = User.objects.create_user(
+                username=donnees["username"],
+                password=donnees["password"],
+                full_name_ar=donnees["full_name_ar"],
+            )
+            utilisateur.role = donnees["role"]
+            utilisateur.phone = donnees.get("phone", "")
+            # Le mot de passe pose par l'administration est provisoire, quelle
+            # que soit sa qualite : il a transite par une autre personne.
+            utilisateur.must_change_password = True
+            utilisateur.save(update_fields=["role", "phone", "must_change_password"])
+
+            etudiante = donnees["etudiante"]
+            if etudiante is not None:
+                etudiante.user = utilisateur
+                etudiante.save(update_fields=["user"])
+
+        audit.warning(
+            "Compte cree — %s (%s, %s) par %s",
+            utilisateur.username,
+            utilisateur.full_name_ar,
+            utilisateur.role,
+            request.user.username,
+        )
+        return Response(
+            {
+                "id": utilisateur.id,
+                "username": utilisateur.username,
+                "full_name_ar": utilisateur.full_name_ar,
+                "role": utilisateur.role,
+                "role_display": utilisateur.get_role_display(),
+                # Rendu une seule fois : il n'est stocke nulle part en clair.
+                "mot_de_passe": donnees["password"],
+            },
+            status=status.HTTP_201_CREATED,
+        )
 
     @extend_schema(responses={200: None})
     def get(self, request: Request) -> Response:
@@ -249,6 +393,51 @@ class DroitsUtilisateurView(APIView):
                 "role": utilisateur.role,
                 "role_display": utilisateur.get_role_display(),
                 "permissions": _etat_permissions(utilisateur),
+            }
+        )
+
+    @extend_schema(request=IdentiteSerializer, responses={200: None})
+    def patch(self, request: Request, pk: int) -> Response:
+        """
+        Corrige l'identite d'un compte : nom complet, telephone.
+
+        Necessaire parce que les premiers comptes ont ete ouverts sans champ
+        de nom, avec une translitteration de l'identifiant. Une personne doit
+        pouvoir porter son nom tel qu'elle l'ecrit.
+        """
+        utilisateur = get_object_or_404(User, pk=pk)
+        serializer = IdentiteSerializer(data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+
+        modifies = []
+        for champ, valeur in serializer.validated_data.items():
+            if getattr(utilisateur, champ) != valeur:
+                setattr(utilisateur, champ, valeur)
+                modifies.append(champ)
+        if modifies:
+            utilisateur.save(update_fields=modifies)
+            audit.info(
+                "Identite modifiee — %s : %s par %s",
+                utilisateur.username,
+                ", ".join(modifies),
+                request.user.username,
+            )
+
+            # Le nom d'une etudiante vit dans son dossier : le laisser diverger
+            # de celui de son compte donnerait deux verites pour une personne.
+            if "full_name_ar" in modifies:
+                Student.objects.filter(user=utilisateur).update(
+                    full_name_ar=utilisateur.full_name_ar
+                )
+
+        return Response(
+            {
+                "id": utilisateur.id,
+                "username": utilisateur.username,
+                "full_name_ar": utilisateur.full_name_ar,
+                "phone": utilisateur.phone,
+                "role": utilisateur.role,
+                "role_display": utilisateur.get_role_display(),
             }
         )
 

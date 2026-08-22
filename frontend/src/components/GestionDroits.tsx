@@ -4,6 +4,7 @@ import { Fragment, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Check, Lock, ShieldCheck, UserCog } from "lucide-react";
 
+import { CorrectionNom } from "@/components/CorrectionNom";
 import { ReinitialisationMotDePasse } from "@/components/ReinitialisationMotDePasse";
 import type {
   DetailDroitsUtilisateur,
@@ -334,6 +335,11 @@ export function DroitsIndividuels({
                   <p className="flex items-center gap-2 font-semibold text-dark">
                     <UserCog size={16} className="text-gris" />
                     {detail.full_name_ar}
+                    <CorrectionNom
+                      key={detail.id}
+                      utilisateur={detail.id}
+                      nom={detail.full_name_ar}
+                    />
                   </p>
                   <p className="text-xs text-gris">
                     {detail.role_display}

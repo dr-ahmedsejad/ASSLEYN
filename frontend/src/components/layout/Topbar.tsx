@@ -17,6 +17,17 @@ interface Props {
 }
 
 /**
+ * Premier mot du nom complet.
+ *
+ * Un salut se fait par le prenom : « مرحبا دعيه », pas « مرحبا دعيه أدو ».
+ * Les noms d'ici comptent souvent trois ou quatre parties, et la barre du haut
+ * doit rester lisible sur un telephone.
+ */
+function prenom(nomComplet: string): string {
+  return nomComplet.trim().split(/\s+/)[0] || nomComplet;
+}
+
+/**
  * Barre du haut : ouverture mobile, repli desktop, contexte de travail, profil.
  *
  * Le selecteur de فصل est enveloppe dans un `Suspense` : il lit les parametres
@@ -49,9 +60,13 @@ export default function Topbar({
         <Menu size={18} />
       </button>
 
-      <h2 className="hidden min-w-0 flex-1 truncate text-sm font-semibold text-dark sm:block">
-        معهد الأصلين
-      </h2>
+      {/* Le nom de l'institut figure deja dans le bandeau lateral. Cette
+          place revient a la personne connectee : sur un telephone, ou tout le
+          reste est masque, c'est le seul repere qui dise « c'est bien ton
+          compte ». Le prenom suffit, et tient dans la largeur. */}
+      <p className="min-w-0 flex-1 truncate text-sm font-semibold text-dark">
+        مرحبا <span className="text-primary">{prenom(user.full_name_ar)}</span>
+      </p>
 
       <div className="flex flex-1 items-center justify-end gap-2 sm:flex-none sm:gap-3">
         {user.role === "STUDENT" ? null : (
