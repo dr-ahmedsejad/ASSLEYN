@@ -1,5 +1,10 @@
 import Image from "next/image";
-import { Award, Star, Trophy } from "lucide-react";
+
+import {
+  LIBELLE_PLACE,
+  Medaille,
+  TEINTE_PLACE,
+} from "@/components/Medaille";
 
 import type { AnnualResult, SemesterResult } from "@/lib/types";
 
@@ -15,9 +20,10 @@ import type { AnnualResult, SemesterResult } from "@/lib/types";
  * et une carte claire supporte mieux la capture, quel que soit le fond de la
  * conversation ou elle sera partagee.
  *
- * Les trois premieres places recoivent une distinction : coupe, medaille
- * d'argent, medaille de bronze. Au-dela, le rang reste affiche mais sobre :
- * une carte partagee ne doit pas transformer chaque place en podium.
+ * Les trois premieres places recoivent une medaille — or, argent, bronze —
+ * qui porte son propre numero (cf. `Medaille`). Au-dela, le rang reste
+ * affiche mais sobre : une carte partagee ne doit pas transformer chaque
+ * place en podium.
  *
  * **La fete est reservee a celles qui ont reussi** : confettis, disque qui
  * surgit, reflet sur la mention. Une carte d'استدراك ne recoit aucun de ces
@@ -28,43 +34,6 @@ import type { AnnualResult, SemesterResult } from "@/lib/types";
  * a converti un استدراك en reussite, la carte le fete.
  */
 
-interface Podium {
-  Icone: typeof Trophy;
-  libelle: string;
-  fond: string;
-  texte: string;
-}
-
-/*
- * Aucune de ces icones ne porte de chiffre.
- *
- * C'est une contrainte, pas un gout : la `Medal` de lucide a un « 1 » grave
- * dans son dessin. Posee sur la deuxieme place, elle affichait une medaille
- * d'argent frappee du chiffre 1 — l'image contredisait le texte juste en
- * dessous. Trois silhouettes distinctes, et le rang ecrit une seule fois, dans
- * la pastille.
- */
-const PODIUM: Record<number, Podium> = {
-  1: {
-    Icone: Trophy,
-    libelle: "المرتبة الأولى",
-    fond: "linear-gradient(135deg,#E5C018,#F5D340)",
-    texte: "#7a6300",
-  },
-  2: {
-    Icone: Award,
-    libelle: "المرتبة الثانية",
-    fond: "linear-gradient(135deg,#9aa5b1,#d7dee6)",
-    texte: "#3f4a56",
-  },
-  3: {
-    Icone: Star,
-    libelle: "المرتبة الثالثة",
-    fond: "linear-gradient(135deg,#c07b3a,#e3ab72)",
-    texte: "#5c3512",
-  },
-};
-
 export function CarteResultat({
   resultat,
   annuel,
@@ -74,7 +43,7 @@ export function CarteResultat({
   annuel?: AnnualResult | null;
   nom: string;
 }) {
-  const distinction = PODIUM[resultat.rank];
+  const teinte = TEINTE_PLACE[resultat.rank];
   const reussie = resultat.decision_final === "PASSED";
 
   return (
@@ -112,30 +81,20 @@ export function CarteResultat({
 
       {/* Distinction, ou pastille de rang */}
       <div className="relative mt-5 flex flex-col items-center">
-        {distinction ? (
+        {teinte ? (
           <>
-            <div
-              className={`relative flex h-24 w-24 items-center justify-center rounded-full shadow-card ${
-                reussie ? "pastille-pop" : ""
-              }`}
-              style={{ background: distinction.fond }}
-            >
-              <distinction.Icone size={44} style={{ color: distinction.texte }} />
-
-              {/* Le rang, en chiffre, sur la medaille elle-meme : l'image et
-                  le texte ne peuvent plus se contredire. */}
-              <span
-                className="chiffres absolute -bottom-1 flex h-7 w-7 items-center justify-center rounded-full border-2 border-white text-sm font-extrabold leading-none shadow-card"
-                style={{ background: distinction.texte, color: "#ffffff" }}
-              >
-                {resultat.rank}
-              </span>
-            </div>
+            {/* La medaille porte son propre numero : l'image et le texte ne
+                peuvent plus se contredire. */}
+            <Medaille
+              rang={resultat.rank}
+              taille={110}
+              className={reussie ? "pastille-pop" : ""}
+            />
             <p
-              className="mt-3 rounded-full px-4 py-1 text-sm font-bold"
-              style={{ background: distinction.fond, color: distinction.texte }}
+              className="mt-2 rounded-full px-4 py-1 text-sm font-bold"
+              style={{ background: teinte.fond, color: teinte.texte }}
             >
-              {distinction.libelle}{" "}
+              {LIBELLE_PLACE[resultat.rank]}{" "}
               <span className="chiffres font-extrabold">
                 من {resultat.cohort_size}
               </span>

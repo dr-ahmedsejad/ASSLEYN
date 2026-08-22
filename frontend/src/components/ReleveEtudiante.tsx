@@ -3,7 +3,16 @@ import { Share2 } from "lucide-react";
 
 import type { AnnualResult, SemesterResult } from "@/lib/types";
 
-import { BadgeDecision, Carte, DecisionMatiere, Nombre, Vide } from "./ui";
+import { estEvalue } from "@/lib/evaluation";
+
+import {
+  Alerte,
+  BadgeDecision,
+  Carte,
+  DecisionMatiere,
+  Nombre,
+  Vide,
+} from "./ui";
 
 /**
  * Releve d'une etudiante : un bloc par فصل, puis le resultat annuel.
@@ -37,7 +46,23 @@ export function ReleveEtudiante({
         بطاقة النتيجة للمشاركة
       </Link>
 
-      {semestres.map((resultat) => (
+      {semestres.map((resultat) =>
+        !estEvalue(resultat) ? (
+          /* Un فصل publie avant la saisie des notes rend une moyenne de 0,00
+             et un استدراك que rien ne distingue d'un echec reel. On dit ce
+             qu'il en est plutot que d'afficher des chiffres qui ne reposent
+             sur rien. */
+          <Carte
+            key={resultat.id}
+            titre={`الفصل ${resultat.semester_number}`}
+            description={resultat.section_name}
+          >
+            <Alerte ton="info">
+              لم تُدخل نقاط هذا الفصل بعد. ستظهر النتيجة هنا فور إدخالها
+              واعتماد المداولة.
+            </Alerte>
+          </Carte>
+        ) : (
         <Carte
           key={resultat.id}
           titre={`الفصل ${resultat.semester_number}`}
@@ -107,7 +132,8 @@ export function ReleveEtudiante({
             </p>
           ) : null}
         </Carte>
-      ))}
+        )
+      )}
 
       {annuels.map((annuel) => (
         <Carte

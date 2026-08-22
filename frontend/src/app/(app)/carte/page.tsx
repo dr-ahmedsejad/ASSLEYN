@@ -2,8 +2,9 @@ import Link from "next/link";
 
 import { CarteResultat } from "@/components/CarteResultat";
 import { Refus } from "@/components/Refus";
-import { Carte, OngletLien, Onglets, Vide } from "@/components/ui";
+import { Alerte, Carte, OngletLien, Onglets, Vide } from "@/components/ui";
 import { apiRequest, getCurrentUser } from "@/lib/api";
+import { estEvalue, faslAPresenter } from "@/lib/evaluation";
 import { PERMISSIONS } from "@/lib/nav-config";
 import type { AnnualResult, SemesterResult } from "@/lib/types";
 
@@ -44,10 +45,17 @@ export default async function PageCarte({
   }
 
   const parametres = await searchParams;
-  // Par defaut le dernier فصل publie : c'est celui qu'on partage.
+  // Par defaut le dernier فصل **evalue**, et non le dernier publie.
+  //
+  // Un فصل publie avant la saisie des notes produit un resultat parfaitement
+  // forme — moyenne 0,00, rang, decision استدراك — que rien ne distingue d'un
+  // echec reel. Le mettre en avant ferait annoncer a une etudiante, sur une
+  // carte destinee au partage, une contre-performance qui n'a pas eu lieu.
   const resultat =
     releve.semesters.find((s) => String(s.semester) === parametres.fasl) ??
-    releve.semesters[releve.semesters.length - 1];
+    faslAPresenter(releve.semesters)!;
+
+  const evalue = estEvalue(resultat);
 
   // Le resultat annuel ne rejoint la carte que s'il est complet : afficher une
   // moyenne annuelle calculee sur un seul فصل induirait en erreur.
@@ -83,15 +91,26 @@ export default async function PageCarte({
         </Carte>
       ) : null}
 
-      <CarteResultat
-        resultat={resultat}
-        annuel={annuel}
-        nom={utilisateur.full_name_ar}
-      />
+      {evalue ? (
+        <>
+          <CarteResultat
+            resultat={resultat}
+            annuel={annuel}
+            nom={utilisateur.full_name_ar}
+          />
 
-      <p className="text-center text-xs text-gris">
-        التقط صورة للبطاقة لمشاركتها.
-      </p>
+          <p className="text-center text-xs text-gris">
+            التقط صورة للبطاقة لمشاركتها.
+          </p>
+        </>
+      ) : (
+        <Carte>
+          <Alerte ton="info">
+            لم تُدخل نقاط <strong>الفصل {resultat.semester_number}</strong> بعد،
+            فلا بطاقة له حتى الآن. ستظهر هنا فور إدخال النقاط واعتماد المداولة.
+          </Alerte>
+        </Carte>
+      )}
     </div>
   );
 }
