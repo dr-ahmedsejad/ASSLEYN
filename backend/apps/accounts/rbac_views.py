@@ -13,7 +13,9 @@ import logging
 from django.db import transaction
 from django.db.models import Q
 from drf_spectacular.utils import extend_schema
+from django.utils import timezone
 from rest_framework import serializers, status
+from rest_framework.generics import ListAPIView
 from rest_framework.exceptions import ValidationError
 from django.shortcuts import get_object_or_404
 from rest_framework.request import Request
@@ -23,6 +25,7 @@ from rest_framework.views import APIView
 from django.contrib.auth import password_validation
 
 from apps.accounts.models import (
+    Lockout,
     Role,
     RolePermission,
     Student,
@@ -277,6 +280,38 @@ class CreationCompteSerializer(serializers.Serializer):
         return value
 
 
+class CompteSerializer(serializers.ModelSerializer):
+    """Une ligne de la liste des comptes."""
+
+    role_display = serializers.CharField(source="get_role_display", read_only=True)
+    matricule = serializers.SerializerMethodField()
+    verrouille = serializers.SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = [
+            "id",
+            "username",
+            "full_name_ar",
+            "role",
+            "role_display",
+            "matricule",
+            "phone",
+            "is_active",
+            "must_change_password",
+            "last_login",
+            "date_joined",
+            "verrouille",
+        ]
+
+    def get_matricule(self, obj: User) -> str | None:
+        dossier = getattr(obj, "student_profile", None)
+        return dossier.matricule if dossier else None
+
+    def get_verrouille(self, obj: User) -> bool:
+        return obj.username in self.context.get("verrouilles", set())
+
+
 class IdentiteSerializer(serializers.Serializer):
     """Identite d'un compte, modifiable apres coup."""
 
@@ -375,6 +410,61 @@ class UtilisateursDroitsView(APIView):
                 for personne in personnes.order_by("role", "full_name_ar")[:200]
             ]
         )
+
+
+class ComptesView(ListAPIView):
+    """
+    Tous les comptes, etudiantes comprises.
+
+    A ne pas confondre avec `UtilisateursDroitsView`, qui ne montre que le
+    personnel : celle-la sert a **deleguer une capacite**, et les droits d'une
+    etudiante tiennent a son statut, pas a une delegation. Ici on regarde les
+    comptes eux-memes — qui en a un, sous quel nom, ouvert ou ferme.
+
+    Filtres : `search` (identifiant ou nom), `role`, `verrouilles=1`,
+    `mdp_provisoire=1`.
+    """
+
+    serializer_class = CompteSerializer
+    permission_classes = [PeutGererComptes]
+
+    def get_queryset(self):
+        comptes = User.objects.select_related("student_profile")
+
+        recherche = (self.request.query_params.get("search") or "").strip()
+        if recherche:
+            comptes = comptes.filter(
+                Q(username__icontains=recherche)
+                | Q(full_name_ar__icontains=recherche)
+            )
+
+        role = self.request.query_params.get("role")
+        if role in Role.values:
+            comptes = comptes.filter(role=role)
+
+        if self.request.query_params.get("mdp_provisoire") == "1":
+            comptes = comptes.filter(must_change_password=True)
+
+        if self.request.query_params.get("verrouilles") == "1":
+            fermes = Lockout.objects.filter(
+                released_at__isnull=True, until__gt=timezone.now()
+            ).values("username")
+            comptes = comptes.filter(username__in=fermes)
+
+        # Le personnel d'abord : c'est lui qu'on cherche le plus souvent, et
+        # les etudiantes se retrouvent par leur numero.
+        return comptes.order_by("role", "username")
+
+    def get_serializer_context(self) -> dict:
+        contexte = super().get_serializer_context()
+        # Une seule requete pour l'ensemble de la page, plutot qu'une par
+        # ligne : c'est la difference entre 25 requetes et une.
+        contexte["verrouilles"] = set(
+            Lockout.objects.filter(
+                released_at__isnull=True, until__gt=timezone.now()
+            ).values_list("username", flat=True)
+        )
+        return contexte
 
 
 class DroitsUtilisateurView(APIView):

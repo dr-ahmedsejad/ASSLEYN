@@ -67,6 +67,7 @@ export async function reinitialiserMotDePasse(
     });
 
     revalidatePath("/droits");
+    revalidatePath("/comptes");
     return {
       username: reponse.username,
       nom: reponse.full_name_ar,

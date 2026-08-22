@@ -10,6 +10,7 @@ import {
   ScrollText,
   ShieldCheck,
   Siren,
+  UserCog,
   Users,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
@@ -142,6 +143,13 @@ export const NAV_GROUPS: NavGroup[] = [
     icon: Siren,
     permission: PERMISSIONS.JOURNAL_CONSULTER,
     items: [{ href: "/securite", label: "الزيارات وسجل الدخول" }],
+  },
+  {
+    key: "comptes",
+    label: "الحسابات",
+    icon: UserCog,
+    permission: PERMISSIONS.COMPTES_GERER,
+    items: [{ href: "/comptes", label: "كل الحسابات" }],
   },
   {
     key: "droits",

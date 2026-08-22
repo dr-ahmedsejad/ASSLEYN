@@ -93,6 +93,7 @@ export async function corrigerIdentite(
   }
 
   revalidatePath("/droits");
+  revalidatePath("/comptes");
   revalidatePath("/", "layout");
   return { message: "تم تعديل الاسم." };
 }

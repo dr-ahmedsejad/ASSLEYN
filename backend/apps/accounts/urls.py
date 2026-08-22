@@ -2,6 +2,7 @@ from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
 from apps.accounts.rbac_views import (
+    ComptesView,
     DroitsUtilisateurView,
     MatriceDroitsView,
     UtilisateursDroitsView,
@@ -58,6 +59,7 @@ urlpatterns = [
         ReinitialiserMotDePasseView.as_view(),
         name="securite-reinitialiser",
     ),
+    path("rbac/comptes/", ComptesView.as_view(), name="rbac-comptes"),
     path("rbac/matrice/", MatriceDroitsView.as_view(), name="rbac-matrice"),
     path("rbac/utilisateurs/", UtilisateursDroitsView.as_view(), name="rbac-utilisateurs"),
     path(

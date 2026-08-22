@@ -214,7 +214,9 @@ REST_FRAMEWORK = {
         "rest_framework.filters.SearchFilter",
         "rest_framework.filters.OrderingFilter",
     ],
-    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+    # Pagination maison : celle de DRF ignore `?page_size=`, que les ecrans
+    # utilisent partout. Voir apps/common/pagination.py.
+    "DEFAULT_PAGINATION_CLASS": "apps.common.pagination.Pagination",
     "PAGE_SIZE": 50,
     "DEFAULT_THROTTLE_CLASSES": [
         "rest_framework.throttling.AnonRateThrottle",

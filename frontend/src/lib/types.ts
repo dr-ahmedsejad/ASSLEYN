@@ -356,3 +356,19 @@ export interface StatistiquesVisites {
   top_etudiantes: VisiteuseAssidue[];
   par_jour: { jour: string; visites: number }[];
 }
+
+/** Une ligne de la liste des comptes (`/rbac/comptes/`). */
+export interface Compte {
+  id: number;
+  username: string;
+  full_name_ar: string;
+  role: Role;
+  role_display: string;
+  matricule: string | null;
+  phone: string;
+  is_active: boolean;
+  must_change_password: boolean;
+  last_login: string | null;
+  date_joined: string;
+  verrouille: boolean;
+}
