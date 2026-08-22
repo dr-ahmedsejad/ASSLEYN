@@ -7,7 +7,25 @@ import { ChevronDown, KeyRound, LogOut } from "lucide-react";
 import { deconnexion } from "@/lib/auth";
 import type { CurrentUser } from "@/lib/types";
 
-/** Menu de profil : avatar, role, changement de mot de passe, deconnexion. */
+/**
+ * Premier mot du nom complet.
+ *
+ * Un salut se fait par le prenom : « مرحبا دعيه », pas « مرحبا دعيه أدو ». Les
+ * noms d'ici comptent souvent trois ou quatre parties, et le bandeau doit
+ * rester lisible sur un telephone. Le nom entier reste visible en depliant le
+ * menu.
+ */
+function prenom(nomComplet: string): string {
+  return nomComplet.trim().split(/\s+/)[0] || nomComplet;
+}
+
+/**
+ * Menu de profil : salut, role, changement de mot de passe, deconnexion.
+ *
+ * Le salut est ici, et non dans le titre de la barre : c'est le bloc qui
+ * designe deja la personne connectee — son role, ses initiales, ses actions.
+ * Le nom de l'institut, lui, reprend sa place au centre.
+ */
 export default function UserMenu({ user }: { user: CurrentUser }) {
   const [open, setOpen] = useState(false);
   const conteneur = useRef<HTMLDivElement>(null);
@@ -47,9 +65,9 @@ export default function UserMenu({ user }: { user: CurrentUser }) {
         aria-haspopup="menu"
         className="flex items-center gap-2.5 rounded-xl px-2 py-1.5 transition-colors hover:bg-gray-50"
       >
-        <div className="hidden flex-col items-start sm:flex">
-          <p className="text-xs font-semibold leading-tight text-dark">
-            {user.full_name_ar}
+        <div className="flex min-w-0 flex-col items-start">
+          <p className="max-w-36 truncate text-xs font-semibold leading-tight text-dark">
+            مرحبا <span className="text-primary">{prenom(user.full_name_ar)}</span>
           </p>
           <span
             className="mt-0.5 inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-semibold"
