@@ -205,6 +205,23 @@ body {
   padding-inline-end: 2.75rem;
 }
 
+/*
+ * Champ de recherche : loupe au debut, croix d'effacement a la fin.
+ *
+ * Les deux marges sont declarees ici, et non en utilitaires : `.champ` pose
+ * un `padding` court, et une classe utilitaire de meme specificite ne
+ * l'emporte pas de facon fiable — le texte se glissait alors sous la loupe,
+ * masquant le debut du nom ou du matricule.
+ *
+ * 2,75rem = 44 px : l'icone occupe de 4 a 40 px, il reste donc quatre pixels
+ * d'air. Meme valeur que `.champ-mdp`, pour que les deux champs se
+ * ressemblent.
+ */
+.champ-recherche {
+  padding-inline-start: 2.75rem;
+  padding-inline-end: 2.75rem;
+}
+
 .champ:focus-visible {
   outline: none;
   border-color: #006633;

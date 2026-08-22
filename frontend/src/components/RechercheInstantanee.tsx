@@ -78,7 +78,13 @@ export function RechercheInstantanee({
 
   return (
     <div className="relative max-w-sm">
-      <span className="pointer-events-none absolute top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center text-gris">
+      {/* Ancree explicitement au debut : une boite absolue sans decalage
+          reste a sa position statique, ce qui la ferait deriver des que le
+          contenu change. */}
+      <span
+        className="pointer-events-none absolute top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center text-gris"
+        style={{ insetInlineStart: "0.25rem" }}
+      >
         {enCours ? (
           <Loader2 size={16} className="animate-spin" />
         ) : (
@@ -94,7 +100,7 @@ export function RechercheInstantanee({
         placeholder={placeholder}
         aria-label={libelle}
         aria-busy={enCours}
-        className="champ ps-10 pe-10"
+        className="champ champ-recherche"
       />
 
       {saisie ? (
