@@ -45,11 +45,36 @@ base déjà en service.
 |---|---|
 | `./deploy.sh update` | `git pull`, reconstruction, redémarrage. Les migrations passent avant que gunicorn n'accepte une requête. |
 | `./deploy.sh backup` | Sauvegarde SQL compressée, vérifiée, 30 dernières conservées. |
+| `bash telecharger-sauvegarde.sh …` | **Depuis votre poste** : sauvegarde le VPS puis la rapatrie. |
 | `./deploy.sh restore F` | Verse une sauvegarde (destructif, sauvegarde préalable automatique). |
 | `./deploy.sh reset-db` | Repart du contenu de `initdb/` (destructif). |
 | `./deploy.sh manage …` | Commande Django : `createsuperuser`, `create_student_accounts`… |
 | `./deploy.sh logs [svc]` | Journaux. |
 | `./deploy.sh status` | État des conteneurs, volumes, disque. |
+
+### Rapatrier une sauvegarde sur son poste
+
+Une seule commande, lancée **depuis votre ordinateur** :
+
+```bash
+bash deploy/telecharger-sauvegarde.sh root@203.0.113.10
+```
+
+Elle produit la sauvegarde sur le serveur, la télécharge dans
+`~/asleyn-sauvegardes`, puis la vérifie. Un second argument change le dossier
+d'arrivée ; `--dernier` rapatrie la dernière sauvegarde existante sans en
+produire une nouvelle.
+
+Deux contrôles, parce qu'ils ne disent pas la même chose : `gzip -t` atteste
+que l'archive n'a pas été abîmée en chemin, le marqueur de fin atteste que le
+dump était complet au départ. Un `pg_dump` interrompu produit une archive
+parfaitement valide — et tronquée.
+
+Le fichier reste **aussi** sur le serveur, où la rotation garde les trente
+derniers. Une copie unique, sur un seul poste, n'est pas une sauvegarde.
+
+Il porte les dossiers nominatifs de 98 mineures : le script le passe en
+`chmod 600`, et il n'a rien à faire dans un dossier synchronisé en ligne.
 
 Sauvegarde automatique — une ligne de `crontab -e` :
 
