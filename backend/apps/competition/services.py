@@ -82,16 +82,21 @@ def demarrer(competition: Competition) -> int:
         raise CompetitionInvalide("المسابقة منتهية.")
 
     groupes = list(competition.groups.all())
-    questions = list(competition.questions.all())
-
     if len(groupes) < 2:
         raise CompetitionInvalide("المسابقة تحتاج مجموعتين على الأقل.")
-    if len(questions) < len(groupes):
-        raise CompetitionInvalide(
-            "عدد الأسئلة لا يكفي لجولة واحدة كاملة."
-        )
 
-    total = (len(questions) // len(groupes)) * len(groupes)
+    if competition.avec_questions:
+        questions = list(competition.questions.all())
+        if len(questions) < len(groupes):
+            raise CompetitionInvalide(
+                "عدد الأسئلة لا يكفي لجولة واحدة كاملة."
+            )
+        total = (len(questions) // len(groupes)) * len(groupes)
+    else:
+        # ندوة شعرية : pas d'enonce a distribuer, le compte vient des جولات.
+        questions = []
+        total = competition.rounds * len(groupes)
+
     Turn.objects.bulk_create(
         [
             Turn(
@@ -99,7 +104,7 @@ def demarrer(competition: Competition) -> int:
                 index=i,
                 round_number=i // len(groupes) + 1,
                 group=groupes[i % len(groupes)],
-                question=questions[i],
+                question=questions[i] if questions else None,
             )
             for i in range(total)
         ]

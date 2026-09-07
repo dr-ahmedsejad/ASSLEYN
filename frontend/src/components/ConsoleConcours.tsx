@@ -216,9 +216,13 @@ export function ConsoleConcours({ deroule }: { deroule: DerouleConcours }) {
         </div>
 
         <div className="flex flex-col items-center gap-5 p-5">
-          <p className="text-center text-xl font-semibold leading-relaxed text-dark">
-            {courant.question_text}
-          </p>
+          {/* Pas d'enonce dans une ندوة شعرية : le tour de parole s'ouvre sur
+              le chronometre, et le jury ecoute. */}
+          {courant.question_text ? (
+            <p className="text-center text-xl font-semibold leading-relaxed text-dark">
+              {courant.question_text}
+            </p>
+          ) : null}
 
           <Chronometre
             secondes={restant}
@@ -250,7 +254,15 @@ export function ConsoleConcours({ deroule }: { deroule: DerouleConcours }) {
                 }}
               >
                 <CheckCircle2 size={20} />
-                {expire ? "إجابة صحيحة رغم انتهاء الوقت" : "إجابة صحيحة"}
+                {/* Une ندوة شعرية ne juge pas la justesse d'une reponse : le
+                    jury constate seulement que le groupe a pris la parole. */}
+                {competition.avec_questions
+                  ? expire
+                    ? "إجابة صحيحة رغم انتهاء الوقت"
+                    : "إجابة صحيحة"
+                  : expire
+                    ? "أجابت رغم انتهاء الوقت"
+                    : "أجابت"}
               </button>
 
               {/* « لم تجب » ne s'ouvre qu'a l'expiration du temps.

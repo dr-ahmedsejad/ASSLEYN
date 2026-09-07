@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Play, Trophy } from "lucide-react";
+import { Feather, Play, Trophy } from "lucide-react";
 
 import { LienDirect } from "@/components/LienDirect";
 import { NouvelleCompetition } from "@/components/NouvelleCompetition";
@@ -45,18 +45,29 @@ export default async function PageCompetitions() {
               >
                 <div className="min-w-0">
                   <p className="flex flex-wrap items-center gap-2 font-semibold text-dark">
-                    <Trophy size={15} className="text-gris" />
+                    {competition.avec_questions ? (
+                      <Trophy size={15} className="text-gris" />
+                    ) : (
+                      <Feather size={15} className="text-gris" />
+                    )}
                     {competition.name}
+                    <span className="rounded-lg border border-gray-200 bg-gray-50 px-2 py-0.5 text-[11px] font-medium text-gris">
+                      {competition.kind_display}
+                    </span>
                     <span
                       className={`rounded-lg border px-2 py-0.5 text-[11px] font-medium ${TON_ETAT[competition.state]}`}
                     >
                       {competition.state_display}
                     </span>
                   </p>
+                  {/* Une ندوة شعرية n'a pas d'enonces a compter : on annonce
+                      ses جولات, qui sont ce qui en fixe la duree. */}
                   <p className="chiffres mt-1 text-xs text-gris">
                     {competition.nombre_groupes} مجموعات ·{" "}
-                    {competition.nombre_questions} سؤالا ·{" "}
-                    {competition.turn_seconds} ثانية للدور
+                    {competition.avec_questions
+                      ? `${competition.nombre_questions} سؤالا`
+                      : `${competition.rounds} جولات`}{" "}
+                    · {competition.turn_seconds} ثانية للدور
                   </p>
                 </div>
 

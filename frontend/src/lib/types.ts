@@ -393,9 +393,17 @@ export interface QuestionConcours {
   display_order: number;
 }
 
+/** Les deux formes de session. Voir `CompetitionKind` cote serveur. */
+export type TypeCompetition = "CULTURELLE" | "POETIQUE";
+
 export interface Competition {
   id: number;
   name: string;
+  kind: TypeCompetition;
+  kind_display: string;
+  /** Faux pour une ندوة شعرية : ni saisie ni projection d'enonces. */
+  avec_questions: boolean;
+  rounds: number;
   code: string;
   state: EtatCompetition;
   state_display: string;
@@ -418,8 +426,8 @@ export interface Tour {
   group: number;
   group_name: string;
   group_color: string;
-  question: number;
-  question_text: string;
+  question: number | null;
+  question_text: string | null;
   started_at: string | null;
   outcome: IssueTour;
   outcome_display: string;
@@ -450,6 +458,8 @@ export interface DerouleConcours {
 /** Ce que voit la salle. Rien de plus. */
 export interface EcranDirect {
   name: string;
+  kind: TypeCompetition;
+  kind_display: string;
   state: EtatCompetition;
   state_display: string;
   turn_seconds: number;

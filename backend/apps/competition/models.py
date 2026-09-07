@@ -30,6 +30,23 @@ from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 
+class CompetitionKind(models.TextChoices):
+    """
+    Les deux formes que prend une session.
+
+    La **مسابقة ثقافية** repose sur des enonces : chaque tour porte une
+    question, et le nombre de tours decoule du nombre de questions saisies.
+
+    La **ندوة شعرية** n'a pas d'enonce du tout. Le tour de parole revient a un
+    groupe, le chronometre tourne, et le jury constate seulement si le groupe
+    a recite dans le temps. Rien n'est donc a preparer avant la seance, et le
+    nombre de tours ne peut venir que d'un nombre de جولات fixe a la creation.
+    """
+
+    CULTURELLE = "CULTURELLE", _("مسابقة ثقافية")
+    POETIQUE = "POETIQUE", _("ندوة شعرية")
+
+
 class CompetitionState(models.TextChoices):
     DRAFT = "DRAFT", _("قيد التحضير")
     RUNNING = "RUNNING", _("جارية")
@@ -47,6 +64,13 @@ class Competition(models.Model):
 
     name = models.CharField(_("اسم المسابقة"), max_length=150)
 
+    kind = models.CharField(
+        _("نوع المسابقة"),
+        max_length=12,
+        choices=CompetitionKind.choices,
+        default=CompetitionKind.CULTURELLE,
+    )
+
     #: Adresse de l'ecran public. Tiree au hasard, assez longue pour ne pas se
     #: deviner, assez courte pour se recopier depuis une projection.
     code = models.CharField(_("رمز العرض العام"), max_length=12, unique=True)
@@ -62,6 +86,18 @@ class Competition(models.Model):
         _("مدة الدور بالثواني"),
         default=30,
         validators=[MinValueValidator(5), MaxValueValidator(600)],
+    )
+
+    #: Nombre de tours de parole par groupe, pour une ندوة شعرية.
+    #:
+    #: Sans enonces, plus rien ne dit ou la seance s'arrete. On le fixe donc a
+    #: la creation, et le deroule reste calculable d'un coup — c'est ce qui
+    #: permet au jury de travailler sans reseau. Ignore pour une مسابقة
+    #: ثقافية, ou ce sont les questions qui comptent.
+    rounds = models.PositiveSmallIntegerField(
+        _("عدد الجولات"),
+        default=5,
+        validators=[MinValueValidator(1), MaxValueValidator(50)],
     )
 
     #: L'ecran public montre l'enonce du tour en cours — jamais les suivants.
@@ -89,19 +125,29 @@ class Competition(models.Model):
     def en_cours(self) -> bool:
         return self.state == CompetitionState.RUNNING
 
+    @property
+    def avec_questions(self) -> bool:
+        """Une ندوة شعرية n'a pas d'enonces — ni a saisir, ni a projeter."""
+        return self.kind == CompetitionKind.CULTURELLE
+
     def tours_prevus(self) -> int:
         """
-        Nombre de tours que la competition comportera.
+        Nombre de tours que la session comportera.
 
-        Des tours **complets** : chaque groupe repond au meme nombre de
-        questions. Avec quatre groupes et trente questions, on joue vingt-huit
-        tours et deux questions restent en reserve — sans quoi deux groupes
-        auraient une occasion de plus que les autres, et le classement se
-        discuterait.
+        Des tours **complets** dans les deux cas : chaque groupe passe le meme
+        nombre de fois. Pour une مسابقة ثقافية, le compte vient des questions
+        — quatre groupes et trente questions donnent vingt-huit tours, deux
+        questions restant en reserve, sans quoi deux groupes auraient une
+        occasion de plus que les autres et le classement se discuterait. Pour
+        une ندوة شعرية, il vient du nombre de جولات choisi a la creation.
         """
         groupes = self.groups.count()
+        if groupes == 0:
+            return 0
+        if not self.avec_questions:
+            return self.rounds * groupes
         questions = self.questions.count()
-        if groupes == 0 or questions == 0:
+        if questions == 0:
             return 0
         return (questions // groupes) * groupes
 
@@ -190,10 +236,13 @@ class Turn(models.Model):
         related_name="turns",
         verbose_name=_("المجموعة"),
     )
+    #: Vide pour une ندوة شعرية : le tour de parole s'y ouvre sans enonce.
     question = models.ForeignKey(
         Question,
         on_delete=models.CASCADE,
         related_name="turns",
+        null=True,
+        blank=True,
         verbose_name=_("السؤال"),
     )
 

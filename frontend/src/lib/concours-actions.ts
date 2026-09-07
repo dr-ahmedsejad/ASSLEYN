@@ -34,14 +34,20 @@ export async function creerCompetition(
   if (!name) return { erreur: "اسم المسابقة مطلوب." };
 
   const secondes = Number(donnees.get("turn_seconds") ?? 30);
+  const poetique = donnees.get("kind") === "POETIQUE";
+  const jolees = Number(donnees.get("rounds") ?? 5);
 
   try {
     const creee = await apiRequest<Competition>("/competitions/", {
       method: "POST",
       body: {
         name,
+        kind: poetique ? "POETIQUE" : "CULTURELLE",
         turn_seconds: Number.isFinite(secondes) ? secondes : 30,
-        show_question: donnees.get("show_question") === "on",
+        // Le nombre de جولات ne sert qu'a la ندوة شعرية, ou rien d'autre ne
+        // dit ou la seance s'arrete. Le serveur l'ignore pour l'autre type.
+        rounds: poetique && Number.isFinite(jolees) ? jolees : 5,
+        show_question: !poetique && donnees.get("show_question") === "on",
       },
     });
     revalidatePath("/competitions");

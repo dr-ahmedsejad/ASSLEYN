@@ -4,7 +4,13 @@ from __future__ import annotations
 
 from rest_framework import serializers
 
-from apps.competition.models import Competition, Group, Question, Turn
+from apps.competition.models import (
+    Competition,
+    CompetitionState,
+    Group,
+    Question,
+    Turn,
+)
 
 
 class GroupSerializer(serializers.ModelSerializer):
@@ -45,10 +51,16 @@ class TurnSerializer(serializers.ModelSerializer):
 
     group_name = serializers.CharField(source="group.name", read_only=True)
     group_color = serializers.CharField(source="group.color", read_only=True)
-    question_text = serializers.CharField(source="question.text", read_only=True)
     outcome_display = serializers.CharField(
         source="get_outcome_display", read_only=True
     )
+
+    #: `null` pour une ندوة شعرية, ou le tour n'a pas d'enonce. Une source
+    #: pointant sur `question.text` leverait sur ce tour-la.
+    question_text = serializers.SerializerMethodField()
+
+    def get_question_text(self, obj: Turn) -> str | None:
+        return obj.question.text if obj.question_id else None
 
     class Meta:
         model = Turn
@@ -75,6 +87,8 @@ class CompetitionSerializer(serializers.ModelSerializer):
     groups = GroupSerializer(many=True, read_only=True)
     questions = QuestionSerializer(many=True, read_only=True)
     state_display = serializers.CharField(source="get_state_display", read_only=True)
+    kind_display = serializers.CharField(source="get_kind_display", read_only=True)
+    avec_questions = serializers.BooleanField(read_only=True)
     tours_prevus = serializers.IntegerField(read_only=True)
     nombre_groupes = serializers.SerializerMethodField()
     nombre_questions = serializers.SerializerMethodField()
@@ -84,10 +98,14 @@ class CompetitionSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "name",
+            "kind",
+            "kind_display",
+            "avec_questions",
             "code",
             "state",
             "state_display",
             "turn_seconds",
+            "rounds",
             "show_question",
             "created_at",
             "started_at",
@@ -111,6 +129,23 @@ class CompetitionSerializer(serializers.ModelSerializer):
 
     def get_nombre_questions(self, obj: Competition) -> int:
         return obj.questions.count()
+
+    def validate(self, attrs: dict) -> dict:
+        """
+        Le type et le nombre de جولات se figent au demarrage.
+
+        Les tours sont crees d'un coup a ce moment-la ; les changer ensuite ne
+        changerait plus le deroule, mais ferait mentir ce qui est affiche.
+        """
+        instance = self.instance
+        if instance is None or instance.state == CompetitionState.DRAFT:
+            return attrs
+        for champ in ("kind", "rounds"):
+            if champ in attrs and attrs[champ] != getattr(instance, champ):
+                raise serializers.ValidationError(
+                    {champ: "لا يمكن تغيير هذا بعد انطلاق المسابقة."}
+                )
+        return attrs
 
 
 class GesteSerializer(serializers.Serializer):

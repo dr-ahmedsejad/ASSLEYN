@@ -88,11 +88,19 @@ export function PreparationConcours({
     ETAT_INITIAL,
   );
 
+  const avecQuestions = competition.avec_questions;
   const groupes = competition.groups.length;
   const questions = competition.questions.length;
-  const tours = groupes > 0 ? Math.floor(questions / groupes) * groupes : 0;
-  const jolees = groupes > 0 ? Math.floor(questions / groupes) : 0;
-  const reserve = questions - tours;
+
+  // Une ندوة شعرية n'a pas d'enonces a distribuer : son compte vient du
+  // nombre de جولات choisi a la creation, et rien ne reste en reserve.
+  const jolees = avecQuestions
+    ? groupes > 0
+      ? Math.floor(questions / groupes)
+      : 0
+    : competition.rounds;
+  const tours = jolees * groupes;
+  const reserve = avecQuestions ? questions - tours : 0;
   const pret = groupes >= 2 && jolees >= 1;
 
   return (
@@ -141,7 +149,10 @@ export function PreparationConcours({
         <Message etat={etatGroupe} />
       </Carte>
 
-      {/* ─── Questions ──────────────────────────────────────────── */}
+      {/* ─── Questions ──────────────────────────────────────────────
+          Absentes de la ندوة شعرية : il n'y a rien a y preparer, et une carte
+          vide laisserait croire a un oubli. */}
+      {avecQuestions ? (
       <Carte titre={`الأسئلة (${questions})`}>
         <form action={actionQuestions} className="space-y-3">
           <input type="hidden" name="competition" value={competition.id} />
@@ -181,15 +192,22 @@ export function PreparationConcours({
           </ol>
         ) : null}
       </Carte>
+      ) : null}
 
       {/* ─── Depart ─────────────────────────────────────────────── */}
       <Carte titre="الانطلاق">
         {pret ? (
           <>
-            <div className="mb-4 grid grid-cols-3 gap-3 text-center">
+            <div
+              className={`mb-4 grid gap-3 text-center ${
+                avecQuestions ? "grid-cols-3" : "grid-cols-2"
+              }`}
+            >
               <Chiffre libelle="جولة" valeur={jolees} />
               <Chiffre libelle="دورا" valeur={tours} />
-              <Chiffre libelle="سؤالا في الاحتياط" valeur={reserve} />
+              {avecQuestions ? (
+                <Chiffre libelle="سؤالا في الاحتياط" valeur={reserve} />
+              ) : null}
             </div>
 
             {reserve > 0 ? (
@@ -213,8 +231,9 @@ export function PreparationConcours({
             <Message etat={etatDepart} />
 
             <p className="mt-3 text-xs leading-relaxed text-gris">
-              بعد الانطلاق لا تُعدَّل المجموعات ولا الأسئلة: البرنامج يُحمَّل
-              كاملا في جهاز اللجنة ليعمل دون شبكة.
+              {avecQuestions
+                ? "بعد الانطلاق لا تُعدَّل المجموعات ولا الأسئلة: البرنامج يُحمَّل كاملا في جهاز اللجنة ليعمل دون شبكة."
+                : "بعد الانطلاق لا تُعدَّل المجموعات ولا عدد الجولات: البرنامج يُحمَّل كاملا في جهاز اللجنة ليعمل دون شبكة."}
             </p>
 
             {/* Le lien est disponible des la preparation : on l'envoie a la
@@ -225,8 +244,14 @@ export function PreparationConcours({
           </>
         ) : (
           <Alerte ton="warning">
-            تحتاج المسابقة مجموعتين على الأقل، وأسئلة تكفي لجولة كاملة
-            {groupes >= 2 ? ` (${groupes} أسئلة على الأقل)` : ""}.
+            {avecQuestions ? (
+              <>
+                تحتاج المسابقة مجموعتين على الأقل، وأسئلة تكفي لجولة كاملة
+                {groupes >= 2 ? ` (${groupes} أسئلة على الأقل)` : ""}.
+              </>
+            ) : (
+              <>تحتاج الندوة مجموعتين على الأقل.</>
+            )}
           </Alerte>
         )}
       </Carte>

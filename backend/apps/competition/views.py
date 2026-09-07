@@ -89,6 +89,8 @@ class CompetitionViewSet(viewsets.ModelViewSet):
         competition = self.get_object()
         if competition.state != CompetitionState.DRAFT:
             raise ValidationError("لا يمكن تعديل الأسئلة بعد انطلاق المسابقة.")
+        if not competition.avec_questions:
+            raise ValidationError("الندوة الشعرية لا تتضمن أسئلة.")
 
         serializer = QuestionsEnLotSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -241,7 +243,9 @@ class EcranPublicView(APIView):
                 "group_name": courant.group.name,
                 "group_color": courant.group.color,
                 "question_text": (
-                    courant.question.text if competition.show_question else None
+                    courant.question.text
+                    if courant.question_id and competition.show_question
+                    else None
                 ),
                 "started_at": courant.started_at,
                 "secondes_restantes": courant.secondes_restantes(maintenant),
@@ -251,6 +255,8 @@ class EcranPublicView(APIView):
         return Response(
             {
                 "name": competition.name,
+                "kind": competition.kind,
+                "kind_display": competition.get_kind_display(),
                 "state": competition.state,
                 "state_display": competition.get_state_display(),
                 "turn_seconds": competition.turn_seconds,
