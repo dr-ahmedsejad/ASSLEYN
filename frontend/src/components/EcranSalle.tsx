@@ -225,16 +225,21 @@ function Podium({ lignes }: { lignes: EcranDirect["classement"] }) {
         النتيجة النهائية
       </p>
 
-      <div className="grid gap-4 sm:grid-cols-3 sm:items-end">
+      {/* Trois colonnes a toutes les tailles.
+          Empiler sur telephone rendait la forme du podium — celle qui dit le
+          resultat avant qu'on lise les chiffres. Ce qui change avec la
+          largeur, c'est l'echelle, jamais la disposition : medaille, nom et
+          points retrecissent ensemble. */}
+      <div className="grid grid-cols-3 items-end gap-1.5 sm:gap-4">
         {premiers.map((ligne) => {
           const premier = ligne.rank === 1;
           return (
             <div
               key={ligne.id}
-              className={`carte-apparition relative overflow-hidden rounded-3xl px-5 text-center ${
-                premier ? "py-8 sm:order-2" : "py-6"
-              } ${ligne.rank === 2 ? "sm:order-1" : ""} ${
-                ligne.rank === 3 ? "sm:order-3" : ""
+              className={`carte-apparition relative overflow-hidden rounded-2xl px-1.5 text-center sm:rounded-3xl sm:px-5 ${
+                premier ? "order-2 py-5 sm:py-8" : "py-3.5 sm:py-6"
+              } ${ligne.rank === 2 ? "order-1" : ""} ${
+                ligne.rank === 3 ? "order-3" : ""
               }`}
               style={{
                 background: `linear-gradient(160deg, ${ligne.color}, ${ligne.color}aa)`,
@@ -248,25 +253,36 @@ function Podium({ lignes }: { lignes: EcranDirect["classement"] }) {
                   rang={ligne.rank}
                   taille={premier ? 104 : 84}
                   fondColore
+                  className={
+                    premier
+                      ? "h-auto w-[3.6rem] sm:w-[104px]"
+                      : "h-auto w-11 sm:w-[84px]"
+                  }
                 />
               </div>
 
+              {/* `text-balance` evite qu'un nom de trois mots laisse un mot
+                  seul sur la derniere ligne, dans une colonne aussi etroite. */}
               <p
-                className={`mt-2 font-bold text-white ${
-                  premier ? "text-2xl sm:text-3xl" : "text-xl"
+                className={`mt-1.5 font-bold leading-tight text-balance text-white sm:mt-2 ${
+                  premier
+                    ? "text-sm sm:text-3xl"
+                    : "text-xs sm:text-xl"
                 }`}
               >
                 {ligne.name}
               </p>
 
               <p
-                className={`chiffres mt-1 font-extrabold text-white ${
-                  premier ? "text-6xl" : "text-5xl"
+                className={`chiffres mt-0.5 font-extrabold leading-none text-white sm:mt-1 ${
+                  premier ? "text-3xl sm:text-6xl" : "text-2xl sm:text-5xl"
                 }`}
               >
                 {ligne.points}
               </p>
-              <p className="text-xs text-white/70">نقطة</p>
+              <p className="mt-0.5 text-[10px] text-white/70 sm:text-xs">
+                نقطة
+              </p>
             </div>
           );
         })}
