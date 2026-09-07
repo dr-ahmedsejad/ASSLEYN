@@ -230,7 +230,19 @@ function Podium({ lignes }: { lignes: EcranDirect["classement"] }) {
    * echange quand la mise en scene ne signifie plus rien.
    */
   const trop = surPodium.length > 4;
-  const premiers = trop ? lignes.filter((l) => l.rank === 1) : surPodium;
+  const tete = trop ? lignes.filter((l) => l.rank === 1) : surPodium;
+
+  /**
+   * La premiere place elle-meme peut deborder : si tous les groupes finissent
+   * a trois points, ils sont tous premiers. Reduire au rang 1 ne reduit alors
+   * rien, et le retour a un podium de six cartes est complet.
+   *
+   * Il n'y a alors rien a mettre en scene — personne ne se detache. On le dit
+   * en toutes lettres et on aligne tout le monde, plutot que de choisir
+   * quatre gagnants parmi six a egalite parfaite.
+   */
+  const egaliteGenerale = tete.length > 4;
+  const premiers = egaliteGenerale ? [] : tete;
   const suivants = lignes.filter((l) => !premiers.includes(l));
 
   /**
@@ -250,10 +262,18 @@ function Podium({ lignes }: { lignes: EcranDirect["classement"] }) {
     <section className="relative mx-auto max-w-5xl">
       <Confettis />
 
-      <p className="mb-8 flex items-center justify-center gap-3 text-center text-2xl font-bold text-accent sm:text-3xl">
+      <p className="mb-3 flex items-center justify-center gap-3 text-center text-2xl font-bold text-accent sm:text-3xl">
         <Trophy size={28} />
         النتيجة النهائية
       </p>
+
+      {egaliteGenerale ? (
+        <p className="mb-6 text-center text-base text-white/80 sm:text-lg">
+          تعادل عام: كل المجموعات في المرتبة الأولى بالنقاط نفسها.
+        </p>
+      ) : (
+        <div className="mb-5" />
+      )}
 
       {/* Trois colonnes a toutes les tailles.
           Empiler sur telephone rendait la forme du podium — celle qui dit le
@@ -262,9 +282,11 @@ function Podium({ lignes }: { lignes: EcranDirect["classement"] }) {
           points retrecissent ensemble. */}
       <div
         className={
-          podiumClassique
-            ? "grid grid-cols-3 items-end gap-1.5 sm:gap-4"
-            : "grid grid-cols-2 items-stretch gap-2 sm:grid-cols-3 sm:gap-4"
+          premiers.length === 0
+            ? "hidden"
+            : podiumClassique
+              ? "grid grid-cols-3 items-end gap-1.5 sm:gap-4"
+              : "grid grid-cols-2 items-stretch gap-2 sm:grid-cols-3 sm:gap-4"
         }
       >
         {premiers.map((ligne) => {
@@ -329,7 +351,11 @@ function Podium({ lignes }: { lignes: EcranDirect["classement"] }) {
       </div>
 
       {suivants.length > 0 ? (
-        <div className="mt-6 grid gap-2 sm:grid-cols-2">
+        <div
+          className={`grid gap-2 sm:grid-cols-2 ${
+            premiers.length === 0 ? "" : "mt-6"
+          }`}
+        >
           {suivants.map((ligne) => (
             <div
               key={ligne.id}
