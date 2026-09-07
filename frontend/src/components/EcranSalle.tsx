@@ -213,6 +213,20 @@ function Tableau({
  * A egalite, deux groupes portent la meme medaille et le meme rang. Le
  * classement est dense, comme partout ailleurs dans l'application.
  */
+
+/**
+ * Les marches, du plus haut au plus bas.
+ *
+ * Trois niveaux distincts et non deux : la deuxieme et la troisieme place se
+ * retrouvaient a la meme hauteur, et la rangee cessait de se lire comme un
+ * podium. L'ecart de rembourrage se double a l'affichage — les cartes sont
+ * alignees par le bas — et la marche se voit meme sur un telephone.
+ */
+const NIVEAUX: Record<number, string> = {
+  1: "py-5 sm:py-8",
+  2: "py-3 sm:py-5",
+  3: "py-1.5 sm:py-2.5",
+};
 function Podium({ lignes }: { lignes: EcranDirect["classement"] }) {
   /**
    * Trois cartes, jamais plus — et le reste dans un tableau.
@@ -232,18 +246,17 @@ function Podium({ lignes }: { lignes: EcranDirect["classement"] }) {
   const suivants = lignes.slice(3);
 
   /**
-   * La forme de podium — une place surelevee entre deux autres — ne se tient
-   * que si les trois cartes portent trois rangs differents. Deux premiers ex
-   * aequo n'ont pas de deuxieme place a mettre a leur droite : les ordres
-   * fixes se marcheraient dessus, et une carte doree se retrouverait plus bas
-   * qu'une carte d'argent.
+   * L'ordre d'affichage, de droite a gauche.
    *
-   * Dans ce cas les trois cartes s'alignent a hauteur egale, dans l'ordre du
-   * classement. Ce qui distingue la premiere place n'est plus la hauteur, mais
-   * le cerne dore et la medaille : elle se distingue toujours.
+   * Le podium classique met la deuxieme place a droite, la premiere au centre,
+   * la troisieme a gauche. Quand les deux premieres cartes sont ex aequo, il
+   * n'y a pas de deuxieme place a mettre a droite : les deux premiers restent
+   * cote a cote, et la suivante prend la gauche.
    */
-  const rangsDistincts = new Set(premiers.map((l) => l.rank)).size;
-  const podiumClassique = premiers.length === 3 && rangsDistincts === 3;
+  const ordre =
+    premiers.length === 3 && premiers[0].rank !== premiers[1].rank
+      ? [premiers[1], premiers[0], premiers[2]]
+      : premiers;
 
   /**
    * Personne ne se detache : tous les groupes ont le meme score.
@@ -278,28 +291,29 @@ function Podium({ lignes }: { lignes: EcranDirect["classement"] }) {
           largeur, c'est l'echelle, jamais la disposition : medaille, nom et
           points retrecissent ensemble. */}
       <div
-        className={`grid gap-1.5 sm:gap-4 ${
-          podiumClassique ? "items-end" : "items-stretch"
-        } ${
-          premiers.length === 3
+        className={`grid items-end gap-1.5 sm:gap-4 ${
+          ordre.length === 3
             ? "grid-cols-3"
-            : premiers.length === 2
+            : ordre.length === 2
               ? "grid-cols-2"
               : "grid-cols-1"
         }`}
       >
-        {premiers.map((ligne) => {
+        {ordre.map((ligne) => {
           const premier = ligne.rank === 1;
-          // La hauteur et l'ordre ne servent que le podium a trois cartes.
-          const surelevation = podiumClassique
-            ? `${premier ? "order-2 py-5 sm:py-8" : "py-3.5 sm:py-6"} ${
-                ligne.rank === 2 ? "order-1" : ""
-              } ${ligne.rank === 3 ? "order-3" : ""}`
-            : "py-4 sm:py-6";
+          /**
+           * La hauteur dit le rang, et rien d'autre.
+           *
+           * C'est la marche qui fait le podium : trois cartes alignees au meme
+           * niveau ne sont plus qu'une rangee. Deux ex aequo partagent donc la
+           * meme marche — ils ont le meme rang — et une place plus basse se
+           * voit toujours plus bas, quelle que soit la couleur de sa carte.
+           */
+          const marche = NIVEAUX[ligne.rank] ?? NIVEAUX[3];
           return (
             <div
               key={ligne.id}
-              className={`carte-apparition relative overflow-hidden rounded-2xl px-1.5 text-center sm:rounded-3xl sm:px-5 ${surelevation}`}
+              className={`carte-apparition relative overflow-hidden rounded-2xl px-1.5 text-center sm:rounded-3xl sm:px-5 ${marche}`}
               style={{
                 background: `linear-gradient(160deg, ${ligne.color}, ${ligne.color}aa)`,
                 boxShadow: premier
@@ -310,10 +324,10 @@ function Podium({ lignes }: { lignes: EcranDirect["classement"] }) {
               <div className="pastille-pop flex justify-center">
                 <Medaille
                   rang={ligne.rank}
-                  taille={premier && podiumClassique ? 104 : 84}
+                  taille={premier ? 104 : 84}
                   fondColore
                   className={
-                    premier && podiumClassique
+                    premier
                       ? "h-auto w-[3.6rem] sm:w-[104px]"
                       : "h-auto w-11 sm:w-[84px]"
                   }
@@ -321,10 +335,15 @@ function Podium({ lignes }: { lignes: EcranDirect["classement"] }) {
               </div>
 
               {/* `text-balance` evite qu'un nom de trois mots laisse un mot
-                  seul sur la derniere ligne, dans une colonne aussi etroite. */}
+                  seul sur la derniere ligne, dans une colonne aussi etroite.
+
+                  La hauteur de deux lignes est reservee meme pour un nom
+                  court : sans elle, deux ex aequo dont l'un porte un nom long
+                  ne finissaient pas a la meme hauteur, et la marche disait
+                  autre chose que le rang. */}
               <p
-                className={`mt-1.5 font-bold leading-tight text-balance text-white sm:mt-2 ${
-                  premier && podiumClassique
+                className={`mt-1.5 min-h-[2.5em] font-bold leading-tight text-balance text-white sm:mt-2 ${
+                  premier
                     ? "text-sm sm:text-3xl"
                     : "text-xs sm:text-xl"
                 }`}
@@ -334,7 +353,7 @@ function Podium({ lignes }: { lignes: EcranDirect["classement"] }) {
 
               <p
                 className={`chiffres mt-0.5 font-extrabold leading-none text-white sm:mt-1 ${
-                  premier && podiumClassique
+                  premier
                     ? "text-3xl sm:text-6xl"
                     : "text-2xl sm:text-5xl"
                 }`}
