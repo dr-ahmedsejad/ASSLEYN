@@ -213,8 +213,25 @@ function Tableau({
  * classement est dense, comme partout ailleurs dans l'application.
  */
 function Podium({ lignes }: { lignes: EcranDirect["classement"] }) {
-  const premiers = lignes.filter((l) => l.rank <= 3);
-  const suivants = lignes.filter((l) => l.rank > 3);
+  const surPodium = lignes.filter((l) => l.rank <= 3);
+
+  /**
+   * Au-dela de quatre cartes, le podium cesse d'etre un podium.
+   *
+   * Le nombre de places tenables ne depend pas du nombre de groupes mais du
+   * nombre de scores distincts : le rang etant dense, tous ceux qui partagent
+   * les trois meilleurs scores montent ensemble. Six groupes marquant
+   * 3, 3, 2, 2, 1, 1 y montent tous les six — et la forme, qui devait dire le
+   * resultat avant qu'on lise les chiffres, ne dit plus rien.
+   *
+   * Passe ce seuil, seule la premiere place reste en grand ; le reste redevient
+   * un classement, ou les deuxieme et troisieme gardent leur medaille en
+   * petit. On perd la mise en scene, on garde la lisibilite — c'est le bon
+   * echange quand la mise en scene ne signifie plus rien.
+   */
+  const trop = surPodium.length > 4;
+  const premiers = trop ? lignes.filter((l) => l.rank === 1) : surPodium;
+  const suivants = lignes.filter((l) => !premiers.includes(l));
 
   /**
    * Le podium classique — une place surelevee entre deux autres — suppose
@@ -319,15 +336,21 @@ function Podium({ lignes }: { lignes: EcranDirect["classement"] }) {
               className="flex items-center justify-between gap-3 rounded-xl bg-white/5 px-4 py-3"
               style={{ borderInlineStart: `4px solid ${ligne.color}` }}
             >
-              <span className="flex items-center gap-3">
-                <span className="chiffres text-sm text-white/50">
-                  {ligne.rank}
-                </span>
-                <span className="text-lg font-semibold text-white">
+              <span className="flex min-w-0 items-center gap-3">
+                {/* Une place du podium relegue a la liste garde sa medaille :
+                    elle l'a gagnee, seule sa mise en scene a change. */}
+                {ligne.rank <= 3 ? (
+                  <Medaille rang={ligne.rank} taille={30} fondColore />
+                ) : (
+                  <span className="chiffres w-[30px] text-center text-sm text-white/50">
+                    {ligne.rank}
+                  </span>
+                )}
+                <span className="truncate text-lg font-semibold text-white">
                   {ligne.name}
                 </span>
               </span>
-              <span className="chiffres text-2xl font-bold text-white">
+              <span className="chiffres shrink-0 text-2xl font-bold text-white">
                 {ligne.points}
               </span>
             </div>
