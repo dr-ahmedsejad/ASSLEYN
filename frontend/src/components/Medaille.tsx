@@ -49,21 +49,48 @@ const METAUX: Record<number, Metal> = {
   },
 };
 
+/**
+ * Ruban vert de l'institut — le defaut, sur les fonds clairs.
+ *
+ * Il ne convient pas partout : sur le podium, chaque carte porte la couleur de
+ * son groupe, et un groupe vert faisait disparaitre le ruban dans le fond. Un
+ * groupe dore aurait fait disparaitre la medaille d'or elle-meme.
+ */
 const RUBAN = "#0a5c33";
 const RUBAN_OMBRE = "#043f22";
+
+/**
+ * Ruban ivoire, pour les fonds colores.
+ *
+ * L'ivoire se detache des couleurs saturees comme des sombres, la ou aucune
+ * teinte vive ne le ferait sur toutes. Un lisere clair cerne alors le disque :
+ * il separe le metal d'un fond qui pourrait avoir sa nuance.
+ */
+const RUBAN_CLAIR = "#f2eee2";
+const RUBAN_CLAIR_OMBRE = "#cfc7b4";
 
 export function Medaille({
   rang,
   taille = 112,
   className = "",
+  fondColore = false,
 }: {
   /** 1, 2 ou 3. Au-dela, la medaille ne s'affiche pas. */
   rang: number;
   taille?: number;
   className?: string;
+  /**
+   * La medaille repose sur un fond colore — une carte de podium teintee a la
+   * couleur du groupe. Le ruban passe alors a l'ivoire et le disque recoit un
+   * lisere clair, pour que la medaille se lise quelle que soit cette couleur.
+   */
+  fondColore?: boolean;
 }) {
   const metal = METAUX[rang];
   if (!metal) return null;
+
+  const ruban = fondColore ? RUBAN_CLAIR : RUBAN;
+  const rubanOmbre = fondColore ? RUBAN_CLAIR_OMBRE : RUBAN_OMBRE;
 
   return (
     <svg
@@ -76,11 +103,14 @@ export function Medaille({
     >
       {/* Rubans : deux pans qui se croisent, le second en retrait pour
           suggerer la pliure. */}
-      <path d="M22 0 h20 l20 52 -20 9 Z" fill={RUBAN} />
-      <path d="M74 0 h-20 l-20 52 20 9 Z" fill={RUBAN_OMBRE} />
+      <path d="M22 0 h20 l20 52 -20 9 Z" fill={ruban} />
+      <path d="M74 0 h-20 l-20 52 20 9 Z" fill={rubanOmbre} />
 
       {/* Disque : bord, metal, puis la lumiere en haut a gauche et
           l'ombre en bas a droite. */}
+      {fondColore ? (
+        <circle cx="48" cy="82" r="40" fill={RUBAN_CLAIR} opacity="0.9" />
+      ) : null}
       <circle cx="48" cy="82" r="38" fill={metal.bord} />
       <circle cx="48" cy="82" r="33" fill={metal.disque} />
       <path

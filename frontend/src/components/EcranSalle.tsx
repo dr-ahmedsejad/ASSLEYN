@@ -244,7 +244,11 @@ function Podium({ lignes }: { lignes: EcranDirect["classement"] }) {
               }}
             >
               <div className="pastille-pop flex justify-center">
-                <Medaille rang={ligne.rank} taille={premier ? 104 : 84} />
+                <Medaille
+                  rang={ligne.rank}
+                  taille={premier ? 104 : 84}
+                  fondColore
+                />
               </div>
 
               <p
