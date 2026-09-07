@@ -203,60 +203,57 @@ function Tableau({
 }
 
 /**
- * Le classement final : une ceremonie, pas un tableau.
+ * Le classement final : une scene, puis un tableau.
  *
- * La forme dit le resultat avant que les chiffres ne soient lus — la premiere
- * place monte, les autres l'entourent, et chacune porte sa medaille. Les
- * confettis tombent sans fin : la fete dure autant que la projection.
+ * Trois cartes montent — la premiere place au centre, surelevee — et les
+ * confettis tombent sans fin : la fete dure autant que la projection. Les
+ * autres groupes suivent en tableau, lisiblement, sans faire semblant d'etre
+ * sur la scene.
  *
  * A egalite, deux groupes portent la meme medaille et le meme rang. Le
  * classement est dense, comme partout ailleurs dans l'application.
  */
 function Podium({ lignes }: { lignes: EcranDirect["classement"] }) {
-  const surPodium = lignes.filter((l) => l.rank <= 3);
+  /**
+   * Trois cartes, jamais plus — et le reste dans un tableau.
+   *
+   * On avait d'abord fait monter tous les groupes de rang inferieur ou egal a
+   * trois. Le rang etant dense, ce nombre ne depend pas du nombre de groupes
+   * mais du nombre de scores distincts : six groupes marquant 3, 3, 2, 2, 1, 1
+   * montaient tous les six, et la forme qui devait dire le resultat avant
+   * qu'on lise les chiffres ne disait plus rien.
+   *
+   * La regle est donc fixe : les trois premieres lignes du classement, quelles
+   * que soient les egalites. La mise en scene garde une taille connue, le
+   * tableau absorbe le reste, et rien ne deborde — ni sur telephone, ni a
+   * douze groupes.
+   */
+  const premiers = lignes.slice(0, 3);
+  const suivants = lignes.slice(3);
 
   /**
-   * Au-dela de quatre cartes, le podium cesse d'etre un podium.
+   * La forme de podium — une place surelevee entre deux autres — ne se tient
+   * que si les trois cartes portent trois rangs differents. Deux premiers ex
+   * aequo n'ont pas de deuxieme place a mettre a leur droite : les ordres
+   * fixes se marcheraient dessus, et une carte doree se retrouverait plus bas
+   * qu'une carte d'argent.
    *
-   * Le nombre de places tenables ne depend pas du nombre de groupes mais du
-   * nombre de scores distincts : le rang etant dense, tous ceux qui partagent
-   * les trois meilleurs scores montent ensemble. Six groupes marquant
-   * 3, 3, 2, 2, 1, 1 y montent tous les six — et la forme, qui devait dire le
-   * resultat avant qu'on lise les chiffres, ne dit plus rien.
-   *
-   * Passe ce seuil, seule la premiere place reste en grand ; le reste redevient
-   * un classement, ou les deuxieme et troisieme gardent leur medaille en
-   * petit. On perd la mise en scene, on garde la lisibilite — c'est le bon
-   * echange quand la mise en scene ne signifie plus rien.
+   * Dans ce cas les trois cartes s'alignent a hauteur egale, dans l'ordre du
+   * classement. Ce qui distingue la premiere place n'est plus la hauteur, mais
+   * le cerne dore et la medaille : elle se distingue toujours.
    */
-  const trop = surPodium.length > 4;
-  const tete = trop ? lignes.filter((l) => l.rank === 1) : surPodium;
+  const rangsDistincts = new Set(premiers.map((l) => l.rank)).size;
+  const podiumClassique = premiers.length === 3 && rangsDistincts === 3;
 
   /**
-   * La premiere place elle-meme peut deborder : si tous les groupes finissent
-   * a trois points, ils sont tous premiers. Reduire au rang 1 ne reduit alors
-   * rien, et le retour a un podium de six cartes est complet.
+   * Personne ne se detache : tous les groupes ont le meme score.
    *
-   * Il n'y a alors rien a mettre en scene — personne ne se detache. On le dit
-   * en toutes lettres et on aligne tout le monde, plutot que de choisir
-   * quatre gagnants parmi six a egalite parfaite.
+   * Trois d'entre eux occupent quand meme la scene — il faut bien en placer
+   * trois — mais l'ecran doit dire que ce choix ne recompense rien, sinon la
+   * salle lit un vainqueur la ou il n'y en a pas.
    */
-  const egaliteGenerale = tete.length > 4;
-  const premiers = egaliteGenerale ? [] : tete;
-  const suivants = lignes.filter((l) => !premiers.includes(l));
-
-  /**
-   * Le podium classique — une place surelevee entre deux autres — suppose
-   * exactement trois cartes. Les ex aequo n'en donnent pas toujours trois :
-   * deux groupes seulement, ou cinq groupes dont deux paires a egalite, en
-   * produisent deux, quatre, cinq… Les ordres fixes se marcheraient alors
-   * dessus et la grille deborderait sur une seconde ligne bancale.
-   *
-   * Hors de ce cas, les cartes s'alignent simplement dans l'ordre du
-   * classement, a hauteur egale. La premiere place garde son cerne dore : ce
-   * qui la distingue n'est plus la hauteur, mais elle se distingue toujours.
-   */
-  const podiumClassique = premiers.length === 3;
+  const egaliteGenerale =
+    lignes.length > 1 && lignes.every((ligne) => ligne.rank === 1);
 
   return (
     <section className="relative mx-auto max-w-5xl">
@@ -281,13 +278,15 @@ function Podium({ lignes }: { lignes: EcranDirect["classement"] }) {
           largeur, c'est l'echelle, jamais la disposition : medaille, nom et
           points retrecissent ensemble. */}
       <div
-        className={
-          premiers.length === 0
-            ? "hidden"
-            : podiumClassique
-              ? "grid grid-cols-3 items-end gap-1.5 sm:gap-4"
-              : "grid grid-cols-2 items-stretch gap-2 sm:grid-cols-3 sm:gap-4"
-        }
+        className={`grid gap-1.5 sm:gap-4 ${
+          podiumClassique ? "items-end" : "items-stretch"
+        } ${
+          premiers.length === 3
+            ? "grid-cols-3"
+            : premiers.length === 2
+              ? "grid-cols-2"
+              : "grid-cols-1"
+        }`}
       >
         {premiers.map((ligne) => {
           const premier = ligne.rank === 1;
@@ -350,37 +349,63 @@ function Podium({ lignes }: { lignes: EcranDirect["classement"] }) {
         })}
       </div>
 
+      {/* Le reste du classement : un tableau, franchement.
+          Ces groupes ne sont pas sur la scene ; leur donner des cartes en
+          demi-teinte laissait croire a un second podium. Trois colonnes
+          nommees se lisent de loin sans qu'on ait a deviner ce que chaque
+          nombre represente. */}
       {suivants.length > 0 ? (
-        <div
-          className={`grid gap-2 sm:grid-cols-2 ${
-            premiers.length === 0 ? "" : "mt-6"
-          }`}
-        >
-          {suivants.map((ligne) => (
-            <div
-              key={ligne.id}
-              className="flex items-center justify-between gap-3 rounded-xl bg-white/5 px-4 py-3"
-              style={{ borderInlineStart: `4px solid ${ligne.color}` }}
-            >
-              <span className="flex min-w-0 items-center gap-3">
-                {/* Une place du podium relegue a la liste garde sa medaille :
-                    elle l'a gagnee, seule sa mise en scene a change. */}
-                {ligne.rank <= 3 ? (
-                  <Medaille rang={ligne.rank} taille={30} fondColore />
-                ) : (
-                  <span className="chiffres w-[30px] text-center text-sm text-white/50">
-                    {ligne.rank}
-                  </span>
-                )}
-                <span className="truncate text-lg font-semibold text-white">
-                  {ligne.name}
-                </span>
-              </span>
-              <span className="chiffres shrink-0 text-2xl font-bold text-white">
-                {ligne.points}
-              </span>
-            </div>
-          ))}
+        <div className="mt-6 overflow-x-auto">
+          <table className="w-full border-collapse">
+            <thead>
+              <tr className="text-sm text-white/55 sm:text-base">
+                <th scope="col" className="w-16 py-2 pe-3 text-start font-semibold sm:w-24">
+                  المرتبة
+                </th>
+                <th scope="col" className="py-2 text-start font-semibold">
+                  المجموعة
+                </th>
+                <th scope="col" className="py-2 ps-3 text-end font-semibold">
+                  النقاط
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {suivants.map((ligne) => (
+                <tr key={ligne.id} className="border-t border-white/10">
+                  <td className="py-3 pe-3 text-start">
+                    {/* Une place du podium renvoyee au tableau garde sa
+                        medaille : elle l'a gagnee, seule sa mise en scene a
+                        change. Cinq groupes a 3, 3, 2, 2, 1 mettent un
+                        deuxieme argent ici — il doit rester en argent. */}
+                    {ligne.rank <= 3 ? (
+                      <Medaille rang={ligne.rank} taille={30} fondColore />
+                    ) : (
+                      <span className="chiffres text-lg font-bold text-white/60 sm:text-2xl">
+                        {ligne.rank}
+                      </span>
+                    )}
+                  </td>
+                  <td className="py-3">
+                    <span className="flex min-w-0 items-center gap-3">
+                      <span
+                        className="h-5 w-1.5 shrink-0 rounded-full sm:h-7"
+                        style={{ background: ligne.color }}
+                      />
+                      <span className="truncate text-lg font-semibold text-white sm:text-2xl">
+                        {ligne.name}
+                      </span>
+                    </span>
+                  </td>
+                  <td className="py-3 ps-3 text-end">
+                    <span className="chiffres text-xl font-bold text-white sm:text-3xl">
+                      {ligne.points}
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       ) : null}
     </section>
