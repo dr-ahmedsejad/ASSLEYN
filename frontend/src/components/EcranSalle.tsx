@@ -216,6 +216,19 @@ function Podium({ lignes }: { lignes: EcranDirect["classement"] }) {
   const premiers = lignes.filter((l) => l.rank <= 3);
   const suivants = lignes.filter((l) => l.rank > 3);
 
+  /**
+   * Le podium classique — une place surelevee entre deux autres — suppose
+   * exactement trois cartes. Les ex aequo n'en donnent pas toujours trois :
+   * deux groupes seulement, ou cinq groupes dont deux paires a egalite, en
+   * produisent deux, quatre, cinq… Les ordres fixes se marcheraient alors
+   * dessus et la grille deborderait sur une seconde ligne bancale.
+   *
+   * Hors de ce cas, les cartes s'alignent simplement dans l'ordre du
+   * classement, a hauteur egale. La premiere place garde son cerne dore : ce
+   * qui la distingue n'est plus la hauteur, mais elle se distingue toujours.
+   */
+  const podiumClassique = premiers.length === 3;
+
   return (
     <section className="relative mx-auto max-w-5xl">
       <Confettis />
@@ -230,17 +243,25 @@ function Podium({ lignes }: { lignes: EcranDirect["classement"] }) {
           resultat avant qu'on lise les chiffres. Ce qui change avec la
           largeur, c'est l'echelle, jamais la disposition : medaille, nom et
           points retrecissent ensemble. */}
-      <div className="grid grid-cols-3 items-end gap-1.5 sm:gap-4">
+      <div
+        className={
+          podiumClassique
+            ? "grid grid-cols-3 items-end gap-1.5 sm:gap-4"
+            : "grid grid-cols-2 items-stretch gap-2 sm:grid-cols-3 sm:gap-4"
+        }
+      >
         {premiers.map((ligne) => {
           const premier = ligne.rank === 1;
+          // La hauteur et l'ordre ne servent que le podium a trois cartes.
+          const surelevation = podiumClassique
+            ? `${premier ? "order-2 py-5 sm:py-8" : "py-3.5 sm:py-6"} ${
+                ligne.rank === 2 ? "order-1" : ""
+              } ${ligne.rank === 3 ? "order-3" : ""}`
+            : "py-4 sm:py-6";
           return (
             <div
               key={ligne.id}
-              className={`carte-apparition relative overflow-hidden rounded-2xl px-1.5 text-center sm:rounded-3xl sm:px-5 ${
-                premier ? "order-2 py-5 sm:py-8" : "py-3.5 sm:py-6"
-              } ${ligne.rank === 2 ? "order-1" : ""} ${
-                ligne.rank === 3 ? "order-3" : ""
-              }`}
+              className={`carte-apparition relative overflow-hidden rounded-2xl px-1.5 text-center sm:rounded-3xl sm:px-5 ${surelevation}`}
               style={{
                 background: `linear-gradient(160deg, ${ligne.color}, ${ligne.color}aa)`,
                 boxShadow: premier
@@ -251,10 +272,10 @@ function Podium({ lignes }: { lignes: EcranDirect["classement"] }) {
               <div className="pastille-pop flex justify-center">
                 <Medaille
                   rang={ligne.rank}
-                  taille={premier ? 104 : 84}
+                  taille={premier && podiumClassique ? 104 : 84}
                   fondColore
                   className={
-                    premier
+                    premier && podiumClassique
                       ? "h-auto w-[3.6rem] sm:w-[104px]"
                       : "h-auto w-11 sm:w-[84px]"
                   }
@@ -265,7 +286,7 @@ function Podium({ lignes }: { lignes: EcranDirect["classement"] }) {
                   seul sur la derniere ligne, dans une colonne aussi etroite. */}
               <p
                 className={`mt-1.5 font-bold leading-tight text-balance text-white sm:mt-2 ${
-                  premier
+                  premier && podiumClassique
                     ? "text-sm sm:text-3xl"
                     : "text-xs sm:text-xl"
                 }`}
@@ -275,7 +296,9 @@ function Podium({ lignes }: { lignes: EcranDirect["classement"] }) {
 
               <p
                 className={`chiffres mt-0.5 font-extrabold leading-none text-white sm:mt-1 ${
-                  premier ? "text-3xl sm:text-6xl" : "text-2xl sm:text-5xl"
+                  premier && podiumClassique
+                    ? "text-3xl sm:text-6xl"
+                    : "text-2xl sm:text-5xl"
                 }`}
               >
                 {ligne.points}
