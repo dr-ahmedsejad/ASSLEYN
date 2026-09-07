@@ -28,6 +28,7 @@ class Permission(models.TextChoices):
     ANNEES_GERER = "annees.gerer", _("السنوات الدراسية")
     JOURNAL_CONSULTER = "journal.consulter", _("السجلات والزيارات")
     COMPTES_GERER = "comptes.gerer", _("الحسابات والصلاحيات")
+    COMPETITION_ANIMER = "competition.animer", _("إدارة المسابقات")
     RESULTATS_PERSONNELS = "resultats.personnels", _("الاطلاع على نتائجها")
 
 
@@ -49,6 +50,9 @@ CATEGORIES: dict[str, list[str]] = {
     "المتابعة": [
         Permission.JOURNAL_CONSULTER,
         Permission.COMPTES_GERER,
+    ],
+    "المسابقات": [
+        Permission.COMPETITION_ANIMER,
     ],
     "الطالبة": [
         Permission.RESULTATS_PERSONNELS,

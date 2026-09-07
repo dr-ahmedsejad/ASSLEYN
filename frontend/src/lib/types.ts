@@ -372,3 +372,99 @@ export interface Compte {
   date_joined: string;
   verrouille: boolean;
 }
+
+// --------------------------------------------------------------------------
+// Concours
+// --------------------------------------------------------------------------
+
+export type EtatCompetition = "DRAFT" | "RUNNING" | "FINISHED";
+export type IssueTour = "PENDING" | "CORRECT" | "NO_ANSWER";
+
+export interface GroupeConcours {
+  id: number;
+  name: string;
+  display_order: number;
+  color: string;
+}
+
+export interface QuestionConcours {
+  id: number;
+  text: string;
+  display_order: number;
+}
+
+export interface Competition {
+  id: number;
+  name: string;
+  code: string;
+  state: EtatCompetition;
+  state_display: string;
+  turn_seconds: number;
+  show_question: boolean;
+  created_at: string;
+  started_at: string | null;
+  finished_at: string | null;
+  tours_prevus: number;
+  nombre_groupes: number;
+  nombre_questions: number;
+  groups: GroupeConcours[];
+  questions: QuestionConcours[];
+}
+
+export interface Tour {
+  id: number;
+  index: number;
+  round_number: number;
+  group: number;
+  group_name: string;
+  group_color: string;
+  question: number;
+  question_text: string;
+  started_at: string | null;
+  outcome: IssueTour;
+  outcome_display: string;
+  decided_at: string | null;
+  awarded_late: boolean;
+  note: string;
+}
+
+export interface LigneClassement {
+  id: number;
+  name: string;
+  color: string;
+  display_order: number;
+  points: number;
+  joues: number;
+  restants: number;
+  rank: number;
+}
+
+/** Tout ce dont la console du jury a besoin, livre en une fois. */
+export interface DerouleConcours {
+  competition: Competition;
+  maintenant: string;
+  tours: Tour[];
+  classement: LigneClassement[];
+}
+
+/** Ce que voit la salle. Rien de plus. */
+export interface EcranDirect {
+  name: string;
+  state: EtatCompetition;
+  state_display: string;
+  turn_seconds: number;
+  maintenant: string;
+  tours_prevus: number;
+  tours_joues: number;
+  tour: {
+    index: number;
+    round_number: number;
+    group_name: string;
+    group_color: string;
+    question_text: string | null;
+    started_at: string | null;
+    secondes_restantes: number;
+    en_marche: boolean;
+  } | null;
+  classement: LigneClassement[];
+}

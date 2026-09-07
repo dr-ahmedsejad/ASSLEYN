@@ -10,6 +10,7 @@ import {
   ScrollText,
   ShieldCheck,
   Siren,
+  Trophy,
   UserCog,
   Users,
 } from "lucide-react";
@@ -39,6 +40,7 @@ export const PERMISSIONS = {
   ANNEES_GERER: "annees.gerer",
   JOURNAL_CONSULTER: "journal.consulter",
   COMPTES_GERER: "comptes.gerer",
+  COMPETITION_ANIMER: "competition.animer",
   RESULTATS_PERSONNELS: "resultats.personnels",
 } as const;
 
@@ -128,6 +130,13 @@ export const NAV_GROUPS: NavGroup[] = [
     icon: Users,
     permission: PERMISSIONS.ETUDIANTES_GERER,
     items: [{ href: "/etudiantes", label: "قائمة الطالبات" }],
+  },
+  {
+    key: "competitions",
+    label: "المسابقات",
+    icon: Trophy,
+    permission: PERMISSIONS.COMPETITION_ANIMER,
+    items: [{ href: "/competitions", label: "إدارة المسابقات" }],
   },
   {
     key: "audit",

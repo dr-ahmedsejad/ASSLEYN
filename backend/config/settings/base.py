@@ -51,6 +51,7 @@ LOCAL_APPS = [
     "apps.academics",
     "apps.grading",
     "apps.results",
+    "apps.competition",
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -240,6 +241,9 @@ REST_FRAMEWORK = {
         # verrouillage par compte (apps/accounts/verrouillage.py) qui protege
         # un mot de passe, et lui ne se laisse pas diluer par le nombre.
         "login": "30/min",
+        # L'ecran de la salle interroge toutes les deux secondes. Au plafond
+        # des visiteurs anonymes, il s'auto-bloquerait en une minute.
+        "direct": "120/min",
     },
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     "DEFAULT_RENDERER_CLASSES": ["rest_framework.renderers.JSONRenderer"],

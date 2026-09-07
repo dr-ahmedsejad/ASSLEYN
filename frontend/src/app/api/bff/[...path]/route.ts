@@ -31,6 +31,10 @@ const CHEMINS_AUTORISES = [
   "rbac/utilisateurs",
   "results/recompute",
   "grade-history",
+  // Concours : la console du jury travaille depuis le navigateur, parce
+  // qu'elle doit pouvoir differer ses gestes quand le reseau manque.
+  "competitions",
+  "tours",
 ];
 
 function estAutorise(chemin: string): boolean {
