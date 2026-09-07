@@ -304,7 +304,10 @@ body {
     opacity: 1;
   }
   100% {
-    transform: translate3d(var(--derive, 0), 560px, 0) rotate(var(--tour, 540deg));
+    /* La distance de chute est reglable : 560 px suffisent a une carte
+       partagee, il en faut le double sur un ecran projete. */
+    transform: translate3d(var(--derive, 0), var(--chute, 560px), 0)
+      rotate(var(--tour, 540deg));
     opacity: 0;
   }
 }

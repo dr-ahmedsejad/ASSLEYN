@@ -1,16 +1,16 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import Link from "next/link";
 import {
   CheckCircle2,
   CloudOff,
-  ExternalLink,
   Play,
   TimerOff,
   XCircle,
 } from "lucide-react";
 
+import { LienDirect } from "@/components/LienDirect";
+import { Medaille } from "@/components/Medaille";
 import { empiler, identifiant, vider } from "@/lib/file-hors-ligne";
 import type { DerouleConcours, Tour } from "@/lib/types";
 
@@ -174,7 +174,7 @@ export function ConsoleConcours({ deroule }: { deroule: DerouleConcours }) {
           </p>
         </Carte>
         <Classement lignes={classement} final />
-        <LienPublic code={competition.code} />
+        <LienDirect code={competition.code} />
       </div>
     );
   }
@@ -253,14 +253,25 @@ export function ConsoleConcours({ deroule }: { deroule: DerouleConcours }) {
                 {expire ? "إجابة صحيحة رغم انتهاء الوقت" : "إجابة صحيحة"}
               </button>
 
+              {/* « لم تجب » ne s'ouvre qu'a l'expiration du temps.
+                  Tant qu'il reste des secondes, le groupe peut encore
+                  repondre : declarer l'absence de reponse avant la fin
+                  reviendrait a lui retirer son tour. */}
               <button
                 type="button"
                 onClick={() => trancher("NO_ANSWER")}
-                className="flex items-center justify-center gap-2 rounded-2xl border-2 border-gray-200 px-6 py-4 text-base font-bold text-gris transition-colors hover:bg-gray-50"
+                disabled={!expire}
+                className="flex items-center justify-center gap-2 rounded-2xl border-2 border-gray-200 px-6 py-4 text-base font-bold text-gris transition-colors enabled:hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40"
               >
                 <XCircle size={18} />
                 لم تجب
               </button>
+
+              {!expire ? (
+                <p className="chiffres -mt-1 text-center text-xs text-gris">
+                  يُفعَّل زر «لم تجب» بعد انتهاء الوقت — تبقى {restant} ثانية
+                </p>
+              ) : null}
             </div>
           )}
 
@@ -294,7 +305,7 @@ export function ConsoleConcours({ deroule }: { deroule: DerouleConcours }) {
         {joues} / {tours.length} دورا
       </p>
 
-      <LienPublic code={competition.code} />
+      <LienDirect code={competition.code} />
     </div>
   );
 }
@@ -379,12 +390,19 @@ function Classement({
       <ul className="space-y-2.5">
         {lignes.map((ligne, index) => (
           <li key={ligne.name} className="flex items-center gap-3">
-            <span
-              className="chiffres flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-xs font-bold leading-none text-white"
-              style={{ background: ligne.color }}
-            >
-              {index + 1}
-            </span>
+            {/* Au classement final, la medaille remplace le numero : c'est le
+                meme resultat que voit la salle, et le jury doit reconnaitre
+                son ecran dans le sien. */}
+            {final && index < 3 ? (
+              <Medaille rang={index + 1} taille={34} />
+            ) : (
+              <span
+                className="chiffres flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-xs font-bold leading-none text-white"
+                style={{ background: ligne.color }}
+              >
+                {index + 1}
+              </span>
+            )}
             <div className="min-w-0 flex-1">
               <div className="flex items-baseline justify-between gap-2">
                 <p className="truncate text-sm font-semibold text-dark">
@@ -408,18 +426,5 @@ function Classement({
         ))}
       </ul>
     </Carte>
-  );
-}
-
-function LienPublic({ code }: { code: string }) {
-  return (
-    <Link
-      href={`/direct/${code}`}
-      target="_blank"
-      className="flex items-center justify-center gap-2 rounded-xl border border-gray-200 px-4 py-2.5 text-sm font-medium text-gris transition-colors hover:bg-gray-50"
-    >
-      <ExternalLink size={15} />
-      شاشة القاعة · <span className="chiffres font-bold">{code}</span>
-    </Link>
   );
 }

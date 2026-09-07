@@ -12,6 +12,8 @@ import {
 } from "@/lib/concours-actions";
 import type { Competition } from "@/lib/types";
 
+import { LienDirect } from "@/components/LienDirect";
+
 import { Alerte, Carte } from "./ui";
 
 const ETAT_INITIAL: ResultatConcours = {};
@@ -214,6 +216,12 @@ export function PreparationConcours({
               بعد الانطلاق لا تُعدَّل المجموعات ولا الأسئلة: البرنامج يُحمَّل
               كاملا في جهاز اللجنة ليعمل دون شبكة.
             </p>
+
+            {/* Le lien est disponible des la preparation : on l'envoie a la
+                salle, ou on l'ouvre sur le videoprojecteur, avant de lancer. */}
+            <div className="mt-4">
+              <LienDirect code={competition.code} />
+            </div>
           </>
         ) : (
           <Alerte ton="warning">

@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Trophy, WifiOff } from "lucide-react";
 
+import { Medaille } from "@/components/Medaille";
 import type { EcranDirect } from "@/lib/types";
 
 /**
@@ -202,54 +203,69 @@ function Tableau({
 }
 
 /**
- * Le classement final.
+ * Le classement final : une ceremonie, pas un tableau.
  *
- * La premiere place monte, les autres l'entourent — la forme dit le resultat
- * avant que les chiffres ne soient lus.
+ * La forme dit le resultat avant que les chiffres ne soient lus — la premiere
+ * place monte, les autres l'entourent, et chacune porte sa medaille. Les
+ * confettis tombent sans fin : la fete dure autant que la projection.
+ *
+ * A egalite, deux groupes portent la meme medaille et le meme rang. Le
+ * classement est dense, comme partout ailleurs dans l'application.
  */
 function Podium({ lignes }: { lignes: EcranDirect["classement"] }) {
   const premiers = lignes.filter((l) => l.rank <= 3);
   const suivants = lignes.filter((l) => l.rank > 3);
 
   return (
-    <section className="mx-auto max-w-5xl">
-      <p className="mb-6 flex items-center justify-center gap-2 text-center text-xl font-bold text-accent">
-        <Trophy size={22} />
+    <section className="relative mx-auto max-w-5xl">
+      <Confettis />
+
+      <p className="mb-8 flex items-center justify-center gap-3 text-center text-2xl font-bold text-accent sm:text-3xl">
+        <Trophy size={28} />
         النتيجة النهائية
       </p>
 
       <div className="grid gap-4 sm:grid-cols-3 sm:items-end">
-        {premiers.map((ligne) => (
-          <div
-            key={ligne.id}
-            className={`rounded-3xl px-5 text-center ${
-              ligne.rank === 1 ? "py-10 sm:order-2" : "py-7"
-            } ${ligne.rank === 2 ? "sm:order-1" : ""} ${
-              ligne.rank === 3 ? "sm:order-3" : ""
-            }`}
-            style={{
-              background: `linear-gradient(160deg, ${ligne.color}, ${ligne.color}aa)`,
-            }}
-          >
-            <p className="chiffres text-sm font-bold text-white/70">
-              {ligne.rank}
-            </p>
-            <p
-              className={`mt-1 font-bold text-white ${
-                ligne.rank === 1 ? "text-3xl sm:text-4xl" : "text-2xl"
+        {premiers.map((ligne) => {
+          const premier = ligne.rank === 1;
+          return (
+            <div
+              key={ligne.id}
+              className={`carte-apparition relative overflow-hidden rounded-3xl px-5 text-center ${
+                premier ? "py-8 sm:order-2" : "py-6"
+              } ${ligne.rank === 2 ? "sm:order-1" : ""} ${
+                ligne.rank === 3 ? "sm:order-3" : ""
               }`}
+              style={{
+                background: `linear-gradient(160deg, ${ligne.color}, ${ligne.color}aa)`,
+                boxShadow: premier
+                  ? "0 0 0 2px rgba(229,192,24,.55), 0 24px 60px -20px rgba(0,0,0,.6)"
+                  : "0 16px 40px -18px rgba(0,0,0,.5)",
+              }}
             >
-              {ligne.name}
-            </p>
-            <p
-              className={`chiffres mt-2 font-extrabold text-white ${
-                ligne.rank === 1 ? "text-6xl" : "text-5xl"
-              }`}
-            >
-              {ligne.points}
-            </p>
-          </div>
-        ))}
+              <div className="pastille-pop flex justify-center">
+                <Medaille rang={ligne.rank} taille={premier ? 104 : 84} />
+              </div>
+
+              <p
+                className={`mt-2 font-bold text-white ${
+                  premier ? "text-2xl sm:text-3xl" : "text-xl"
+                }`}
+              >
+                {ligne.name}
+              </p>
+
+              <p
+                className={`chiffres mt-1 font-extrabold text-white ${
+                  premier ? "text-6xl" : "text-5xl"
+                }`}
+              >
+                {ligne.points}
+              </p>
+              <p className="text-xs text-white/70">نقطة</p>
+            </div>
+          );
+        })}
       </div>
 
       {suivants.length > 0 ? (
@@ -276,5 +292,42 @@ function Podium({ lignes }: { lignes: EcranDirect["classement"] }) {
         </div>
       ) : null}
     </section>
+  );
+}
+
+/**
+ * Confettis plein ecran.
+ *
+ * Ceux de la carte de resultat, dont la chute est ici doublee : une carte de
+ * telephone fait cinq cents pixels, un videoprojecteur beaucoup plus. Ils
+ * tournent sans fin — la ceremonie reste a l'ecran le temps qu'il faut — et
+ * s'effacent pour qui a demande moins d'animations.
+ */
+function Confettis() {
+  const couleurs = ["#006633", "#E5C018", "#C82020", "#008844", "#ffffff"];
+
+  return (
+    <div
+      aria-hidden="true"
+      className="pointer-events-none fixed inset-0 overflow-hidden"
+    >
+      {Array.from({ length: 46 }, (_, i) => (
+        <span
+          key={i}
+          className="confetti"
+          style={
+            {
+              insetInlineStart: `${(i * 100) / 46 + (i % 3) * 0.7}%`,
+              background: couleurs[i % couleurs.length],
+              "--derive": `${((i % 7) - 3) * 26}px`,
+              "--tour": `${360 + (i % 4) * 180}deg`,
+              "--duree": `${3.4 + (i % 6) * 0.42}s`,
+              "--attente": `${(i % 11) * 0.28}s`,
+              "--chute": "110vh",
+            } as React.CSSProperties
+          }
+        />
+      ))}
+    </div>
   );
 }

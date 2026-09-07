@@ -1,6 +1,7 @@
 import Link from "next/link";
-import { ExternalLink, Play, Trophy } from "lucide-react";
+import { Play, Trophy } from "lucide-react";
 
+import { LienDirect } from "@/components/LienDirect";
 import { NouvelleCompetition } from "@/components/NouvelleCompetition";
 import { Refus } from "@/components/Refus";
 import { Carte, Vide } from "@/components/ui";
@@ -79,14 +80,7 @@ export default async function PageCompetitions() {
                         <Play size={14} />
                         {competition.state === "RUNNING" ? "إدارة" : "النتيجة"}
                       </Link>
-                      <Link
-                        href={`/direct/${competition.code}`}
-                        target="_blank"
-                        className="flex items-center gap-1.5 rounded-xl border border-gray-200 px-3.5 py-2 text-sm font-medium text-gris transition-colors hover:bg-gray-50"
-                      >
-                        <ExternalLink size={14} />
-                        <span className="chiffres">{competition.code}</span>
-                      </Link>
+                      <LienDirect code={competition.code} compact />
                     </>
                   )}
                 </div>
