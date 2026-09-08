@@ -512,7 +512,7 @@ function LigneTitrage({
               qui explique, et l'explication ne se coupe pas. */}
           {ligne.separe ? (
             <span className="shrink-0 rounded-full bg-accent/15 px-2 py-0.5 text-[10px] font-bold text-accent-dk sm:text-xs">
-              فُصل بالحسم
+              فُصل بجولة الحسم
             </span>
           ) : null}
         </p>

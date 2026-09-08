@@ -685,7 +685,7 @@ function Classement({
                       se devinent pas. */}
                   {ligne.separe ? (
                     <span className="shrink-0 rounded-full bg-accent/15 px-1.5 py-px text-[10px] font-bold text-accent-dk">
-                      فُصل بالحسم
+                      فُصل بجولة الحسم
                     </span>
                   ) : null}
                 </p>
