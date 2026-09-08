@@ -163,58 +163,64 @@ export function PreparationConcours({
                     ))}
                   </ol>
                 ) : (
-                  <p className="px-3 py-2 text-xs text-gris">
-                    لا أسماء بعد.
-                  </p>
+                  <p className="px-3 py-2 text-xs text-gris">لا أسماء بعد.</p>
                 )}
               </li>
             ))}
           </ul>
         ) : null}
 
-        {/* Le classeur constitue les groupes et leurs listes d'un coup.
-            Le formulaire d'a cote reste pour le groupe qu'on ajoute seul. */}
-        <form
-          key={`groupes-${groupes}`}
-          action={actionGroupesFichier}
-          className="mb-4 rounded-xl border border-dashed border-gray-200 bg-gray-50/60 p-4"
-        >
-          <input type="hidden" name="competition" value={competition.id} />
+        {/* Le depot d'un classeur est reserve a l'administration : inscrire
+            les participantes d'une classe entiere est un acte de preparation,
+            pas de conduite. Le formulaire d'a cote reste ouvert au jury —
+            c'est le rattrapage d'un oubli le jour meme. */}
+        {administre ? (
+          <>
+            {/* Le classeur constitue les groupes et leurs listes d'un coup.
+              Le formulaire d'a cote reste pour le groupe qu'on ajoute seul. */}
+            <form
+              key={`groupes-${groupes}`}
+              action={actionGroupesFichier}
+              className="mb-4 rounded-xl border border-dashed border-gray-200 bg-gray-50/60 p-4"
+            >
+              <input type="hidden" name="competition" value={competition.id} />
 
-          <p className="flex items-center gap-1.5 text-sm font-medium text-dark-soft">
-            <Users size={15} />
-            استيراد القوائم من ملف Excel
-          </p>
-          <p className="mt-1 text-xs leading-relaxed text-gris">
-            عمودان: اسم المجموعة ثم اسم الطالبة، سطر لكل طالبة. يتكرر اسم
-            المجموعة في كل سطر من أسطرها.
-          </p>
+              <p className="flex items-center gap-1.5 text-sm font-medium text-dark-soft">
+                <Users size={15} />
+                استيراد القوائم من ملف Excel
+              </p>
+              <p className="mt-1 text-xs leading-relaxed text-gris">
+                عمودان: اسم المجموعة ثم اسم الطالبة، سطر لكل طالبة. يتكرر اسم
+                المجموعة في كل سطر من أسطرها.
+              </p>
 
-          <div className="mt-3 flex flex-wrap items-center gap-2">
-            <input
-              type="file"
-              name="fichier"
-              accept=".xlsx"
-              required
-              className="min-w-0 flex-1 text-sm text-dark-soft file:me-3 file:rounded-lg file:border-0 file:bg-primary/10 file:px-3 file:py-2 file:text-sm file:font-semibold file:text-primary"
-            />
-            <Bouton
-              libelle="استيراد"
-              enCours="جارٍ…"
-              icone={<Upload size={15} />}
-            />
-          </div>
+              <div className="mt-3 flex flex-wrap items-center gap-2">
+                <input
+                  type="file"
+                  name="fichier"
+                  accept=".xlsx"
+                  required
+                  className="min-w-0 flex-1 text-sm text-dark-soft file:me-3 file:rounded-lg file:border-0 file:bg-primary/10 file:px-3 file:py-2 file:text-sm file:font-semibold file:text-primary"
+                />
+                <Bouton
+                  libelle="استيراد"
+                  enCours="جارٍ…"
+                  icone={<Upload size={15} />}
+                />
+              </div>
 
-          <a
-            href="/modele-groupes.xlsx"
-            download
-            className="mt-3 inline-flex items-center gap-1.5 text-xs font-medium text-primary hover:underline"
-          >
-            <Download size={13} />
-            تنزيل نموذج جاهز
-          </a>
-        </form>
-        <Message etat={etatGroupesFichier} />
+              <a
+                href="/modele-groupes.xlsx"
+                download
+                className="mt-3 inline-flex items-center gap-1.5 text-xs font-medium text-primary hover:underline"
+              >
+                <Download size={13} />
+                تنزيل نموذج جاهز
+              </a>
+            </form>
+            <Message etat={etatGroupesFichier} />
+          </>
+        ) : null}
 
         {/* `key` sur le nombre de groupes : le formulaire se remonte apres
             chaque ajout, et le champ repart vide. Sans cela le nom precedent
@@ -356,8 +362,7 @@ export function PreparationConcours({
               عدد الأسئلة المحجوزة لجولات الحسم
             </label>
             <p className="mt-1 text-xs leading-relaxed text-gris">
-              تُترك جانبا ولا تُلعب. كل جولة حسم تستهلك سؤالا لكل مجموعة
-              متعادلة
+              تُترك جانبا ولا تُلعب. كل جولة حسم تستهلك سؤالا لكل مجموعة متعادلة
               {groupes > 0 && gardees > 0
                 ? ` — ${gardees} سؤالا يكفي ${Math.floor(gardees / groupes)} جولة بخمس مجموعات`
                 : ""}
@@ -483,9 +488,8 @@ export function PreparationConcours({
               )
             ) : (
               <>
-                المجموعات جاهزة ({groupes}). تنقص الأسئلة: تحتاج{" "}
-                {groupes} أسئلة على الأقل لجولة واحدة كاملة، وحاليا{" "}
-                {questions}.
+                المجموعات جاهزة ({groupes}). تنقص الأسئلة: تحتاج {groupes} أسئلة
+                على الأقل لجولة واحدة كاملة، وحاليا {questions}.
                 {/* Le jury ne peut pas y remedier : lui dire ce qui manque
                     sans lui dire a qui s'adresser le laisserait chercher un
                     bouton qui n'existe pas pour lui. */}

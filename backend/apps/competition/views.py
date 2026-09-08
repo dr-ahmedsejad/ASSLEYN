@@ -72,7 +72,11 @@ class CompetitionViewSet(viewsets.ModelViewSet):
     #: - **les enonces sont le fond du concours.** Ils se preparent en amont,
     #:   ils se pesent, et celui qui anime les decouvre en meme temps que la
     #:   salle. Les lui laisser ecrire reviendrait a lui laisser choisir ce sur
-    #:   quoi les etudiantes sont evaluees.
+    #:   quoi les etudiantes sont evaluees ;
+    #: - **les listes deposees en bloc** sont de la meme nature. Inscrire les
+    #:   participantes d'une classe entiere est un acte de preparation, pas de
+    #:   conduite. Ajouter un groupe a la main reste ouvert : c'est le
+    #:   rattrapage d'un oubli le jour meme.
     #:
     #: `partial_update` en fait partie : c'est par la que se regle le nombre
     #: d'enonces reserves au departage.
@@ -84,6 +88,7 @@ class CompetitionViewSet(viewsets.ModelViewSet):
             "partial_update",
             "ajouter_questions",
             "importer_questions",
+            "importer_groupes",
         }
     )
 

@@ -23,7 +23,11 @@ from rest_framework import status
 from apps.competition import classeur, services
 from apps.competition.models import Competition, Group, GroupMember, Question
 
-from .test_concours import animateur, api_jury  # noqa: F401  (fixtures)
+from .test_concours import (  # noqa: F401  (fixtures)
+    animateur,
+    api_admin,
+    api_jury,
+)
 
 
 def _classeur(lignes: list[tuple]) -> bytes:
@@ -200,11 +204,11 @@ def test_un_classeur_sans_entete_reste_accepte() -> None:
 
 
 @pytest.mark.django_db
-def test_la_route_refuse_le_mauvais_classeur(api_jury, animateur) -> None:
+def test_la_route_refuse_le_mauvais_classeur(api_admin, animateur) -> None:
     competition = _concours(par=animateur)
 
     reponse = _deposer(
-        api_jury,
+        api_admin,
         competition,
         _classeur([("السؤال", "الإجابة"), ("سؤال أول", "جواب أول")]),
     )
@@ -219,11 +223,27 @@ def test_la_route_refuse_le_mauvais_classeur(api_jury, animateur) -> None:
 
 
 @pytest.mark.django_db
-def test_le_depot_rend_le_compte_de_ce_qui_a_ete_cree(api_jury, animateur) -> None:
+def test_le_jury_ne_depose_pas_de_listes(api_jury, animateur) -> None:
+    """
+    Inscrire une classe entiere est un acte de preparation.
+
+    Le formulaire d'ajout d'un groupe reste ouvert au jury — c'est le
+    rattrapage d'un oubli le jour meme — mais le depot en bloc ne l'est pas.
+    """
+    competition = _concours(par=animateur)
+
+    reponse = _deposer(api_jury, competition, _classeur([("نور اليقين", "سارة")]))
+
+    assert reponse.status_code == status.HTTP_403_FORBIDDEN
+    assert competition.groups.count() == 0
+
+
+@pytest.mark.django_db
+def test_le_depot_rend_le_compte_de_ce_qui_a_ete_cree(api_admin, animateur) -> None:
     competition = _concours(par=animateur)
 
     reponse = _deposer(
-        api_jury,
+        api_admin,
         competition,
         _classeur(
             [
@@ -241,7 +261,7 @@ def test_le_depot_rend_le_compte_de_ce_qui_a_ete_cree(api_jury, animateur) -> No
 
 
 @pytest.mark.django_db
-def test_le_depot_est_refuse_apres_le_depart(api_jury, animateur) -> None:
+def test_le_depot_est_refuse_apres_le_depart(api_admin, animateur) -> None:
     competition = _concours(par=animateur)
     services.importer_groupes(competition, [("أ", ""), ("ب", "")])
     for i in range(2):
@@ -250,7 +270,7 @@ def test_le_depot_est_refuse_apres_le_depart(api_jury, animateur) -> None:
         )
     services.demarrer(competition)
 
-    reponse = _deposer(api_jury, competition, _classeur([("ج", "")]))
+    reponse = _deposer(api_admin, competition, _classeur([("ج", "")]))
 
     assert reponse.status_code == status.HTTP_400_BAD_REQUEST
     assert competition.groups.count() == 2
