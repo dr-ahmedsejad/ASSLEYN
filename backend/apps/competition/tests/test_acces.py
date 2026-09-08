@@ -13,10 +13,12 @@ Trois regles se lisent dans les resultats :
   aucun sens ;
 - **conduire un concours tient a `competition.animer`**, une permission
   delegable — le jury n'est pas forcement l'administration ;
-- **ouvrir et effacer restent a l'administration.** Animer, c'est conduire :
-  preparer, lancer, trancher. Decider qu'il y aura un concours engage
-  l'institut, et effacer celui qui a eu lieu emporte les groupes, les tours
-  et les decisions du jury.
+- **ouvrir, effacer et ecrire les enonces restent a l'administration.**
+  Animer, c'est conduire : constituer les equipes, lancer, trancher. Decider
+  qu'il y aura un concours engage l'institut ; effacer celui qui a eu lieu
+  emporte la seule trace de ce qui s'est passe dans la salle ; et les enonces
+  sont le fond du concours — qui anime les decouvre en meme temps que la
+  salle.
 """
 
 from __future__ import annotations
@@ -83,17 +85,7 @@ def _routes(competition: Competition, tour_id: int) -> list[tuple[str, str, dict
     return [
         ("get", reverse("competition-list"), {}),
         ("get", reverse("competition-detail", args=[competition.id]), {}),
-        (
-            "patch",
-            reverse("competition-detail", args=[competition.id]),
-            {"turn_seconds": 45},
-        ),
         ("post", reverse("competition-ajouter-groupe", args=[competition.id]), {"name": "ج"}),
-        (
-            "post",
-            reverse("competition-ajouter-questions", args=[competition.id]),
-            {"textes": ["سؤال"]},
-        ),
         ("get", reverse("competition-deroule", args=[competition.id]), {}),
         ("post", reverse("competition-demarrer", args=[competition.id]), {}),
         ("post", reverse("competition-barrage", args=[competition.id]), {}),
@@ -108,10 +100,20 @@ def _routes(competition: Competition, tour_id: int) -> list[tuple[str, str, dict
 
 
 def _routes_reservees(competition: Competition) -> list[tuple[str, str, dict]]:
-    """Ouvrir et effacer : ce que la permission du jury ne doit pas donner."""
+    """Ce que la permission du jury ne doit pas donner."""
     return [
         ("post", reverse("competition-list"), {"name": "أخرى"}),
         ("delete", reverse("competition-detail", args=[competition.id]), {}),
+        (
+            "patch",
+            reverse("competition-detail", args=[competition.id]),
+            {"questions_reservees": 4},
+        ),
+        (
+            "post",
+            reverse("competition-ajouter-questions", args=[competition.id]),
+            {"textes": ["سؤال"]},
+        ),
     ]
 
 
@@ -207,10 +209,11 @@ def test_le_jury_n_ouvre_ni_n_efface_une_session(
     api, animateur, admin_user, concours
 ) -> None:
     """
-    `competition.animer` conduit un concours ; elle ne le decide pas.
+    `competition.animer` conduit un concours ; elle ne l'ecrit pas.
 
-    Le jury recoit une session deja creee, la mene de bout en bout, et ne peut
-    pas la faire disparaitre.
+    Le jury recoit une session deja creee, avec ses enonces, la mene de bout
+    en bout, et ne peut ni la faire disparaitre ni changer ce sur quoi les
+    etudiantes sont evaluees.
     """
     api.force_authenticate(animateur)
     refus = [
@@ -223,13 +226,17 @@ def test_le_jury_n_ouvre_ni_n_efface_une_session(
 
 
 @pytest.mark.django_db
-def test_l_administration_ouvre_et_efface(api, admin_user, concours) -> None:
+def test_l_administration_ouvre_ecrit_et_efface(api, admin_user, concours) -> None:
     api.force_authenticate(admin_user)
 
-    creation = api.post(reverse("competition-list"), {"name": "أخرى"}, format="json")
+    accordes = [
+        _appeler(api, methode, url, corps)
+        for methode, url, corps in _routes_reservees(concours)
+        if methode != "delete"
+    ]
     suppression = api.delete(reverse("competition-detail", args=[concours.id]))
 
-    assert creation.status_code == status.HTTP_201_CREATED
+    assert all(r.status_code not in REFUS for r in accordes)
     assert suppression.status_code == status.HTTP_204_NO_CONTENT
 
 

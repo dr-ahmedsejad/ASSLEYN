@@ -16,9 +16,16 @@ export default async function PagePreparation({
 }: {
   params: Promise<{ id: string }>;
 }) {
-  if (!(await utilisateurAvec(PERMISSIONS.COMPETITION_ANIMER))) {
+  const utilisateur = await utilisateurAvec(PERMISSIONS.COMPETITION_ANIMER);
+  if (!utilisateur) {
     return <Refus titre="تحضير المسابقة" />;
   }
+
+  // Les enonces sont le fond du concours : ils se preparent en amont, et qui
+  // anime les decouvre en meme temps que la salle. La carte des questions ne
+  // s'affiche donc que pour l'administration — et le serveur refuse ses
+  // routes au jury, ce qui est la vraie garde.
+  const administre = utilisateur.role === "ADMIN";
 
   const { id } = await params;
   const competition = await apiRequestOuIntrouvable<Competition>(`/competitions/${id}/`);
@@ -41,7 +48,7 @@ export default async function PagePreparation({
         </Link>
       </div>
 
-      <PreparationConcours competition={competition} />
+      <PreparationConcours competition={competition} administre={administre} />
     </div>
   );
 }

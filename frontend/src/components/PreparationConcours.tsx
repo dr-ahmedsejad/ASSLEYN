@@ -82,8 +82,11 @@ function Message({ etat }: { etat: ResultatConcours }) {
  */
 export function PreparationConcours({
   competition,
+  administre,
 }: {
   competition: Competition;
+  /** L'administration prepare les enonces ; le jury conduit la seance. */
+  administre: boolean;
 }) {
   const [etatGroupe, actionGroupe] = useActionState(
     ajouterGroupe,
@@ -246,8 +249,12 @@ export function PreparationConcours({
 
       {/* ─── Questions ──────────────────────────────────────────────
           Absentes de la ندوة شعرية : il n'y a rien a y preparer, et une carte
-          vide laisserait croire a un oubli. */}
-      {avecQuestions ? (
+          vide laisserait croire a un oubli.
+
+          Absentes aussi pour le jury : les enonces sont le fond du concours,
+          ils se preparent en amont, et celui qui anime les decouvre en meme
+          temps que la salle. */}
+      {avecQuestions && administre ? (
         <Carte titre={`الأسئلة (${questions})`}>
           {/* Le classeur d'abord : c'est la voie qui porte les reponses, et
               celle qui coute le moins d'attention quand l'application tourne
@@ -479,6 +486,10 @@ export function PreparationConcours({
                 المجموعات جاهزة ({groupes}). تنقص الأسئلة: تحتاج{" "}
                 {groupes} أسئلة على الأقل لجولة واحدة كاملة، وحاليا{" "}
                 {questions}.
+                {/* Le jury ne peut pas y remedier : lui dire ce qui manque
+                    sans lui dire a qui s'adresser le laisserait chercher un
+                    bouton qui n'existe pas pour lui. */}
+                {administre ? "" : " راجعي الإدارة لإضافتها."}
               </>
             )}
           </Alerte>

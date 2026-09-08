@@ -60,17 +60,32 @@ class CompetitionViewSet(viewsets.ModelViewSet):
     permission_classes = [PeutAnimer]
     queryset = Competition.objects.prefetch_related("groups", "questions")
 
-    #: Ouvrir et effacer une session restent a l'administration.
+    #: Ce que `competition.animer` ne donne pas.
     #:
-    #: `competition.animer` sert a **conduire** un concours : le preparer, le
-    #: lancer, trancher les tours. Decider qu'il y aura un concours, et effacer
-    #: celui qui a eu lieu, sont d'un autre ordre — le premier engage
-    #: l'institut, le second emporte les groupes, les tours et les decisions du
-    #: jury, c'est-a-dire la seule trace de ce qui s'est passe dans la salle.
+    #: Cette permission sert a **conduire** un concours : constituer les
+    #: equipes, lancer, trancher les tours, departager. Elle ne donne ni de
+    #: l'ouvrir, ni de l'effacer, ni d'en ecrire le contenu.
     #:
-    #: Le jury recoit donc une session deja creee, la mene de bout en bout, et
-    #: ne peut pas la faire disparaitre.
-    ACTIONS_RESERVEES = frozenset({"create", "destroy"})
+    #: - **ouvrir** engage l'institut, **effacer** emporte les groupes, les
+    #:   tours et les decisions du jury — la seule trace de ce qui s'est passe
+    #:   dans la salle ;
+    #: - **les enonces sont le fond du concours.** Ils se preparent en amont,
+    #:   ils se pesent, et celui qui anime les decouvre en meme temps que la
+    #:   salle. Les lui laisser ecrire reviendrait a lui laisser choisir ce sur
+    #:   quoi les etudiantes sont evaluees.
+    #:
+    #: `partial_update` en fait partie : c'est par la que se regle le nombre
+    #: d'enonces reserves au departage.
+    ACTIONS_RESERVEES = frozenset(
+        {
+            "create",
+            "destroy",
+            "update",
+            "partial_update",
+            "ajouter_questions",
+            "importer_questions",
+        }
+    )
 
     def get_permissions(self):
         if self.action in self.ACTIONS_RESERVEES:

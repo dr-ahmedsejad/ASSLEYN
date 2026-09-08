@@ -25,7 +25,11 @@ from apps.competition.models import (
     Question,
 )
 
-from .test_concours import animateur, api_jury  # noqa: F401  (fixtures)
+from .test_concours import (  # noqa: F401  (fixtures)
+    animateur,
+    api_admin,
+    api_jury,
+)
 
 
 def _classeur(lignes: list[tuple], titre: str = "الأسئلة") -> bytes:
@@ -130,13 +134,30 @@ def test_un_classeur_sans_question_est_refuse() -> None:
 
 
 @pytest.mark.django_db
+def test_le_jury_ne_depose_pas_d_enonces(api_jury, animateur) -> None:
+    """
+    Ecrire le concours n'est pas le conduire.
+
+    Le classeur passe par une route a part, en multipart : elle doit etre
+    fermee au jury comme la saisie collee, sans quoi la reserve se
+    contournerait par le formulaire d'a cote.
+    """
+    competition = _concours(par=animateur)
+
+    reponse = _deposer(api_jury, competition, _classeur([("سؤال", "جواب")]))
+
+    assert reponse.status_code == status.HTTP_403_FORBIDDEN
+    assert competition.questions.count() == 0
+
+
+@pytest.mark.django_db
 def test_le_depot_cree_les_questions_avec_leurs_reponses(
-    api_jury, animateur
+    api_admin, animateur
 ) -> None:
     competition = _concours(par=animateur)
 
     reponse = _deposer(
-        api_jury,
+        api_admin,
         competition,
         _classeur(
             [
@@ -157,12 +178,12 @@ def test_le_depot_cree_les_questions_avec_leurs_reponses(
 
 
 @pytest.mark.django_db
-def test_un_second_depot_s_ajoute_au_premier(api_jury, animateur) -> None:
+def test_un_second_depot_s_ajoute_au_premier(api_admin, animateur) -> None:
     """On complete un classeur par un autre, sans repartir de zero."""
     competition = _concours(par=animateur)
 
-    _deposer(api_jury, competition, _classeur([("الأول", "أ")]))
-    _deposer(api_jury, competition, _classeur([("الثاني", "ب")]))
+    _deposer(api_admin, competition, _classeur([("الأول", "أ")]))
+    _deposer(api_admin, competition, _classeur([("الثاني", "ب")]))
     ordres = list(
         competition.questions.order_by("display_order").values_list(
             "display_order", flat=True
@@ -174,33 +195,33 @@ def test_un_second_depot_s_ajoute_au_premier(api_jury, animateur) -> None:
 
 
 @pytest.mark.django_db
-def test_un_fichier_qui_n_est_pas_xlsx_est_refuse(api_jury, animateur) -> None:
+def test_un_fichier_qui_n_est_pas_xlsx_est_refuse(api_admin, animateur) -> None:
     competition = _concours(par=animateur)
 
-    reponse = _deposer(api_jury, competition, b"colonne;colonne", nom="questions.csv")
+    reponse = _deposer(api_admin, competition, b"colonne;colonne", nom="questions.csv")
 
     assert reponse.status_code == status.HTTP_400_BAD_REQUEST
     assert competition.questions.count() == 0
 
 
 @pytest.mark.django_db
-def test_le_depot_est_refuse_sur_une_ndwa(api_jury, animateur) -> None:
+def test_le_depot_est_refuse_sur_une_ndwa(api_admin, animateur) -> None:
     competition = _concours(par=animateur, kind=CompetitionKind.POETIQUE)
 
-    reponse = _deposer(api_jury, competition, _classeur([("سؤال", "جواب")]))
+    reponse = _deposer(api_admin, competition, _classeur([("سؤال", "جواب")]))
 
     assert reponse.status_code == status.HTTP_400_BAD_REQUEST
     assert competition.questions.count() == 0
 
 
 @pytest.mark.django_db
-def test_le_depot_est_refuse_apres_le_depart(api_jury, animateur) -> None:
+def test_le_depot_est_refuse_apres_le_depart(api_admin, animateur) -> None:
     competition = _concours(par=animateur)
     Question.objects.create(competition=competition, text="سؤال", display_order=0)
     Question.objects.create(competition=competition, text="سؤال آخر", display_order=1)
     services.demarrer(competition)
 
-    reponse = _deposer(api_jury, competition, _classeur([("جديد", "جواب")]))
+    reponse = _deposer(api_admin, competition, _classeur([("جديد", "جواب")]))
 
     assert reponse.status_code == status.HTTP_400_BAD_REQUEST
     assert competition.questions.count() == 2

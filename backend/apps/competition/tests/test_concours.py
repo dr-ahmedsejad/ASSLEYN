@@ -49,6 +49,18 @@ def api_jury(api, animateur):
     return api
 
 
+@pytest.fixture
+def api_admin(api, admin_user):
+    """
+    L'administration.
+
+    Ecrire les enonces lui est reserve : ils sont le fond du concours, et qui
+    anime les decouvre en meme temps que la salle.
+    """
+    api.force_authenticate(admin_user)
+    return api
+
+
 def _concours(groupes: int = 4, questions: int = 30, secondes: int = 30, par=None):
     competition = Competition.objects.create(
         name="مسابقة القرآن", code=services.generer_code(), turn_seconds=secondes,

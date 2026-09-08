@@ -25,7 +25,11 @@ from apps.competition.models import (
     TurnOutcome,
 )
 
-from .test_concours import animateur, api_jury  # noqa: F401  (fixtures)
+from .test_concours import (  # noqa: F401  (fixtures)
+    animateur,
+    api_admin,
+    api_jury,
+)
 
 
 def _ndwa(groupes: int = 4, par=None) -> Competition:
@@ -119,7 +123,7 @@ def test_une_ndwa_sans_assez_de_groupes_est_refusee(animateur) -> None:
 
 
 @pytest.mark.django_db
-def test_les_questions_sont_refusees_sur_une_ndwa(api_jury, animateur) -> None:
+def test_les_questions_sont_refusees_sur_une_ndwa(api_admin, animateur) -> None:
     """
     Le refus est cote serveur, pas seulement dans l'interface.
 
@@ -129,7 +133,7 @@ def test_les_questions_sont_refusees_sur_une_ndwa(api_jury, animateur) -> None:
     """
     competition = _ndwa(par=animateur)
 
-    reponse = api_jury.post(
+    reponse = api_admin.post(
         reverse("competition-ajouter-questions", args=[competition.id]),
         {"textes": ["بيت من المعلقات"]},
         format="json",
@@ -140,7 +144,7 @@ def test_les_questions_sont_refusees_sur_une_ndwa(api_jury, animateur) -> None:
 
 
 @pytest.mark.django_db
-def test_le_type_ne_change_plus_apres_le_depart(api_jury, animateur) -> None:
+def test_le_type_ne_change_plus_apres_le_depart(api_admin, animateur) -> None:
     """
     Les tours sont crees au demarrage ; changer le type ensuite ne les
     changerait pas, mais ferait mentir tout ce qui est affiche.
@@ -148,7 +152,7 @@ def test_le_type_ne_change_plus_apres_le_depart(api_jury, animateur) -> None:
     competition = _ndwa(par=animateur)
     services.demarrer(competition)
 
-    reponse = api_jury.patch(
+    reponse = api_admin.patch(
         reverse("competition-detail", args=[competition.id]),
         {"kind": CompetitionKind.CULTURELLE},
         format="json",
