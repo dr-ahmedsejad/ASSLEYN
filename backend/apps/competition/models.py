@@ -88,18 +88,6 @@ class Competition(models.Model):
         validators=[MinValueValidator(5), MaxValueValidator(600)],
     )
 
-    #: Nombre de tours de parole par groupe, pour une ندوة شعرية.
-    #:
-    #: Sans enonces, plus rien ne dit ou la seance s'arrete. On le fixe donc a
-    #: la creation, et le deroule reste calculable d'un coup — c'est ce qui
-    #: permet au jury de travailler sans reseau. Ignore pour une مسابقة
-    #: ثقافية, ou ce sont les questions qui comptent.
-    rounds = models.PositiveSmallIntegerField(
-        _("عدد الجولات"),
-        default=5,
-        validators=[MinValueValidator(1), MaxValueValidator(50)],
-    )
-
     #: L'ecran public montre l'enonce du tour en cours — jamais les suivants.
     show_question = models.BooleanField(_("عرض السؤال للجمهور"), default=True)
 
@@ -132,20 +120,23 @@ class Competition(models.Model):
 
     def tours_prevus(self) -> int:
         """
-        Nombre de tours que la session comportera.
+        Nombre de tours que la session comportera, ou zero s'il est inconnu.
 
-        Des tours **complets** dans les deux cas : chaque groupe passe le meme
-        nombre de fois. Pour une مسابقة ثقافية, le compte vient des questions
-        — quatre groupes et trente questions donnent vingt-huit tours, deux
-        questions restant en reserve, sans quoi deux groupes auraient une
-        occasion de plus que les autres et le classement se discuterait. Pour
-        une ندوة شعرية, il vient du nombre de جولات choisi a la creation.
+        Une مسابقة ثقافية tient dans ses questions : quatre groupes et trente
+        questions donnent vingt-huit tours, deux questions restant en reserve,
+        sans quoi deux groupes auraient une occasion de plus que les autres et
+        le classement se discuterait.
+
+        Une ندوة شعرية n'a pas de fin ecrite d'avance : elle tourne jusqu'a ce
+        que le jury l'arrete. Zero dit ici « on ne sait pas », et non « aucun »
+        — les ecrans doivent alors annoncer le tour sans pretendre connaitre
+        le dernier.
         """
         groupes = self.groups.count()
         if groupes == 0:
             return 0
         if not self.avec_questions:
-            return self.rounds * groupes
+            return 0
         questions = self.questions.count()
         if questions == 0:
             return 0

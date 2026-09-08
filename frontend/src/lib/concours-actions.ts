@@ -35,7 +35,6 @@ export async function creerCompetition(
 
   const secondes = Number(donnees.get("turn_seconds") ?? 30);
   const poetique = donnees.get("kind") === "POETIQUE";
-  const jolees = Number(donnees.get("rounds") ?? 5);
 
   try {
     const creee = await apiRequest<Competition>("/competitions/", {
@@ -44,9 +43,6 @@ export async function creerCompetition(
         name,
         kind: poetique ? "POETIQUE" : "CULTURELLE",
         turn_seconds: Number.isFinite(secondes) ? secondes : 30,
-        // Le nombre de جولات ne sert qu'a la ندوة شعرية, ou rien d'autre ne
-        // dit ou la seance s'arrete. Le serveur l'ignore pour l'autre type.
-        rounds: poetique && Number.isFinite(jolees) ? jolees : 5,
         show_question: !poetique && donnees.get("show_question") === "on",
       },
     });
@@ -139,13 +135,71 @@ export async function demarrerCompetition(
     );
     revalidatePath(`/competitions/${competition}`);
     revalidatePath("/competitions");
+    // Le nombre de tours ne veut rien dire pour une ندوة شعرية : ce qu'on cree
+    // est une reserve, pas un programme.
     return {
       code: reponse.code,
-      message: `انطلقت المسابقة على ${reponse.tours} دورا.`,
+      message:
+        donnees.get("avec_questions") === "1"
+          ? `انطلقت المسابقة على ${reponse.tours} دورا.`
+          : "انطلقت الندوة. تستمر حتى تُنهيها اللجنة.",
     };
   } catch (erreur) {
     if (erreur instanceof ApiError) {
       return { erreur: erreur.messages[0] ?? "تعذر انطلاق المسابقة." };
+    }
+    throw erreur;
+  }
+}
+
+/**
+ * Fin d'une ندوة شعرية.
+ *
+ * Elle n'a pas de dernier tour ecrit d'avance : c'est ce geste, et lui seul,
+ * qui la termine. Les tours prepares d'avance et jamais lances disparaissent
+ * alors — le compte rendu ne montre que ce qui a eu lieu.
+ */
+export async function cloturerCompetition(
+  _etat: ResultatConcours,
+  donnees: FormData,
+): Promise<ResultatConcours> {
+  const competition = String(donnees.get("competition") ?? "");
+
+  try {
+    await apiRequest(`/competitions/${competition}/cloturer/`, {
+      method: "POST",
+    });
+    revalidatePath(`/competitions/${competition}/animer`);
+    revalidatePath("/competitions");
+    return { message: "انتهت الندوة." };
+  } catch (erreur) {
+    if (erreur instanceof ApiError) {
+      return { erreur: erreur.messages[0] ?? "تعذر إنهاء الندوة." };
+    }
+    throw erreur;
+  }
+}
+
+/**
+ * Suppression d'une session, reservee a l'administration.
+ *
+ * Elle emporte les groupes, les tours et les decisions du jury — la seule
+ * trace de ce qui s'est passe dans la salle. Le serveur verifie le role de son
+ * cote : cacher le bouton ne protege rien.
+ */
+export async function supprimerCompetition(
+  _etat: ResultatConcours,
+  donnees: FormData,
+): Promise<ResultatConcours> {
+  const competition = String(donnees.get("competition") ?? "");
+
+  try {
+    await apiRequest(`/competitions/${competition}/`, { method: "DELETE" });
+    revalidatePath("/competitions");
+    return { message: "حُذفت المسابقة." };
+  } catch (erreur) {
+    if (erreur instanceof ApiError) {
+      return { erreur: erreur.messages[0] ?? "تعذر حذف المسابقة." };
     }
     throw erreur;
   }

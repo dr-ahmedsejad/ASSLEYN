@@ -60,7 +60,15 @@ export default async function PageAnimer({
         </Alerte>
       </Carte>
 
-      <ConsoleConcours deroule={deroule} />
+      {/* `key` sur l'etat : la console travaille sur une copie locale du
+          deroule, qu'un simple rafraichissement ne remplace pas. Quand le jury
+          termine la seance, il faut donc la remonter pour qu'elle reparte des
+          donnees du serveur — sans quoi elle continuerait d'afficher un tour a
+          lancer dans une session close. */}
+      <ConsoleConcours
+        key={deroule.competition.state}
+        deroule={deroule}
+      />
     </div>
   );
 }

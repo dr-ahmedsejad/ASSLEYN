@@ -154,8 +154,12 @@ export function EcranSalle({
         </>
       )}
 
+      {/* Une ندوة شعرية n'a pas de dernier tour : la salle voit ce qui a ete
+          joue, pas une fraction dont le denominateur n'existe pas. */}
       <p className="chiffres mt-8 text-center text-xs text-white/40 sm:mt-5">
-        {etat.tours_joues} / {etat.tours_prevus}
+        {etat.tours_prevus === null
+          ? etat.tours_joues
+          : `${etat.tours_joues} / ${etat.tours_prevus}`}
       </p>
     </main>
   );

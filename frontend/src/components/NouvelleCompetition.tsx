@@ -5,7 +5,10 @@ import { useRouter } from "next/navigation";
 import { useFormStatus } from "react-dom";
 import { Plus } from "lucide-react";
 
-import { creerCompetition, type ResultatConcours } from "@/lib/concours-actions";
+import {
+  creerCompetition,
+  type ResultatConcours,
+} from "@/lib/concours-actions";
 import type { TypeCompetition } from "@/lib/types";
 
 import { Carte } from "./ui";
@@ -56,8 +59,8 @@ function Bouton() {
  *
  * Le type d'abord : c'est lui qui decide de tout le reste. Une مسابقة ثقافية
  * demandera des enonces et peut les projeter ; une ندوة شعرية n'a rien a
- * preparer, mais il faut lui dire combien de جولات elle durera, sans quoi
- * plus rien ne dit ou elle s'arrete.
+ * preparer et n'a pas de fin ecrite d'avance — elle tourne jusqu'a ce que le
+ * jury l'arrete depuis sa console.
  *
  * La duree du tour reste modifiable dans les deux cas : trente secondes
  * conviennent a une question de memorisation, moins a un raisonnement, plus a
@@ -150,27 +153,10 @@ export function NouvelleCompetition() {
         </div>
 
         {type === "POETIQUE" ? (
-          <div className="sm:w-1/2 sm:pe-1.5">
-            <label
-              htmlFor="rounds"
-              className="mb-1.5 block text-sm font-medium text-dark-soft"
-            >
-              عدد الجولات
-            </label>
-            <input
-              id="rounds"
-              name="rounds"
-              type="number"
-              min={1}
-              max={50}
-              defaultValue={5}
-              dir="ltr"
-              className="champ"
-            />
-            <p className="mt-1.5 text-xs leading-relaxed text-gris">
-              كل مجموعة تأخذ دورا في كل جولة. العدد يُثبَّت عند الانطلاق.
-            </p>
-          </div>
+          <p className="text-xs leading-relaxed text-gris">
+            تدور الندوة على المجموعات جولة بعد جولة، وتنتهي عندما تُنهيها اللجنة
+            من شاشة الإدارة. لا عدد جولات يُحدَّد مسبقا.
+          </p>
         ) : (
           <label className="flex items-center gap-2 text-sm text-dark-soft">
             <input

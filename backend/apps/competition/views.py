@@ -27,7 +27,7 @@ from rest_framework.throttling import ScopedRateThrottle
 from rest_framework.views import APIView
 
 from apps.accounts.rbac import Permission
-from apps.common.permissions import RequiresPermission
+from apps.common.permissions import IsAdmin, RequiresPermission
 from apps.competition import services
 from apps.competition.models import (
     Competition,
@@ -57,10 +57,35 @@ class CompetitionViewSet(viewsets.ModelViewSet):
     permission_classes = [PeutAnimer]
     queryset = Competition.objects.prefetch_related("groups", "questions")
 
+    def get_permissions(self):
+        """
+        La suppression est reservee a l'administration.
+
+        Animer une session et en effacer une ne sont pas le meme geste : le
+        premier se rattrape, le second emporte les groupes, les tours et les
+        decisions du jury — c'est-a-dire la seule trace de ce qui s'est passe
+        dans la salle. Une permission deleguee au jury ouvrirait cette porte a
+        qui n'a besoin que de conduire un concours.
+        """
+        if self.action == "destroy":
+            return [IsAdmin()]
+        return super().get_permissions()
+
     def perform_create(self, serializer) -> None:
         serializer.save(
             created_by=self.request.user, code=services.generer_code()
         )
+
+    def perform_destroy(self, instance: Competition) -> None:
+        audit.warning(
+            "Concours supprime — %s (%s) : %d groupes, %d tours, par %s",
+            instance.name,
+            instance.code,
+            instance.groups.count(),
+            instance.turns.count(),
+            self.request.user.username,
+        )
+        instance.delete()
 
     # ─── Preparation ───────────────────────────────────────────────
 
@@ -261,7 +286,12 @@ class EcranPublicView(APIView):
                 "state_display": competition.get_state_display(),
                 "turn_seconds": competition.turn_seconds,
                 "maintenant": maintenant,
-                "tours_prevus": competition.turns.count(),
+                # `null` pour une ندوة شعرية : elle n'a pas de dernier tour
+                # ecrit d'avance, et annoncer la reserve preparee ferait
+                # croire a la salle qu'on en est au dixieme sur septante-cinq.
+                "tours_prevus": (
+                    competition.turns.count() if competition.avec_questions else None
+                ),
                 "tours_joues": competition.turns.exclude(outcome="PENDING").count(),
                 "tour": tour,
                 "classement": services.classement(competition),

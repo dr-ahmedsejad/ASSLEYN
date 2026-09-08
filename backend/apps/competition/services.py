@@ -3,10 +3,16 @@ Regles du concours, hors de toute vue.
 
 Deux points meritent d'etre lus avant le reste.
 
-**Le deroule est calcule une fois.** Au demarrage, tous les tours sont crees :
-le tour d'indice i revient au groupe `i % nombre_de_groupes` et porte la
-question d'indice i. Le jury peut alors travailler sans reseau, puisque plus
-rien n'a besoin d'etre demande au serveur pour savoir qui passe ensuite.
+**Le deroule est calcule d'avance.** Au demarrage, les tours sont crees d'un
+coup : le tour d'indice i revient au groupe `i % nombre_de_groupes` et porte
+la question d'indice i. Le jury peut alors travailler sans reseau, puisque
+plus rien n'a besoin d'etre demande au serveur pour savoir qui passe ensuite.
+
+Une مسابقة ثقافية s'arrete quand ses questions sont epuisees, et le deroule
+est alors complet des le depart. Une ندوة شعرية n'a pas de fin ecrite : elle
+tourne jusqu'a ce que le jury l'arrete. On ne peut donc pas tout creer — on
+pose une reserve large, qu'on recharge des qu'elle s'epuise, et ce qui n'a pas
+servi disparait a la cloture.
 
 **L'heure vient du navigateur, bornee par le serveur.** Un geste peut arriver
 avec cinq minutes de retard, apres une coupure. Prendre l'heure d'arrivee
@@ -37,6 +43,16 @@ ALPHABET_CODE = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"
 
 #: Tolerance sur une heure annoncee par un navigateur en avance sur le serveur.
 DERIVE_TOLEREE = timedelta(seconds=5)
+
+#: Jolees preparees d'avance pour une ندوة شعرية.
+#:
+#: Cette seance n'a pas de fin ecrite : elle tourne jusqu'a ce que le jury
+#: l'arrete. On ne peut donc pas creer « tous » les tours — mais on peut en
+#: creer largement assez pour que le jury n'attende jamais le reseau, et
+#: recharger la reserve des qu'elle s'epuise. Vingt-cinq jolees, c'est plus
+#: qu'une soiree n'en contient, et ce sont des lignes vides qui ne couteront
+#: rien : celles qui n'auront pas servi disparaissent a la cloture.
+JOLEES_DAVANCE = 25
 
 
 class CompetitionInvalide(Exception):
@@ -93,9 +109,10 @@ def demarrer(competition: Competition) -> int:
             )
         total = (len(questions) // len(groupes)) * len(groupes)
     else:
-        # ندوة شعرية : pas d'enonce a distribuer, le compte vient des جولات.
+        # ندوة شعرية : elle n'a pas de fin ecrite d'avance. On pose une
+        # reserve de جولات, qui se rechargera d'elle-meme.
         questions = []
-        total = competition.rounds * len(groupes)
+        total = JOLEES_DAVANCE * len(groupes)
 
     Turn.objects.bulk_create(
         [
@@ -193,7 +210,11 @@ def trancher(
     )
 
     if not competition_a_des_tours_restants(tour.competition):
-        cloturer(tour.competition)
+        if tour.competition.avec_questions:
+            # Les questions sont epuisees : la مسابقة ثقافية est finie.
+            cloturer(tour.competition)
+        else:
+            recharger(tour.competition)
     return tour
 
 
@@ -201,12 +222,53 @@ def competition_a_des_tours_restants(competition: Competition) -> bool:
     return competition.turns.filter(outcome=TurnOutcome.PENDING).exists()
 
 
+@transaction.atomic
+def recharger(competition: Competition) -> int:
+    """
+    Remet des jolees d'avance dans une ندوة شعرية.
+
+    Rien ici ne decide de la fin : seul le jury l'arrete. Tant qu'il ne l'a pas
+    fait, il doit toujours avoir un tour a lancer, y compris s'il depasse la
+    reserve posee au demarrage.
+    """
+    groupes = list(competition.groups.all())
+    if not groupes:
+        return 0
+
+    depart = competition.turns.count()
+    Turn.objects.bulk_create(
+        [
+            Turn(
+                competition=competition,
+                index=depart + i,
+                round_number=(depart + i) // len(groupes) + 1,
+                group=groupes[(depart + i) % len(groupes)],
+                question=None,
+            )
+            for i in range(JOLEES_DAVANCE * len(groupes))
+        ]
+    )
+    return JOLEES_DAVANCE * len(groupes)
+
+
+@transaction.atomic
 def cloturer(competition: Competition) -> Competition:
-    """Ferme la competition. Le classement devient definitif."""
+    """
+    Ferme la session. Le classement devient definitif.
+
+    Les tours prepares d'avance qui n'ont jamais ete lances disparaissent : ce
+    sont des lignes que personne n'a jouees, et les laisser ferait croire a une
+    seance interrompue alors qu'elle s'est terminee quand le jury l'a voulu.
+    Un tour lance mais non tranche reste, lui : il a eu lieu.
+    """
     if competition.state != CompetitionState.FINISHED:
         competition.state = CompetitionState.FINISHED
         competition.finished_at = timezone.now()
         competition.save(update_fields=["state", "finished_at"])
+
+    competition.turns.filter(
+        outcome=TurnOutcome.PENDING, started_at__isnull=True
+    ).delete()
     return competition
 
 

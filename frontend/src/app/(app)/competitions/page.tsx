@@ -3,6 +3,7 @@ import { Feather, Play, Trophy } from "lucide-react";
 
 import { LienDirect } from "@/components/LienDirect";
 import { NouvelleCompetition } from "@/components/NouvelleCompetition";
+import { SupprimerCompetition } from "@/components/SupprimerCompetition";
 import { Refus } from "@/components/Refus";
 import { Carte, Vide } from "@/components/ui";
 import { apiRequest } from "@/lib/api";
@@ -19,9 +20,15 @@ const TON_ETAT: Record<string, string> = {
 };
 
 export default async function PageCompetitions() {
-  if (!(await utilisateurAvec(PERMISSIONS.COMPETITION_ANIMER))) {
+  const utilisateur = await utilisateurAvec(PERMISSIONS.COMPETITION_ANIMER);
+  if (!utilisateur) {
     return <Refus titre="المسابقات" />;
   }
+
+  // Effacer une session emporte les groupes, les tours et les decisions du
+  // jury. Animer n'est pas effacer : le geste reste a l'administration, et le
+  // serveur le verifie de son cote.
+  const administre = utilisateur.role === "ADMIN";
 
   const liste = await apiRequest<Paginated<Competition>>("/competitions/");
 
@@ -60,13 +67,13 @@ export default async function PageCompetitions() {
                       {competition.state_display}
                     </span>
                   </p>
-                  {/* Une ندوة شعرية n'a pas d'enonces a compter : on annonce
-                      ses جولات, qui sont ce qui en fixe la duree. */}
+                  {/* Une ندوة شعرية n'a ni enonces ni nombre de tours a
+                      annoncer : elle dure ce que le jury decide. */}
                   <p className="chiffres mt-1 text-xs text-gris">
-                    {competition.nombre_groupes} مجموعات ·{" "}
+                    {competition.nombre_groupes} مجموعات
                     {competition.avec_questions
-                      ? `${competition.nombre_questions} سؤالا`
-                      : `${competition.rounds} جولات`}{" "}
+                      ? ` · ${competition.nombre_questions} سؤالا`
+                      : ""}{" "}
                     · {competition.turn_seconds} ثانية للدور
                   </p>
                 </div>
@@ -94,6 +101,12 @@ export default async function PageCompetitions() {
                       <LienDirect code={competition.code} compact />
                     </>
                   )}
+                  {administre ? (
+                    <SupprimerCompetition
+                      competition={competition.id}
+                      nom={competition.name}
+                    />
+                  ) : null}
                 </div>
               </li>
             ))}

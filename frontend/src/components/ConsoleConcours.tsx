@@ -1,9 +1,18 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  useActionState,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import { useRouter } from "next/navigation";
 import {
   CheckCircle2,
   CloudOff,
+  Flag,
   Play,
   TimerOff,
   XCircle,
@@ -11,6 +20,7 @@ import {
 
 import { LienDirect } from "@/components/LienDirect";
 import { Medaille } from "@/components/Medaille";
+import { cloturerCompetition } from "@/lib/concours-actions";
 import { empiler, identifiant, vider } from "@/lib/file-hors-ligne";
 import type { DerouleConcours, Tour } from "@/lib/types";
 
@@ -132,7 +142,9 @@ export function ConsoleConcours({ deroule }: { deroule: DerouleConcours }) {
       demarre_a: depart,
     });
     setTours((liste) =>
-      liste.map((t) => (t.id === courant.id ? { ...t, started_at: depart } : t)),
+      liste.map((t) =>
+        t.id === courant.id ? { ...t, started_at: depart } : t,
+      ),
     );
     void reprendre();
   }
@@ -167,10 +179,13 @@ export function ConsoleConcours({ deroule }: { deroule: DerouleConcours }) {
   if (!courant) {
     return (
       <div className="space-y-5">
-        <Carte titre="انتهت المسابقة">
+        <Carte
+          titre={competition.avec_questions ? "انتهت المسابقة" : "انتهت الندوة"}
+        >
           <p className="text-sm text-gris">
-            كل الأدوار حُسمت. النتيجة النهائية معروضة أدناه، وهي نفسها التي تظهر
-            على شاشة القاعة.
+            {competition.avec_questions
+              ? "كل الأدوار حُسمت. النتيجة النهائية معروضة أدناه، وهي نفسها التي تظهر على شاشة القاعة."
+              : "أنهت اللجنة الندوة. النتيجة النهائية معروضة أدناه، وهي نفسها التي تظهر على شاشة القاعة."}
           </p>
         </Carte>
         <Classement lignes={classement} final />
@@ -206,9 +221,11 @@ export function ConsoleConcours({ deroule }: { deroule: DerouleConcours }) {
             background: `linear-gradient(160deg, ${courant.group_color}, ${courant.group_color}cc)`,
           }}
         >
+          {/* Une ندوة شعرية n'a pas de dernier tour : annoncer « الدور 3 من
+              75 » ferait passer la reserve preparee pour un programme. */}
           <p className="chiffres text-[11px] opacity-80">
-            الجولة {courant.round_number} · الدور {courant.index + 1} من{" "}
-            {tours.length}
+            الجولة {courant.round_number} · الدور {courant.index + 1}
+            {competition.avec_questions ? ` من ${tours.length}` : ""}
           </p>
           <p className="mt-0.5 text-2xl font-bold leading-tight">
             {courant.group_name}
@@ -314,11 +331,83 @@ export function ConsoleConcours({ deroule }: { deroule: DerouleConcours }) {
       <Classement lignes={classement} />
 
       <p className="chiffres text-center text-xs text-gris">
-        {joues} / {tours.length} دورا
+        {competition.avec_questions
+          ? `${joues} / ${tours.length} دورا`
+          : `${joues} دورا`}
       </p>
+
+      {/* La ندوة شعرية ne s'arrete pas toute seule : c'est le jury qui decide
+          que la seance est finie, et il n'y a que cet ecran pour le dire. */}
+      {!competition.avec_questions ? (
+        <ClotureNdwa competition={competition.id} />
+      ) : null}
 
       <LienDirect code={competition.code} />
     </div>
+  );
+}
+
+/**
+ * Fin de la ندوة شعرية.
+ *
+ * Rien d'autre ne l'arrete : ni les questions, puisqu'il n'y en a pas, ni un
+ * nombre de جولات, puisqu'on n'en fixe pas. Le bouton demande donc une
+ * confirmation — un geste isole, irreversible, au milieu d'un ecran ou tous
+ * les autres se rattrapent.
+ */
+function ClotureNdwa({ competition }: { competition: number }) {
+  const [etat, action] = useActionState(cloturerCompetition, {});
+  const [confirme, setConfirme] = useState(false);
+  const router = useRouter();
+
+  // La console travaille sur son etat local ; une fois la seance close, c'est
+  // le serveur qui a raison — on lui redemande la page.
+  useEffect(() => {
+    if (etat.message) router.refresh();
+  }, [etat.message, router]);
+
+  if (!confirme) {
+    return (
+      <button
+        type="button"
+        onClick={() => setConfirme(true)}
+        className="flex w-full items-center justify-center gap-2 rounded-2xl border-2 border-gray-200 px-6 py-3.5 text-sm font-bold text-gris transition-colors hover:bg-gray-50"
+      >
+        <Flag size={16} />
+        إنهاء الندوة
+      </button>
+    );
+  }
+
+  return (
+    <form action={action} className="space-y-2">
+      <input type="hidden" name="competition" value={competition} />
+      <p className="text-center text-sm text-dark-soft">
+        هل تُنهي الندوة؟ الترتيب يصير نهائيا.
+      </p>
+      <div className="grid grid-cols-2 gap-2">
+        <button
+          type="button"
+          onClick={() => setConfirme(false)}
+          className="rounded-2xl border-2 border-gray-200 px-4 py-3 text-sm font-bold text-gris transition-colors hover:bg-gray-50"
+        >
+          تراجع
+        </button>
+        <button
+          type="submit"
+          className="flex items-center justify-center gap-2 rounded-2xl px-4 py-3 text-sm font-bold text-white transition-opacity hover:opacity-90"
+          style={{ background: "linear-gradient(135deg,#8a6d0b,#b8930f)" }}
+        >
+          <Flag size={16} />
+          نعم، أنهِ الندوة
+        </button>
+      </div>
+      {etat.erreur ? (
+        <p role="alert" className="text-center text-sm text-red-700">
+          {etat.erreur}
+        </p>
+      ) : null}
+    </form>
   );
 }
 
@@ -382,7 +471,11 @@ function Chronometre({
           {secondes}
         </p>
         <p className="mt-1 text-[11px] text-gris">
-          {!enMarche ? "بانتظار الانطلاق" : secondes === 0 ? "انتهى الوقت" : "ثانية"}
+          {!enMarche
+            ? "بانتظار الانطلاق"
+            : secondes === 0
+              ? "انتهى الوقت"
+              : "ثانية"}
         </p>
       </div>
     </div>

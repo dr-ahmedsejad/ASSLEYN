@@ -403,7 +403,6 @@ export interface Competition {
   kind_display: string;
   /** Faux pour une ندوة شعرية : ni saisie ni projection d'enonces. */
   avec_questions: boolean;
-  rounds: number;
   code: string;
   state: EtatCompetition;
   state_display: string;
@@ -464,7 +463,8 @@ export interface EcranDirect {
   state_display: string;
   turn_seconds: number;
   maintenant: string;
-  tours_prevus: number;
+  /** `null` pour une ندوة شعرية : elle n'a pas de dernier tour ecrit d'avance. */
+  tours_prevus: number | null;
   tours_joues: number;
   tour: {
     index: number;

@@ -105,7 +105,6 @@ class CompetitionSerializer(serializers.ModelSerializer):
             "state",
             "state_display",
             "turn_seconds",
-            "rounds",
             "show_question",
             "created_at",
             "started_at",
@@ -132,15 +131,16 @@ class CompetitionSerializer(serializers.ModelSerializer):
 
     def validate(self, attrs: dict) -> dict:
         """
-        Le type et le nombre de جولات se figent au demarrage.
+        Le type se fige au demarrage.
 
-        Les tours sont crees d'un coup a ce moment-la ; les changer ensuite ne
-        changerait plus le deroule, mais ferait mentir ce qui est affiche.
+        Les premiers tours sont crees a ce moment-la, avec ou sans enonce
+        selon le type ; en changer ensuite ne changerait plus le deroule, mais
+        ferait mentir tout ce qui est affiche.
         """
         instance = self.instance
         if instance is None or instance.state == CompetitionState.DRAFT:
             return attrs
-        for champ in ("kind", "rounds"):
+        for champ in ("kind",):
             if champ in attrs and attrs[champ] != getattr(instance, champ):
                 raise serializers.ValidationError(
                     {champ: "لا يمكن تغيير هذا بعد انطلاق المسابقة."}

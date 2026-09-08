@@ -92,16 +92,13 @@ export function PreparationConcours({
   const groupes = competition.groups.length;
   const questions = competition.questions.length;
 
-  // Une ندوة شعرية n'a pas d'enonces a distribuer : son compte vient du
-  // nombre de جولات choisi a la creation, et rien ne reste en reserve.
-  const jolees = avecQuestions
-    ? groupes > 0
-      ? Math.floor(questions / groupes)
-      : 0
-    : competition.rounds;
+  // Une ندوة شعرية n'a rien a compter : elle tourne jusqu'a ce que le jury
+  // l'arrete, et deux groupes suffisent a la commencer.
+  const jolees =
+    avecQuestions && groupes > 0 ? Math.floor(questions / groupes) : 0;
   const tours = jolees * groupes;
   const reserve = avecQuestions ? questions - tours : 0;
-  const pret = groupes >= 2 && jolees >= 1;
+  const pret = groupes >= 2 && (!avecQuestions || jolees >= 1);
 
   return (
     <div className="space-y-5">
@@ -121,7 +118,15 @@ export function PreparationConcours({
           </ul>
         ) : null}
 
-        <form action={actionGroupe} className="flex flex-wrap items-end gap-2">
+        {/* `key` sur le nombre de groupes : le formulaire se remonte apres
+            chaque ajout, et le champ repart vide. Sans cela le nom precedent
+            restait, et deux groupes ajoutes de suite se retrouvaient colles
+            dans un seul nom. */}
+        <form
+          key={groupes}
+          action={actionGroupe}
+          className="flex flex-wrap items-end gap-2"
+        >
           <input type="hidden" name="competition" value={competition.id} />
           <input type="hidden" name="rang" value={groupes} />
           <div className="min-w-0 flex-1">
@@ -140,11 +145,7 @@ export function PreparationConcours({
               className="champ"
             />
           </div>
-          <Bouton
-            libelle="إضافة"
-            enCours="…"
-            icone={<UserPlus size={15} />}
-          />
+          <Bouton libelle="إضافة" enCours="…" icone={<UserPlus size={15} />} />
         </form>
         <Message etat={etatGroupe} />
       </Carte>
@@ -153,45 +154,49 @@ export function PreparationConcours({
           Absentes de la ندوة شعرية : il n'y a rien a y preparer, et une carte
           vide laisserait croire a un oubli. */}
       {avecQuestions ? (
-      <Carte titre={`الأسئلة (${questions})`}>
-        <form action={actionQuestions} className="space-y-3">
-          <input type="hidden" name="competition" value={competition.id} />
-          <div>
-            <label
-              htmlFor="textes"
-              className="mb-1.5 block text-sm font-medium text-dark-soft"
-            >
-              سؤال في كل سطر
-            </label>
-            <textarea
-              id="textes"
-              name="textes"
-              rows={6}
-              required
-              placeholder={"ما حكم النون الساكنة إذا جاء بعدها حرف الباء؟\nمن كتب المعلقات السبع؟"}
-              className="champ"
-              style={{ resize: "vertical" }}
+        <Carte titre={`الأسئلة (${questions})`}>
+          <form action={actionQuestions} className="space-y-3">
+            <input type="hidden" name="competition" value={competition.id} />
+            <div>
+              <label
+                htmlFor="textes"
+                className="mb-1.5 block text-sm font-medium text-dark-soft"
+              >
+                سؤال في كل سطر
+              </label>
+              <textarea
+                id="textes"
+                name="textes"
+                rows={6}
+                required
+                placeholder={
+                  "ما حكم النون الساكنة إذا جاء بعدها حرف الباء؟\nمن كتب المعلقات السبع؟"
+                }
+                className="champ"
+                style={{ resize: "vertical" }}
+              />
+            </div>
+            <Bouton
+              libelle="إضافة الأسئلة"
+              enCours="جارٍ…"
+              icone={<ListPlus size={15} />}
             />
-          </div>
-          <Bouton
-            libelle="إضافة الأسئلة"
-            enCours="جارٍ…"
-            icone={<ListPlus size={15} />}
-          />
-        </form>
-        <Message etat={etatQuestions} />
+          </form>
+          <Message etat={etatQuestions} />
 
-        {competition.questions.length > 0 ? (
-          <ol className="mt-4 max-h-56 space-y-1.5 overflow-y-auto border-t border-gray-100 pt-3">
-            {competition.questions.map((question, index) => (
-              <li key={question.id} className="text-sm text-dark-soft">
-                <span className="chiffres text-xs text-gris">{index + 1}.</span>{" "}
-                {question.text}
-              </li>
-            ))}
-          </ol>
-        ) : null}
-      </Carte>
+          {competition.questions.length > 0 ? (
+            <ol className="mt-4 max-h-56 space-y-1.5 overflow-y-auto border-t border-gray-100 pt-3">
+              {competition.questions.map((question, index) => (
+                <li key={question.id} className="text-sm text-dark-soft">
+                  <span className="chiffres text-xs text-gris">
+                    {index + 1}.
+                  </span>{" "}
+                  {question.text}
+                </li>
+              ))}
+            </ol>
+          ) : null}
+        </Carte>
       ) : null}
 
       {/* ─── Depart ─────────────────────────────────────────────── */}
@@ -200,14 +205,18 @@ export function PreparationConcours({
           <>
             <div
               className={`mb-4 grid gap-3 text-center ${
-                avecQuestions ? "grid-cols-3" : "grid-cols-2"
+                avecQuestions ? "grid-cols-3" : "grid-cols-1"
               }`}
             >
-              <Chiffre libelle="جولة" valeur={jolees} />
-              <Chiffre libelle="دورا" valeur={tours} />
               {avecQuestions ? (
-                <Chiffre libelle="سؤالا في الاحتياط" valeur={reserve} />
-              ) : null}
+                <>
+                  <Chiffre libelle="جولة" valeur={jolees} />
+                  <Chiffre libelle="دورا" valeur={tours} />
+                  <Chiffre libelle="سؤالا في الاحتياط" valeur={reserve} />
+                </>
+              ) : (
+                <Chiffre libelle="مجموعات في كل جولة" valeur={groupes} />
+              )}
             </div>
 
             {reserve > 0 ? (
@@ -221,8 +230,13 @@ export function PreparationConcours({
 
             <form action={actionDepart}>
               <input type="hidden" name="competition" value={competition.id} />
+              <input
+                type="hidden"
+                name="avec_questions"
+                value={avecQuestions ? "1" : ""}
+              />
               <Bouton
-                libelle="انطلاق المسابقة"
+                libelle={avecQuestions ? "انطلاق المسابقة" : "انطلاق الندوة"}
                 enCours="جارٍ الانطلاق…"
                 icone={<Play size={16} />}
                 ton="or"
@@ -233,7 +247,7 @@ export function PreparationConcours({
             <p className="mt-3 text-xs leading-relaxed text-gris">
               {avecQuestions
                 ? "بعد الانطلاق لا تُعدَّل المجموعات ولا الأسئلة: البرنامج يُحمَّل كاملا في جهاز اللجنة ليعمل دون شبكة."
-                : "بعد الانطلاق لا تُعدَّل المجموعات ولا عدد الجولات: البرنامج يُحمَّل كاملا في جهاز اللجنة ليعمل دون شبكة."}
+                : "بعد الانطلاق لا تُعدَّل المجموعات: البرنامج يُحمَّل كاملا في جهاز اللجنة ليعمل دون شبكة. تدور الندوة جولة بعد جولة حتى تُنهيها اللجنة من شاشة الإدارة."}
             </p>
 
             {/* Le lien est disponible des la preparation : on l'envoie a la
