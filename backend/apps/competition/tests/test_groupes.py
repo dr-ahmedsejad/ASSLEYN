@@ -20,7 +20,7 @@ from django.urls import reverse
 from openpyxl import Workbook
 from rest_framework import status
 
-from apps.competition import services
+from apps.competition import classeur, services
 from apps.competition.models import Competition, Group, GroupMember, Question
 
 from .test_concours import animateur, api_jury  # noqa: F401  (fixtures)
@@ -146,6 +146,71 @@ def test_le_nom_est_pris_tel_quel(animateur) -> None:
     membre = GroupMember.objects.get(group__competition=competition)
 
     assert membre.name == "زينب من معهد آخر"
+
+
+# --------------------------------------------------------------------------
+# Le fichier depose dans le mauvais import
+# --------------------------------------------------------------------------
+
+
+def test_un_classeur_de_questions_est_refuse_par_l_import_des_groupes() -> None:
+    """
+    Le defaut qui a coute une preparation entiere.
+
+    Les deux depots se ressemblent — deux colonnes, un bouton — et le fichier
+    des questions est parti dans celui des groupes. Les trois enonces sont
+    devenus trois equipes, leurs reponses trois participantes, et la seance
+    n'a pas pu demarrer faute de questions. Rien n'avait proteste.
+
+    La ligne d'en-tete est le seul signe fiable : elle nomme les colonnes.
+    """
+    contenu = _classeur(
+        [
+            ("السؤال", "الإجابة"),
+            ("كم عدد سور القرآن الكريم؟", "مئة وأربع عشرة سورة."),
+        ]
+    )
+
+    with pytest.raises(classeur.ClasseurInvalide) as erreur:
+        classeur.lire_groupes(contenu)
+    assert "مجموعات" in str(erreur.value)
+
+
+def test_un_classeur_de_groupes_est_refuse_par_l_import_des_questions() -> None:
+    """Le meme controle dans l'autre sens."""
+    contenu = _classeur([("المجموعة", "الطالبة"), ("نور اليقين", "سارة بن علي")])
+
+    with pytest.raises(classeur.ClasseurInvalide) as erreur:
+        classeur.lire(contenu)
+    assert "أسئلة" in str(erreur.value)
+
+
+def test_un_classeur_sans_entete_reste_accepte() -> None:
+    """
+    Le controle porte sur l'en-tete, pas sur le contenu.
+
+    Beaucoup de gens n'en mettent pas : refuser leur fichier faute de pouvoir
+    l'identifier serait pire que le probleme qu'on evite.
+    """
+    couples = classeur.lire_groupes(
+        _classeur([("نور اليقين", "سارة بن علي"), ("رياض الصالحات", "مريم قاسمي")])
+    )
+
+    assert len(couples) == 2
+
+
+@pytest.mark.django_db
+def test_la_route_refuse_le_mauvais_classeur(api_jury, animateur) -> None:
+    competition = _concours(par=animateur)
+
+    reponse = _deposer(
+        api_jury,
+        competition,
+        _classeur([("السؤال", "الإجابة"), ("سؤال أول", "جواب أول")]),
+    )
+
+    assert reponse.status_code == status.HTTP_400_BAD_REQUEST
+    assert competition.groups.count() == 0
 
 
 # --------------------------------------------------------------------------

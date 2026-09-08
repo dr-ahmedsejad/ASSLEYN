@@ -394,14 +394,24 @@ export function PreparationConcours({
             </div>
           </>
         ) : (
+          /* Ne nommer que ce qui manque.
+             Le message annoncait les deux conditions meme quand les groupes
+             etaient au complet : on lisait « تحتاج المسابقة مجموعتين » avec
+             six groupes a l'ecran, et on cherchait le probleme du mauvais
+             cote. */
           <Alerte ton="warning">
-            {avecQuestions ? (
-              <>
-                تحتاج المسابقة مجموعتين على الأقل، وأسئلة تكفي لجولة كاملة
-                {groupes >= 2 ? ` (${groupes} أسئلة على الأقل)` : ""}.
-              </>
+            {groupes < 2 ? (
+              avecQuestions ? (
+                <>تحتاج المسابقة مجموعتين على الأقل.</>
+              ) : (
+                <>تحتاج الندوة مجموعتين على الأقل.</>
+              )
             ) : (
-              <>تحتاج الندوة مجموعتين على الأقل.</>
+              <>
+                المجموعات جاهزة ({groupes}). تنقص الأسئلة: تحتاج{" "}
+                {groupes} أسئلة على الأقل لجولة واحدة كاملة، وحاليا{" "}
+                {questions}.
+              </>
             )}
           </Alerte>
         )}
