@@ -491,6 +491,15 @@ def lancer_barrage(competition: Competition) -> tuple[int, int]:
     pour tout le reste : sur un reseau qui hoquette, une heure enregistree dit
     surtout quand le doigt s'est pose.
     """
+    # Un departage se joue sur un classement acquis. Tant qu'il reste des
+    # tours ordinaires, tout le monde est a egalite a zero point : ouvrir une
+    # manche a ce moment-la departagerait des groupes qui n'ont pas encore
+    # joue.
+    if competition.turns.filter(
+        outcome=TurnOutcome.PENDING, tiebreak_round=0
+    ).exists():
+        raise CompetitionInvalide("المسابقة لم تنته بعد.")
+
     if competition.turns.filter(
         outcome=TurnOutcome.PENDING, tiebreak_round__gt=0
     ).exists():

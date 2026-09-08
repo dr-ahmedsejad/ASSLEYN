@@ -358,6 +358,26 @@ def test_une_ndwa_se_departage_sans_enonces(animateur) -> None:
 
 
 @pytest.mark.django_db
+def test_pas_de_departage_tant_que_la_competition_dure(animateur) -> None:
+    """
+    Au demarrage, tous les groupes sont a zero — donc tous « a egalite ».
+
+    Ouvrir une manche a ce moment-la departagerait des equipes qui n'ont pas
+    encore joue. Le refus porte sur les tours ordinaires restants, pas sur
+    l'etat : c'est la seule mesure qui ne se laisse pas tromper par une
+    session rouverte pour un departage precedent.
+    """
+    competition = _concours(animateur, groupes=3, questions=9)
+    services.demarrer(competition)
+
+    with pytest.raises(services.CompetitionInvalide) as erreur:
+        services.lancer_barrage(competition)
+
+    assert "تنته" in str(erreur.value)
+    assert competition.turns.filter(tiebreak_round__gt=0).count() == 0
+
+
+@pytest.mark.django_db
 def test_une_manche_deja_ouverte_n_en_ouvre_pas_une_seconde(animateur) -> None:
     competition = _concours(animateur, groupes=2, questions=8)
     services.demarrer(competition)

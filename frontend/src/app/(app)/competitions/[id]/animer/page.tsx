@@ -60,13 +60,22 @@ export default async function PageAnimer({
         </Alerte>
       </Carte>
 
-      {/* `key` sur l'etat : la console travaille sur une copie locale du
-          deroule, qu'un simple rafraichissement ne remplace pas. Quand le jury
-          termine la seance, il faut donc la remonter pour qu'elle reparte des
-          donnees du serveur — sans quoi elle continuerait d'afficher un tour a
-          lancer dans une session close. */}
+      {/* La console travaille sur une copie locale du deroule, qu'un simple
+          rafraichissement ne remplace pas : il faut la remonter des que les
+          donnees du serveur ont bouge.
+
+          L'etat ne suffit pas a le dire. Une manche de departage ramene la
+          session de « terminee » a « en cours » — mais la page, chargee au
+          demarrage, n'avait jamais vu la cloture : elle lisait « en cours »
+          avant, et « en cours » apres. La cle ne changeait pas, la console
+          gardait ses quinze tours d'avant, et le jury voyait l'invitation au
+          departage lui repondre que la manche etait deja ouverte.
+
+          Le nombre de tours, lui, bouge a chaque manche creee. Les deux
+          ensemble couvrent tout ce qui peut changer sous les pieds de la
+          console. */}
       <ConsoleConcours
-        key={deroule.competition.state}
+        key={`${deroule.competition.state}-${deroule.tours.length}`}
         deroule={deroule}
       />
     </div>
