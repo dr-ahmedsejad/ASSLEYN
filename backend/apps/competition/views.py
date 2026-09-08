@@ -60,17 +60,20 @@ class CompetitionViewSet(viewsets.ModelViewSet):
     permission_classes = [PeutAnimer]
     queryset = Competition.objects.prefetch_related("groups", "questions")
 
-    def get_permissions(self):
-        """
-        La suppression est reservee a l'administration.
+    #: Ouvrir et effacer une session restent a l'administration.
+    #:
+    #: `competition.animer` sert a **conduire** un concours : le preparer, le
+    #: lancer, trancher les tours. Decider qu'il y aura un concours, et effacer
+    #: celui qui a eu lieu, sont d'un autre ordre — le premier engage
+    #: l'institut, le second emporte les groupes, les tours et les decisions du
+    #: jury, c'est-a-dire la seule trace de ce qui s'est passe dans la salle.
+    #:
+    #: Le jury recoit donc une session deja creee, la mene de bout en bout, et
+    #: ne peut pas la faire disparaitre.
+    ACTIONS_RESERVEES = frozenset({"create", "destroy"})
 
-        Animer une session et en effacer une ne sont pas le meme geste : le
-        premier se rattrape, le second emporte les groupes, les tours et les
-        decisions du jury — c'est-a-dire la seule trace de ce qui s'est passe
-        dans la salle. Une permission deleguee au jury ouvrirait cette porte a
-        qui n'a besoin que de conduire un concours.
-        """
-        if self.action == "destroy":
+    def get_permissions(self):
+        if self.action in self.ACTIONS_RESERVEES:
             return [IsAdmin()]
         return super().get_permissions()
 

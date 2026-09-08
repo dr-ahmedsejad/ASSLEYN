@@ -13,9 +13,10 @@ Trois regles se lisent dans les resultats :
   aucun sens ;
 - **conduire un concours tient a `competition.animer`**, une permission
   delegable — le jury n'est pas forcement l'administration ;
-- **effacer un concours reste a l'administration.** Animer et effacer ne sont
-  pas le meme geste : le second emporte les groupes, les tours et les
-  decisions du jury.
+- **ouvrir et effacer restent a l'administration.** Animer, c'est conduire :
+  preparer, lancer, trancher. Decider qu'il y aura un concours engage
+  l'institut, et effacer celui qui a eu lieu emporte les groupes, les tours
+  et les decisions du jury.
 """
 
 from __future__ import annotations
@@ -78,10 +79,9 @@ def concours(animateur) -> Competition:
 
 
 def _routes(competition: Competition, tour_id: int) -> list[tuple[str, str, dict]]:
-    """Chaque route du concours, avec sa methode et un corps minimal."""
+    """Les routes de conduite : celles que `competition.animer` doit ouvrir."""
     return [
         ("get", reverse("competition-list"), {}),
-        ("post", reverse("competition-list"), {"name": "أخرى"}),
         ("get", reverse("competition-detail", args=[competition.id]), {}),
         (
             "patch",
@@ -104,6 +104,14 @@ def _routes(competition: Competition, tour_id: int) -> list[tuple[str, str, dict
             reverse("tour-decider", args=[tour_id]),
             {"client_uuid": str(uuid.uuid4()), "outcome": "CORRECT"},
         ),
+    ]
+
+
+def _routes_reservees(competition: Competition) -> list[tuple[str, str, dict]]:
+    """Ouvrir et effacer : ce que la permission du jury ne doit pas donner."""
+    return [
+        ("post", reverse("competition-list"), {"name": "أخرى"}),
+        ("delete", reverse("competition-detail", args=[competition.id]), {}),
     ]
 
 
@@ -131,10 +139,9 @@ def test_aucune_route_du_jury_n_est_ouverte(api, concours) -> None:
         reponse = _appeler(api, methode, url, corps)
         assert reponse.status_code in REFUS, f"{methode.upper()} {url} est ouverte"
 
-    assert (
-        api.delete(reverse("competition-detail", args=[concours.id])).status_code
-        in REFUS
-    )
+    for methode, url, corps in _routes_reservees(concours):
+        reponse = _appeler(api, methode, url, corps)
+        assert reponse.status_code in REFUS, f"{methode.upper()} {url} est ouverte"
 
 
 @pytest.mark.django_db
@@ -144,7 +151,9 @@ def test_un_compte_sans_la_permission_est_refuse(api, sans_droits, concours) -> 
     tour = concours.turns.first()
     api.force_authenticate(sans_droits)
 
-    for methode, url, corps in _routes(concours, tour.id):
+    for methode, url, corps in _routes(concours, tour.id) + _routes_reservees(
+        concours
+    ):
         reponse = _appeler(api, methode, url, corps)
         assert reponse.status_code in REFUS, f"{methode.upper()} {url} passe sans droit"
 
@@ -194,19 +203,34 @@ def test_la_permission_suffit_a_conduire_un_concours(api, animateur, concours) -
 
 
 @pytest.mark.django_db
-def test_seule_l_administration_efface(api, animateur, admin_user, concours) -> None:
-    competition = Competition.objects.create(
-        name="أخرى", code=services.generer_code(), created_by=animateur
-    )
+def test_le_jury_n_ouvre_ni_n_efface_une_session(
+    api, animateur, admin_user, concours
+) -> None:
+    """
+    `competition.animer` conduit un concours ; elle ne le decide pas.
 
+    Le jury recoit une session deja creee, la mene de bout en bout, et ne peut
+    pas la faire disparaitre.
+    """
     api.force_authenticate(animateur)
-    refus = api.delete(reverse("competition-detail", args=[competition.id]))
+    refus = [
+        _appeler(api, methode, url, corps)
+        for methode, url, corps in _routes_reservees(concours)
+    ]
 
+    assert all(r.status_code == status.HTTP_403_FORBIDDEN for r in refus)
+    assert Competition.objects.filter(pk=concours.pk).exists()
+
+
+@pytest.mark.django_db
+def test_l_administration_ouvre_et_efface(api, admin_user, concours) -> None:
     api.force_authenticate(admin_user)
-    accord = api.delete(reverse("competition-detail", args=[competition.id]))
 
-    assert refus.status_code == status.HTTP_403_FORBIDDEN
-    assert accord.status_code == status.HTTP_204_NO_CONTENT
+    creation = api.post(reverse("competition-list"), {"name": "أخرى"}, format="json")
+    suppression = api.delete(reverse("competition-detail", args=[concours.id]))
+
+    assert creation.status_code == status.HTTP_201_CREATED
+    assert suppression.status_code == status.HTTP_204_NO_CONTENT
 
 
 @pytest.mark.django_db

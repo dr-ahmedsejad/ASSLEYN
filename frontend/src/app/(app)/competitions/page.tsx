@@ -25,9 +25,10 @@ export default async function PageCompetitions() {
     return <Refus titre="المسابقات" />;
   }
 
-  // Effacer une session emporte les groupes, les tours et les decisions du
-  // jury. Animer n'est pas effacer : le geste reste a l'administration, et le
-  // serveur le verifie de son cote.
+  // Ouvrir et effacer une session restent a l'administration. Animer un
+  // concours, c'est le conduire — decider qu'il aura lieu, ou effacer celui
+  // qui a eu lieu, est d'un autre ordre. Le serveur le verifie de son cote :
+  // masquer ces gestes evite seulement de proposer des portes fermees.
   const administre = utilisateur.role === "ADMIN";
 
   const liste = await apiRequest<Paginated<Competition>>("/competitions/");
@@ -36,7 +37,7 @@ export default async function PageCompetitions() {
     <div className="space-y-5">
       <h1 className="text-xl font-bold text-dark">المسابقات</h1>
 
-      <NouvelleCompetition />
+      {administre ? <NouvelleCompetition /> : null}
 
       <Carte titre={`${liste.count} مسابقة`} sansPadding>
         {liste.results.length === 0 ? (
