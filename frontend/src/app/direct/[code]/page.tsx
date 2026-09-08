@@ -41,11 +41,14 @@ export default async function PageDirect({
   const initial = (await reponse.json()) as EcranDirect;
 
   return (
+    /* Fond clair : c'est l'ecran que la salle regarde le plus longtemps, et
+       le sceau de l'institut — bleu et or — s'y tient mieux que sur le vert
+       sombre. La teinte verte reste, en halo, tout en haut. */
     <div
       className="min-h-screen"
       style={{
         background:
-          "radial-gradient(1400px 700px at 50% -20%, rgba(0,102,51,.55), transparent 65%), #04160d",
+          "radial-gradient(1200px 600px at 50% -22%, rgba(0,102,51,.12), transparent 68%), #f2f7f4",
       }}
     >
       <EcranSalle code={code.toUpperCase()} initial={initial} />

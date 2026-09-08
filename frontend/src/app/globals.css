@@ -24,6 +24,9 @@
 
   --color-accent: #e5c018;
   --color-accent-lt: #f5d340;
+  /* L'or de la charte sur fond clair : #e5c018 sur blanc ne donne que
+     1,7:1, illisible. Cette declinaison sombre monte a 5,4:1. */
+  --color-accent-dk: #8a6d0b;
 
   --color-dark: #0a0f1a;
   --color-dark-soft: #1e293b;

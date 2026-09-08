@@ -3,7 +3,11 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Trophy, WifiOff } from "lucide-react";
 
-import { Medaille } from "@/components/Medaille";
+import {
+  LIBELLE_PLACE,
+  Medaille,
+  TEINTE_PLACE,
+} from "@/components/Medaille";
 import type { EcranDirect } from "@/lib/types";
 
 /**
@@ -88,16 +92,28 @@ export function EcranSalle({
 
   return (
     <main className="min-h-screen px-4 py-6 sm:px-8 sm:py-8">
-      {/* ─── Titre ─────────────────────────────────────────────── */}
-      <header className="mb-8 text-center sm:mb-6">
-        <p className="text-xs font-semibold tracking-[0.22em] text-accent">
+      {/* ─── Titre ─────────────────────────────────────────────────
+          Le sceau de l'institut ouvre l'ecran. Cette page est projetee
+          devant des familles et parfois photographiee : ce qui en sort
+          doit porter le nom de la maison, pas seulement celui du jeu. */}
+      <header className="mb-6 text-center">
+        {/* `img` plutot que `next/image` : la page doit s'afficher meme
+            quand le reseau de la salle vacille, sans passer par le
+            service d'optimisation. */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/logo-institut-carre.png"
+          alt="شعار معهد الأصلين"
+          className="mx-auto h-16 w-16 object-contain sm:h-24 sm:w-24"
+        />
+        <p className="mt-2 text-[11px] font-bold tracking-[0.22em] text-accent-dk">
           معهد الأصلين
         </p>
-        <h1 className="mt-1 text-3xl font-bold text-white sm:text-5xl">
+        <h1 className="mt-1 text-2xl font-bold text-dark sm:text-4xl">
           {etat.name}
         </h1>
         {perdu ? (
-          <p className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1 text-xs text-white/70">
+          <p className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-gris/10 px-3 py-1 text-xs text-gris">
             <WifiOff size={12} />
             إعادة الاتصال…
           </p>
@@ -105,7 +121,7 @@ export function EcranSalle({
       </header>
 
       {termine ? (
-        <Podium lignes={classement} />
+        <ListeTitrage lignes={classement} />
       ) : (
         <>
           {tour ? (
@@ -156,7 +172,7 @@ export function EcranSalle({
 
       {/* Une ندوة شعرية n'a pas de dernier tour : la salle voit ce qui a ete
           joue, pas une fraction dont le denominateur n'existe pas. */}
-      <p className="chiffres mt-8 text-center text-xs text-white/40 sm:mt-5">
+      <p className="chiffres mt-8 text-center text-xs text-gris-lt sm:mt-5">
         {etat.tours_prevus === null
           ? etat.tours_joues
           : `${etat.tours_joues} / ${etat.tours_prevus}`}
@@ -177,17 +193,17 @@ function Tableau({
       {lignes.map((ligne) => (
         <div
           key={ligne.id}
-          className="flex items-center gap-4 rounded-2xl bg-white/5 px-4 py-4 backdrop-blur"
+          className="flex items-center gap-4 rounded-2xl border border-gray-100 bg-white px-4 py-4 shadow-card"
           style={{ borderInlineStart: `5px solid ${ligne.color}` }}
         >
-          <span className="chiffres w-8 shrink-0 text-center text-lg font-bold text-white/50">
+          <span className="chiffres w-8 shrink-0 text-center text-lg font-bold text-gris-lt">
             {ligne.rank}
           </span>
           <div className="min-w-0 flex-1">
-            <p className="truncate text-lg font-bold text-white sm:text-2xl">
+            <p className="truncate text-lg font-bold text-dark sm:text-2xl">
               {ligne.name}
             </p>
-            <div className="mt-1.5 h-2 overflow-hidden rounded-full bg-white/10">
+            <div className="mt-1.5 h-2 overflow-hidden rounded-full bg-gray-100">
               <div
                 className="h-full rounded-full transition-all duration-700"
                 style={{
@@ -197,7 +213,10 @@ function Tableau({
               />
             </div>
           </div>
-          <span className="chiffres text-3xl font-extrabold text-white sm:text-5xl">
+          <span
+            className="chiffres text-3xl font-extrabold sm:text-5xl"
+            style={{ color: ligne.color }}
+          >
             {ligne.points}
           </span>
         </div>
@@ -207,291 +226,178 @@ function Tableau({
 }
 
 /**
- * Le classement final : un podium a trois marches, puis un tableau.
+ * Le classement final : une liste, une medaille par rang.
  *
- * Les groupes classes premier, deuxieme et troisieme montent sur la marche de
- * leur rang — a plusieurs si besoin — et les confettis tombent sans fin : la
- * fete dure autant que la projection. Les suivants passent au tableau, sans
- * faire semblant d'etre sur la scene.
+ * Le podium a trois marches obligeait a choisir. A egalite de points il
+ * fallait bien mettre quelqu'un au centre, et passe le troisieme rang
+ * quelqu'un partait au tableau du dessous — deux decisions que le classement,
+ * lui, ne prend pas.
  *
- * A egalite, deux groupes portent la meme medaille, le meme rang, et la meme
- * marche. Le classement est dense, comme partout ailleurs dans l'application.
+ * La liste ne choisit plus. Chaque groupe a sa ligne, son rang et sa
+ * medaille ; deux ex aequo ont exactement la meme, a la meme hauteur. La forme
+ * ne depend plus du nombre de groupes : trois ou douze, elle s'allonge.
+ *
+ * Ce qui reste de la ceremonie tient a trois choses : la premiere place est
+ * surelevee et cerclee d'or, les confettis tombent sans fin, et la medaille
+ * s'arrete au bronze — elle doit rester une chose qu'on gagne.
  */
-
-/**
- * Hauteur des socles, du plus haut au plus bas.
- *
- * C'est le socle, et non la carte, qui porte desormais la marche. Une marche
- * peut accueillir plusieurs groupes ; sa hauteur ne doit donc pas dependre de
- * ce qu'on pose dessus.
- */
-const SOCLES: Record<number, string> = {
-  1: "h-16 sm:h-20",
-  2: "h-11 sm:h-16",
-  3: "h-7 sm:h-11",
-};
-
-/** Teinte du socle, accordee au metal de la marche. */
-const TEINTES_SOCLE: Record<number, { fond: string; chiffre: string }> = {
-  1: { fond: "rgba(229,192,24,.28)", chiffre: "rgba(240,203,46,.85)" },
-  2: { fond: "rgba(194,204,214,.24)", chiffre: "rgba(215,222,230,.8)" },
-  3: { fond: "rgba(207,147,81,.24)", chiffre: "rgba(227,171,114,.8)" },
-};
-
-function Podium({ lignes }: { lignes: EcranDirect["classement"] }) {
-  /**
-   * Trois marches, et autant de groupes qu'il en faut sur chacune.
-   *
-   * On avait d'abord tenu a trois cartes exactement, quitte a renvoyer au
-   * tableau un groupe pourtant classe troisieme. Une place du podium qui
-   * n'apparait pas sur le podium se defend mal devant la salle : le rang est
-   * dense, deux groupes a egalite ont vraiment le meme rang, et rien ne
-   * justifie d'en descendre un plutot que l'autre.
-   *
-   * Le podium accueille donc tout le monde jusqu'au rang trois. Ce qui est
-   * fixe, ce n'est plus le nombre de cartes mais le nombre de marches : les
-   * ex aequo se serrent sur la leur, et la hauteur continue de dire le rang.
-   */
-  const surPodium = lignes.filter((ligne) => ligne.rank <= 3);
-  const suivants = lignes.filter((ligne) => ligne.rank > 3);
-
-  /**
-   * Les marches, de droite a gauche : la deuxieme, la premiere, la troisieme.
-   *
-   * Une marche vide n'existe pas — a trois groupes tous premiers, il n'y a
-   * qu'une marche, en pleine largeur.
-   */
-  const marches = [2, 1, 3]
-    .map((rang) => ({
-      rang,
-      groupes: surPodium.filter((ligne) => ligne.rank === rang),
-    }))
-    .filter((marche) => marche.groupes.length > 0);
-
+function ListeTitrage({ lignes }: { lignes: EcranDirect["classement"] }) {
   /**
    * Personne ne se detache : tous les groupes ont le meme score.
    *
-   * Trois d'entre eux occupent quand meme la scene — il faut bien en placer
-   * trois — mais l'ecran doit dire que ce choix ne recompense rien, sinon la
-   * salle lit un vainqueur la ou il n'y en a pas.
+   * On ne cercle alors personne d'or — distinguer douze premiers ne distingue
+   * plus rien — et on le dit en toutes lettres, sinon la salle cherche un
+   * vainqueur dans une liste qui n'en designe aucun.
    */
   const egaliteGenerale =
     lignes.length > 1 && lignes.every((ligne) => ligne.rank === 1);
 
+  //: Reference de la barre d'ecart : les points de la premiere place.
+  const maximum = Math.max(...lignes.map((ligne) => ligne.points), 1);
+
   return (
-    <section className="relative mx-auto max-w-5xl">
+    <section className="relative mx-auto max-w-4xl">
       <Confettis />
 
-      <p className="mb-3 flex items-center justify-center gap-3 text-center text-2xl font-bold text-accent sm:text-3xl">
-        <Trophy size={28} />
-        النتيجة النهائية
+      <p className="mb-4 flex justify-center">
+        <span className="inline-flex items-center gap-2 rounded-full border border-accent/55 bg-accent/12 px-4 py-1.5 text-lg font-bold text-accent-dk sm:text-2xl">
+          <Trophy size={22} />
+          النتيجة النهائية
+        </span>
       </p>
 
       {egaliteGenerale ? (
-        <p className="mb-6 text-center text-base text-white/80 sm:text-lg">
+        <p className="mb-4 text-center text-sm text-gris sm:text-base">
           تعادل عام: كل المجموعات في المرتبة الأولى بالنقاط نفسها.
         </p>
-      ) : (
-        <div className="mb-5 sm:mb-3" />
-      )}
-
-      {/* Une colonne par marche, a toutes les tailles.
-          Empiler sur telephone rendait la forme du podium — celle qui dit le
-          resultat avant qu'on lise les chiffres. Ce qui change avec la
-          largeur, c'est l'echelle, jamais la disposition : socle, medaille,
-          nom et points retrecissent ensemble.
-
-          Les colonnes sont alignees par le bas : les socles reposent tous sur
-          le meme sol, et c'est leur hauteur qui fait la marche. Les cartes se
-          posent dessus et montent — une marche chargee monte donc plus haut,
-          comme un vrai podium ou trois personnes tiennent sur la meme
-          plateforme. */}
-      <div
-        className={`grid items-end gap-1.5 sm:gap-4 ${
-          marches.length === 3
-            ? "grid-cols-3"
-            : marches.length === 2
-              ? "grid-cols-2"
-              : "grid-cols-1"
-        }`}
-      >
-        {marches.map((marche) => (
-          <div
-            key={marche.rang}
-            className="flex flex-col justify-end gap-1.5 sm:gap-3"
-          >
-            {marche.groupes.map((ligne) => (
-              <CarteMarche
-                key={ligne.id}
-                ligne={ligne}
-                serree={marche.groupes.length > 1}
-              />
-            ))}
-            <Socle rang={marche.rang} />
-          </div>
-        ))}
-      </div>
-
-      {/* Le reste du classement : un tableau, franchement.
-          Ces groupes ne sont pas sur la scene ; leur donner des cartes en
-          demi-teinte laissait croire a un second podium. Trois colonnes
-          nommees se lisent de loin sans qu'on ait a deviner ce que chaque
-          nombre represente. */}
-      {suivants.length > 0 ? (
-        <div className="mt-6 overflow-x-auto">
-          <table className="w-full border-collapse">
-            <thead>
-              <tr className="text-sm text-white/55 sm:text-base">
-                <th scope="col" className="w-16 py-2 pe-3 text-start font-semibold sm:w-24">
-                  المرتبة
-                </th>
-                <th scope="col" className="py-2 text-start font-semibold">
-                  المجموعة
-                </th>
-                <th scope="col" className="py-2 ps-3 text-end font-semibold">
-                  النقاط
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {suivants.map((ligne) => (
-                <tr key={ligne.id} className="border-t border-white/10">
-                  <td className="py-3 pe-3 text-start">
-                    {/* Une place du podium renvoyee au tableau garde sa
-                        medaille : elle l'a gagnee, seule sa mise en scene a
-                        change. Cinq groupes a 3, 3, 2, 2, 1 mettent un
-                        deuxieme argent ici — il doit rester en argent. */}
-                    {ligne.rank <= 3 ? (
-                      <Medaille rang={ligne.rank} taille={30} fondColore />
-                    ) : (
-                      <span className="chiffres text-lg font-bold text-white/60 sm:text-2xl">
-                        {ligne.rank}
-                      </span>
-                    )}
-                  </td>
-                  <td className="py-3">
-                    <span className="flex min-w-0 items-center gap-3">
-                      <span
-                        className="h-5 w-1.5 shrink-0 rounded-full sm:h-7"
-                        style={{ background: ligne.color }}
-                      />
-                      <span className="truncate text-lg font-semibold text-white sm:text-2xl">
-                        {ligne.name}
-                      </span>
-                    </span>
-                  </td>
-                  <td className="py-3 ps-3 text-end">
-                    <span className="chiffres text-xl font-bold text-white sm:text-3xl">
-                      {ligne.points}
-                    </span>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
       ) : null}
+
+      <ol className="grid gap-2.5 sm:gap-3">
+        {lignes.map((ligne) => (
+          <LigneTitrage
+            key={ligne.id}
+            ligne={ligne}
+            maximum={maximum}
+            tete={ligne.rank === 1 && !egaliteGenerale}
+          />
+        ))}
+      </ol>
     </section>
   );
 }
 
 /**
- * Le socle d'une marche : ce qui reste du podium quand on enleve les groupes.
+ * Une ligne du classement final.
  *
- * Il porte le chiffre de la marche, dans le metal de sa medaille. C'est lui
- * qui dit le rang quand une marche chargee monte plus haut que celle du
- * dessus — le chiffre et le metal ne mentent pas, la hauteur des cartes si.
+ * Le rail de couleur a gauche fait reconnaitre le groupe avant qu'on lise son
+ * nom — de loin, c'est la couleur qui arrive en premier. La barre sous le nom
+ * donne l'ecart avec la premiere place : elle dit si la course etait serree,
+ * ce qu'une colonne de chiffres ne montre pas.
  */
-function Socle({ rang }: { rang: number }) {
-  const teinte = TEINTES_SOCLE[rang] ?? TEINTES_SOCLE[3];
-  return (
-    <div
-      className={`flex items-center justify-center rounded-t-xl sm:rounded-t-2xl ${
-        SOCLES[rang] ?? SOCLES[3]
-      }`}
-      style={{ background: teinte.fond }}
-      aria-hidden="true"
-    >
-      <span
-        className="chiffres text-lg font-extrabold leading-none sm:text-4xl"
-        style={{ color: teinte.chiffre }}
-      >
-        {rang}
-      </span>
-    </div>
-  );
-}
-
-/**
- * La carte d'un groupe sur sa marche.
- *
- * `serree` s'applique des qu'une marche accueille plusieurs groupes : les
- * cartes s'empilent, et une colonne de deux cartes pleine taille depassait le
- * haut d'un telephone. On retrecit alors l'ensemble plutot que de rogner le
- * nom, qui est ce que la salle cherche des yeux.
- */
-function CarteMarche({
+function LigneTitrage({
   ligne,
-  serree,
+  maximum,
+  tete,
 }: {
   ligne: EcranDirect["classement"][number];
-  serree: boolean;
+  maximum: number;
+  tete: boolean;
 }) {
-  const premier = ligne.rank === 1;
-  const grand = premier && !serree;
+  const place = LIBELLE_PLACE[ligne.rank];
+  const teinte = TEINTE_PLACE[ligne.rank];
+
   return (
-    <div
-      className={`carte-apparition relative overflow-hidden rounded-2xl px-1.5 text-center sm:rounded-3xl sm:px-5 ${
-        serree ? "py-2 sm:py-3" : "py-4 sm:py-6"
+    <li
+      className={`carte-apparition relative grid grid-cols-[auto_1fr_auto] items-center gap-3 overflow-hidden rounded-2xl border bg-white ps-3 pe-2 shadow-card sm:gap-5 sm:ps-5 sm:pe-4 ${
+        tete
+          ? "border-accent/50 py-3.5 sm:py-5"
+          : "border-gray-100 py-2.5 sm:py-3.5"
       }`}
-      style={{
-        background: `linear-gradient(160deg, ${ligne.color}, ${ligne.color}aa)`,
-        boxShadow: premier
-          ? "0 0 0 2px rgba(229,192,24,.55), 0 24px 60px -20px rgba(0,0,0,.6)"
-          : "0 16px 40px -18px rgba(0,0,0,.5)",
-      }}
+      style={
+        tete
+          ? {
+              // La couleur du groupe teinte le debut de la ligne, sans jamais
+              // passer sous le nom : le texte reste sur du blanc.
+              background: `linear-gradient(90deg, ${ligne.color}1f, #ffffff 62%)`,
+              boxShadow:
+                "0 0 0 1.5px rgba(229,192,24,.38), 0 10px 26px -14px rgba(4,54,31,.3)",
+            }
+          : undefined
+      }
     >
-      <div className="pastille-pop flex justify-center">
-        <Medaille
-          rang={ligne.rank}
-          taille={grand ? 104 : 84}
-          fondColore
-          className={
-            grand
-              ? "h-auto w-[3.6rem] sm:w-[104px]"
-              : serree
-                ? "h-auto w-9 sm:w-[56px]"
-                : "h-auto w-11 sm:w-[84px]"
-          }
-        />
+      <span
+        aria-hidden="true"
+        className="absolute inset-y-0 start-0 w-1 sm:w-1.5"
+        style={{ background: ligne.color }}
+      />
+
+      <span className="flex w-9 justify-center sm:w-14">
+        {place ? (
+          <Medaille
+            rang={ligne.rank}
+            taille={tete ? 46 : 38}
+            className={
+              tete ? "h-auto w-8 sm:w-[46px]" : "h-auto w-6 sm:w-[38px]"
+            }
+          />
+        ) : (
+          /* Au-dela du bronze, un chiffre. La medaille reste une chose qui se
+             gagne, pas une decoration distribuee a toute la liste. */
+          <span className="chiffres text-lg font-extrabold text-gris-lt sm:text-2xl">
+            {ligne.rank}
+          </span>
+        )}
+      </span>
+
+      <div className="min-w-0">
+        <p className="flex min-w-0 items-baseline gap-2">
+          <span
+            className={`truncate font-bold text-dark ${
+              tete ? "text-base sm:text-3xl" : "text-sm sm:text-2xl"
+            }`}
+          >
+            {ligne.name}
+          </span>
+
+          {/* Le libelle de la place accompagne le nom sur la meme ligne : en
+              dessous, il decalait la barre d'ecart et allongeait la ligne
+              sans rien dire de plus.
+
+              Absent sur telephone : la medaille y porte deja son chiffre et
+              son metal, et la place volee au nom compte davantage. */}
+          {place ? (
+            <span
+              className="hidden shrink-0 rounded-full px-2 py-0.5 text-xs font-bold sm:inline-block"
+              style={{ background: teinte.fond, color: teinte.texte }}
+            >
+              {place}
+            </span>
+          ) : null}
+        </p>
+
+        <div className="mt-1.5 h-1 overflow-hidden rounded-full bg-gray-100 sm:h-1.5">
+          <div
+            className="h-full rounded-full transition-all duration-700"
+            style={{
+              width: `${(ligne.points / maximum) * 100}%`,
+              background: ligne.color,
+            }}
+          />
+        </div>
       </div>
 
-      {/* `text-balance` evite qu'un nom de trois mots laisse un mot seul sur
-          la derniere ligne, dans une colonne aussi etroite. Aucune hauteur
-          n'est reservee : les cartes d'une meme marche sont empilees, pas
-          cote a cote, et rien n'oblige plus deux ex aequo a se repondre au
-          pixel pres. */}
-      <p
-        className={`mt-1.5 font-bold leading-tight text-balance text-white sm:mt-2 ${
-          grand ? "text-sm sm:text-3xl" : serree ? "text-xs sm:text-lg" : "text-xs sm:text-xl"
-        }`}
-      >
-        {ligne.name}
-      </p>
-
-      <p
-        className={`chiffres mt-0.5 font-extrabold leading-none text-white sm:mt-1 ${
-          grand
-            ? "text-3xl sm:text-6xl"
-            : serree
-              ? "text-2xl sm:text-4xl"
-              : "text-2xl sm:text-5xl"
-        }`}
-      >
-        {ligne.points}
-      </p>
-      <p className="mt-0.5 text-[10px] text-white/70 sm:text-xs">نقطة</p>
-    </div>
+      <div className="min-w-[2.75rem] text-center sm:min-w-[4rem]">
+        <p
+          className={`chiffres font-extrabold leading-none ${
+            tete ? "text-2xl sm:text-5xl" : "text-xl sm:text-4xl"
+          }`}
+          style={{ color: ligne.color }}
+        >
+          {ligne.points}
+        </p>
+        <p className="mt-0.5 text-[10px] text-gris sm:text-xs">نقطة</p>
+      </div>
+    </li>
   );
 }
 
@@ -504,7 +410,9 @@ function CarteMarche({
  * s'effacent pour qui a demande moins d'animations.
  */
 function Confettis() {
-  const couleurs = ["#006633", "#E5C018", "#C82020", "#008844", "#ffffff"];
+  // Le blanc a disparu avec le fond sombre. Les teintes viennent du sceau
+  // de l'institut : le bleu de l'arc et l'or du livre.
+  const couleurs = ["#006633", "#E5C018", "#C82020", "#2159a8", "#e8a33d"];
 
   return (
     <div
