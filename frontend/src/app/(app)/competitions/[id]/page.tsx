@@ -4,7 +4,7 @@ import { ArrowRight } from "lucide-react";
 
 import { PreparationConcours } from "@/components/PreparationConcours";
 import { Refus } from "@/components/Refus";
-import { apiRequest } from "@/lib/api";
+import { apiRequestOuIntrouvable } from "@/lib/api";
 import { utilisateurAvec } from "@/lib/acces";
 import { PERMISSIONS } from "@/lib/nav-config";
 import type { Competition } from "@/lib/types";
@@ -21,7 +21,7 @@ export default async function PagePreparation({
   }
 
   const { id } = await params;
-  const competition = await apiRequest<Competition>(`/competitions/${id}/`);
+  const competition = await apiRequestOuIntrouvable<Competition>(`/competitions/${id}/`);
 
   // Une competition lancee n'a plus rien a preparer : sa console l'attend.
   if (competition.state !== "DRAFT") {

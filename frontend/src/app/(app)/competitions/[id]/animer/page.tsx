@@ -5,7 +5,7 @@ import { ArrowRight } from "lucide-react";
 import { ConsoleConcours } from "@/components/ConsoleConcours";
 import { Refus } from "@/components/Refus";
 import { Alerte, Carte } from "@/components/ui";
-import { apiRequest } from "@/lib/api";
+import { apiRequestOuIntrouvable } from "@/lib/api";
 import { utilisateurAvec } from "@/lib/acces";
 import { PERMISSIONS } from "@/lib/nav-config";
 import type { DerouleConcours } from "@/lib/types";
@@ -30,7 +30,7 @@ export default async function PageAnimer({
   }
 
   const { id } = await params;
-  const deroule = await apiRequest<DerouleConcours>(
+  const deroule = await apiRequestOuIntrouvable<DerouleConcours>(
     `/competitions/${id}/deroule/`,
   );
 

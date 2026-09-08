@@ -13,6 +13,7 @@
 import "server-only";
 
 import { cookies, headers } from "next/headers";
+import { notFound } from "next/navigation";
 
 import {
   API_BASE_URL,
@@ -137,6 +138,29 @@ export async function apiRequest<T>(
 
   if (!response.ok) throw new ApiError(response.status, payload);
   return payload as T;
+}
+
+/**
+ * Comme `apiRequest`, mais un 404 de l'API devient un 404 de page.
+ *
+ * Une ressource ouverte depuis un lien peut avoir disparu entre-temps — une
+ * competition supprimee, un onglet reste ouvert, un signet. Laisser remonter
+ * l'`ApiError` affichait une trace d'appel a la place de la page ; ce qu'il
+ * faut montrer, c'est que la chose n'existe plus.
+ *
+ * Seul le 404 est traduit. Un 403 ou un 500 restent des erreurs : les
+ * confondre avec une absence cacherait un probleme de droits ou de serveur.
+ */
+export async function apiRequestOuIntrouvable<T>(
+  path: string,
+  options: RequestOptions = {},
+): Promise<T> {
+  try {
+    return await apiRequest<T>(path, options);
+  } catch (erreur) {
+    if (erreur instanceof ApiError && erreur.status === 404) notFound();
+    throw erreur;
+  }
 }
 
 function safeJson(text: string): unknown {
