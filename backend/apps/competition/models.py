@@ -271,6 +271,15 @@ class Turn(models.Model):
     index = models.PositiveSmallIntegerField(_("رقم الدور"))
     round_number = models.PositiveSmallIntegerField(_("الجولة"))
 
+    #: Numero de la manche de departage, ou zero pour un tour ordinaire.
+    #:
+    #: Les tours de barrage ne rapportent aucun point au classement : ils
+    #: **ordonnent** des groupes deja a egalite, sans jamais les faire passer
+    #: devant quelqu'un qu'ils n'avaient pas rattrape. Un groupe a cinq points
+    #: qui gagne le barrage reste a cinq points ; il passe seulement devant
+    #: celles qui en avaient cinq aussi.
+    tiebreak_round = models.PositiveSmallIntegerField(_("جولة الحسم"), default=0)
+
     group = models.ForeignKey(
         Group,
         on_delete=models.CASCADE,

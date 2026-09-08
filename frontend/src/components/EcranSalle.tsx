@@ -251,9 +251,12 @@ export function EcranSalle({
                   background: `linear-gradient(160deg, ${tour.group_color}, ${tour.group_color}bb)`,
                 }}
               >
+                {/* Une manche de departage ne fait pas partie du programme :
+                    l'annoncer comme « الدور 7 من 6 » serait un contresens. */}
                 <p className="chiffres text-xs text-white/75">
-                  الجولة {tour.round_number} · الدور {tour.index + 1} من{" "}
-                  {etat.tours_prevus}
+                  {tour.tiebreak_round > 0
+                    ? `جولة الحسم ${tour.tiebreak_round}`
+                    : `الجولة ${tour.round_number} · الدور ${tour.index + 1} من ${etat.tours_prevus}`}
                 </p>
                 <p className="mt-1 text-3xl font-bold text-white sm:text-5xl">
                   {tour.group_name}

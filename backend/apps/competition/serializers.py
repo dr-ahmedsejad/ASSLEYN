@@ -128,6 +128,7 @@ class TurnSerializer(serializers.ModelSerializer):
             "id",
             "index",
             "round_number",
+            "tiebreak_round",
             "group",
             "group_name",
             "group_color",

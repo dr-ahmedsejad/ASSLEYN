@@ -289,7 +289,14 @@ def trancher(
         client_uuid=client_uuid, turn=tour, kind=TurnAction.Kind.DECIDE
     )
 
-    if not competition_a_des_tours_restants(tour.competition):
+    if tour.tiebreak_round > 0:
+        # Une manche de departage se ferme sur elle-meme. Recharger une ندوة
+        # ici lui ajouterait vingt-cinq جولات au moment du classement final.
+        if not tour.competition.turns.filter(
+            outcome=TurnOutcome.PENDING, tiebreak_round__gt=0
+        ).exists():
+            cloturer(tour.competition)
+    elif not competition_a_des_tours_restants(tour.competition):
         if tour.competition.avec_questions:
             # Les questions sont epuisees : la مسابقة ثقافية est finie.
             cloturer(tour.competition)
@@ -354,34 +361,196 @@ def cloturer(competition: Competition) -> Competition:
 
 def classement(competition: Competition) -> list[dict]:
     """
-    Classement : un point par tour correct, ex aequo a rang partage.
+    Classement : un point par tour ordinaire gagne, ex aequo a rang partage.
 
-    Meme convention que les resultats de l'institut — deux groupes a egalite
-    partagent le rang, et le suivant n'est pas supprime.
+    Les tours de **barrage** ne rapportent aucun point. Ils servent uniquement
+    a ordonner des groupes deja a egalite : un groupe a cinq points qui gagne
+    le barrage reste a cinq points, il passe seulement devant celles qui en
+    avaient cinq aussi. Sans cette separation, une manche de departage ferait
+    depasser un groupe qu'on n'avait pas rattrape sur le terrain.
+
+    Deux groupes partagent donc un rang lorsqu'ils ont **et** le meme nombre
+    de points **et** le meme parcours de barrage — c'est-a-dire quand rien ne
+    les a departages.
     """
+    manches = (
+        competition.turns.order_by("-tiebreak_round")
+        .values_list("tiebreak_round", flat=True)
+        .first()
+        or 0
+    )
+
     lignes = []
     for groupe in competition.groups.all():
-        tours = groupe.turns.all()
+        tours = list(groupe.turns.all())
+        ordinaires = [tour for tour in tours if tour.tiebreak_round == 0]
+        departage = [tour for tour in tours if tour.tiebreak_round > 0]
+
+        # Le resultat manche par manche, et non leur somme. Une victoire a la
+        # premiere manche vaut plus qu'une victoire a la seconde : la premiere
+        # se gagne contre tout le monde, la seconde seulement contre ceux qui
+        # avaient deja perdu. Les additionner remettrait a egalite un groupe
+        # sorti en tete et un groupe repeche au tour suivant.
+        victoires = [
+            1
+            if any(
+                tour.tiebreak_round == manche and tour.outcome == TurnOutcome.CORRECT
+                for tour in departage
+            )
+            else 0
+            for manche in range(1, manches + 1)
+        ]
+
         lignes.append(
             {
                 "id": groupe.id,
                 "name": groupe.name,
                 "color": groupe.color,
                 "display_order": groupe.display_order,
-                "points": sum(1 for t in tours if t.outcome == TurnOutcome.CORRECT),
-                "joues": sum(1 for t in tours if t.tranche),
-                "restants": sum(1 for t in tours if not t.tranche),
+                "points": sum(
+                    1 for t in ordinaires if t.outcome == TurnOutcome.CORRECT
+                ),
+                "joues": sum(1 for t in ordinaires if t.tranche),
+                "restants": sum(1 for t in ordinaires if not t.tranche),
+                "departage": victoires,
             }
         )
 
-    lignes.sort(key=lambda ligne: (-ligne["points"], ligne["display_order"]))
+    lignes.sort(
+        key=lambda ligne: (
+            -ligne["points"],
+            tuple(-victoire for victoire in ligne["departage"]),
+            ligne["display_order"],
+        )
+    )
     rang, precedent = 0, None
     for ligne in lignes:
-        if ligne["points"] != precedent:
+        marque = (ligne["points"], tuple(ligne["departage"]))
+        if marque != precedent:
             rang += 1
-            precedent = ligne["points"]
+            precedent = marque
         ligne["rank"] = rang
     return lignes
+
+
+def groupes_a_departager(competition: Competition) -> list[dict]:
+    """
+    Les groupes de la plus haute egalite non resolue, ou une liste vide.
+
+    Une seule egalite a la fois, et la plus haute d'abord. Avec trois groupes
+    au premier rang et deux au deuxieme, le barrage ne concerne que les trois
+    premieres ; les deux autres deviennent quatriemes ex aequo, et le jury
+    decide ensuite s'il veut les departager a leur tour — souvent, seul le
+    podium l'interesse.
+    """
+    lignes = classement(competition)
+    compte: dict[int, int] = {}
+    for ligne in lignes:
+        compte[ligne["rank"]] = compte.get(ligne["rank"], 0) + 1
+
+    for ligne in lignes:  # deja tries du meilleur rang au dernier
+        if compte[ligne["rank"]] > 1:
+            return [autre for autre in lignes if autre["rank"] == ligne["rank"]]
+    return []
+
+
+def questions_de_reserve(competition: Competition) -> list:
+    """
+    Les enonces qu'aucun tour n'utilise.
+
+    Ce sont ceux que le deroule laisse de cote pour que chaque groupe reponde
+    au meme nombre de questions. Ils ne servaient a rien ; ils alimentent
+    desormais les manches de departage — et chaque manche consomme les siens,
+    donc la reserve fond a mesure.
+    """
+    utilisees = set(
+        competition.turns.exclude(question=None).values_list("question_id", flat=True)
+    )
+    return [
+        question
+        for question in competition.questions.all()
+        if question.id not in utilisees
+    ]
+
+
+@transaction.atomic
+def lancer_barrage(competition: Competition) -> tuple[int, int]:
+    """
+    Ouvre une manche de departage entre les groupes a egalite.
+
+    Rend le numero de la manche et le nombre de groupes concernes. La session
+    repasse en cours : le jury joue ces tours comme les autres, avec les memes
+    boutons, et la cloture revient d'elle-meme quand ils sont tous tranches.
+
+    Le temps de reponse n'entre nulle part. C'est le jury qui tranche, comme
+    pour tout le reste : sur un reseau qui hoquette, une heure enregistree dit
+    surtout quand le doigt s'est pose.
+    """
+    if competition.turns.filter(
+        outcome=TurnOutcome.PENDING, tiebreak_round__gt=0
+    ).exists():
+        raise CompetitionInvalide("جولة الحسم جارية بالفعل.")
+
+    egalite = groupes_a_departager(competition)
+    if len(egalite) < 2:
+        raise CompetitionInvalide("لا يوجد تعادل يحتاج الحسم.")
+
+    groupes = {
+        groupe.id: groupe
+        for groupe in competition.groups.filter(
+            id__in=[ligne["id"] for ligne in egalite]
+        )
+    }
+
+    # Les enonces de reserve, quand il y en a assez pour tout le monde.
+    #
+    # La reserve vaut le reste de la division des questions par les groupes :
+    # elle est donc, par construction, **toujours plus petite que le nombre de
+    # groupes**. Elle suffit rarement a une manche complete.
+    #
+    # Plutot que de refuser le departage pour une raison arithmetique — au
+    # moment ou toute la salle attend —, on retombe sur ce que fait une ندوة
+    # شعرية : un tour sans enonce. Le jury pose sa question a voix haute, le
+    # chronometre tourne, il tranche. C'est ainsi que se tient un barrage
+    # partout ailleurs.
+    #
+    # Tout ou rien : donner un enonce a l'ecran a une moitie des groupes et
+    # pas a l'autre serait la seule injustice possible ici.
+    questions = []
+    if competition.avec_questions:
+        reserve = questions_de_reserve(competition)
+        if len(reserve) >= len(egalite):
+            questions = reserve[: len(egalite)]
+
+    manche = (
+        competition.turns.order_by("-tiebreak_round")
+        .values_list("tiebreak_round", flat=True)
+        .first()
+        or 0
+    ) + 1
+    depart = (
+        competition.turns.order_by("-index").values_list("index", flat=True).first()
+        or 0
+    ) + 1
+
+    Turn.objects.bulk_create(
+        [
+            Turn(
+                competition=competition,
+                index=depart + i,
+                round_number=manche,
+                tiebreak_round=manche,
+                group=groupes[ligne["id"]],
+                question=questions[i] if questions else None,
+            )
+            for i, ligne in enumerate(egalite)
+        ]
+    )
+
+    competition.state = CompetitionState.RUNNING
+    competition.finished_at = None
+    competition.save(update_fields=["state", "finished_at"])
+    return manche, len(egalite)
 
 
 def tour_courant(competition: Competition) -> Turn | None:

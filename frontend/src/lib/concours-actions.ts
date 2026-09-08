@@ -246,6 +246,36 @@ export async function cloturerCompetition(
 }
 
 /**
+ * Ouvre une manche de departage entre les groupes a egalite.
+ *
+ * La plus haute egalite d'abord, et elle seule. Le jury relance autant de fois
+ * qu'il le souhaite — souvent deux, le temps de former le podium — et
+ * s'arrete quand le classement lui convient.
+ */
+export async function lancerBarrage(
+  _etat: ResultatConcours,
+  donnees: FormData,
+): Promise<ResultatConcours> {
+  const competition = String(donnees.get("competition") ?? "");
+
+  try {
+    const manche = await apiRequest<{ manche: number; groupes: number }>(
+      `/competitions/${competition}/barrage/`,
+      { method: "POST" },
+    );
+    revalidatePath(`/competitions/${competition}/animer`);
+    return {
+      message: `جولة الحسم ${manche.manche} بين ${manche.groupes} مجموعات.`,
+    };
+  } catch (erreur) {
+    if (erreur instanceof ApiError) {
+      return { erreur: erreur.messages[0] ?? "تعذر فتح جولة الحسم." };
+    }
+    throw erreur;
+  }
+}
+
+/**
  * Suppression d'une session, reservee a l'administration.
  *
  * Elle emporte les groupes, les tours et les decisions du jury — la seule

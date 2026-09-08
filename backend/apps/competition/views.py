@@ -279,14 +279,59 @@ class CompetitionViewSet(viewsets.ModelViewSet):
         """
         competition = self.get_object()
         tours = competition.turns.select_related("group", "question").all()
+
+        # Ce qu'il reste a departager, et avec quoi. La console ne peut pas le
+        # calculer : la reserve d'enonces n'est connue que du serveur.
+        egalite = services.groupes_a_departager(competition)
+        reserve = (
+            len(services.questions_de_reserve(competition))
+            if competition.avec_questions
+            else 0
+        )
+        departage = {
+            "groupes": [ligne["name"] for ligne in egalite],
+            # `False` veut dire : le jury posera sa question a voix haute.
+            "avec_enonces": bool(egalite) and reserve >= len(egalite),
+        }
+
         return Response(
             {
                 "competition": CompetitionSerializer(competition).data,
                 "maintenant": timezone.now(),
                 "tours": TurnSerializer(tours, many=True).data,
                 "classement": services.classement(competition),
+                # Ce qu'il reste a departager, et de quoi le faire. La console
+                # ne peut pas le calculer : la reserve d'enonces n'est connue
+                # que du serveur.
+                "departage": departage,
             }
         )
+
+    @extend_schema(request=None, responses={200: None})
+    @action(detail=True, methods=["post"])
+    def barrage(self, request: Request, pk=None) -> Response:
+        """
+        Ouvre une manche de departage entre les groupes a egalite.
+
+        La plus haute egalite d'abord, et elle seule. Avec trois groupes au
+        premier rang et deux au deuxieme, seules les trois premieres jouent ;
+        les deux autres deviennent quatriemes ex aequo, et le jury relance s'il
+        veut les departager a leur tour.
+        """
+        competition = self.get_object()
+        try:
+            manche, groupes = services.lancer_barrage(competition)
+        except services.CompetitionInvalide as erreur:
+            raise ValidationError(str(erreur)) from erreur
+
+        audit.info(
+            "Barrage ouvert — %s : manche %d entre %d groupes, par %s",
+            competition.name,
+            manche,
+            groupes,
+            request.user.username,
+        )
+        return Response({"manche": manche, "groupes": groupes})
 
     @extend_schema(request=None, responses={200: None})
     @action(detail=True, methods=["post"])
@@ -382,6 +427,7 @@ class EcranPublicView(APIView):
             tour = {
                 "index": courant.index,
                 "round_number": courant.round_number,
+                "tiebreak_round": courant.tiebreak_round,
                 "group_name": courant.group.name,
                 "group_color": courant.group.color,
                 # La salle voit qui repond. Les noms seulement : ni matricule,
@@ -412,9 +458,13 @@ class EcranPublicView(APIView):
                 # ecrit d'avance, et annoncer la reserve preparee ferait
                 # croire a la salle qu'on en est au dixieme sur septante-cinq.
                 "tours_prevus": (
-                    competition.turns.count() if competition.avec_questions else None
+                    competition.turns.filter(tiebreak_round=0).count()
+                    if competition.avec_questions
+                    else None
                 ),
-                "tours_joues": competition.turns.exclude(outcome="PENDING").count(),
+                "tours_joues": competition.turns.filter(tiebreak_round=0)
+                .exclude(outcome="PENDING")
+                .count(),
                 "tour": tour,
                 "classement": services.classement(competition),
             }

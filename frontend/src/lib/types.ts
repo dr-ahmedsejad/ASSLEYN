@@ -440,6 +440,8 @@ export interface Tour {
   group: number;
   group_name: string;
   group_color: string;
+  /** Zero pour un tour ordinaire, sinon le numero de la manche de departage. */
+  tiebreak_round: number;
   question: number | null;
   question_text: string | null;
   /** Aide-memoire du jury. Absente de l'ecran de la salle. */
@@ -460,6 +462,8 @@ export interface LigneClassement {
   points: number;
   joues: number;
   restants: number;
+  /** Resultat manche par manche des departages. Vide s'il n'y en a pas eu. */
+  departage: number[];
   rank: number;
 }
 
@@ -469,6 +473,12 @@ export interface DerouleConcours {
   maintenant: string;
   tours: Tour[];
   classement: LigneClassement[];
+  /** L'egalite qui reste a departager, et de quoi la departager. */
+  departage: {
+    groupes: string[];
+    /** Faux : le jury posera sa question a voix haute. */
+    avec_enonces: boolean;
+  };
 }
 
 /** Ce que voit la salle. Rien de plus. */
@@ -490,6 +500,7 @@ export interface EcranDirect {
     group_color: string;
     /** Les prenoms de la salle. Aucun matricule ne sort par cette route. */
     group_members: string[];
+    tiebreak_round: number;
     question_text: string | null;
     started_at: string | null;
     secondes_restantes: number;

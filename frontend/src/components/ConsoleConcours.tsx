@@ -14,6 +14,7 @@ import {
   CloudOff,
   Eye,
   Flag,
+  Swords,
   Play,
   TimerOff,
   Volume2,
@@ -23,7 +24,7 @@ import {
 
 import { LienDirect } from "@/components/LienDirect";
 import { Medaille } from "@/components/Medaille";
-import { cloturerCompetition } from "@/lib/concours-actions";
+import { cloturerCompetition, lancerBarrage } from "@/lib/concours-actions";
 import { empiler, identifiant, vider } from "@/lib/file-hors-ligne";
 import {
   arreter as arreterLesSons,
@@ -229,6 +230,17 @@ export function ConsoleConcours({ deroule }: { deroule: DerouleConcours }) {
               : "أنهت اللجنة الندوة. النتيجة النهائية معروضة أدناه، وهي نفسها التي تظهر على شاشة القاعة."}
           </p>
         </Carte>
+        {/* Un seul bouton, et rien a regler.
+            Le serveur sait qui est a egalite et avec quoi la departager ; le
+            jury n'a qu'a decider s'il le veut. */}
+        {deroule.departage.groupes.length > 1 ? (
+          <Departage
+            competition={competition.id}
+            groupes={deroule.departage.groupes}
+            avecEnonces={deroule.departage.avec_enonces}
+          />
+        ) : null}
+
         <Classement lignes={classement} final />
         <LienDirect code={competition.code} />
       </div>
@@ -272,8 +284,10 @@ export function ConsoleConcours({ deroule }: { deroule: DerouleConcours }) {
           {/* Une ندوة شعرية n'a pas de dernier tour : annoncer « الدور 3 من
               75 » ferait passer la reserve preparee pour un programme. */}
           <p className="chiffres text-[11px] opacity-80">
-            الجولة {courant.round_number} · الدور {courant.index + 1}
-            {competition.avec_questions ? ` من ${tours.length}` : ""}
+            {courant.tiebreak_round > 0
+              ? `جولة الحسم ${courant.tiebreak_round}`
+              : `الجولة ${courant.round_number} · الدور ${courant.index + 1}` +
+                (competition.avec_questions ? ` من ${tours.length}` : "")}
           </p>
           <p className="mt-0.5 text-2xl font-bold leading-tight">
             {courant.group_name}
@@ -438,6 +452,63 @@ export function ConsoleConcours({ deroule }: { deroule: DerouleConcours }) {
 
       <LienDirect code={competition.code} />
     </div>
+  );
+}
+
+/**
+ * Le departage, propose a la fin quand une egalite subsiste.
+ *
+ * Rien a regler : le serveur choisit l'egalite la plus haute et l'alimente
+ * comme il peut. Le jury lit qui joue, et decide s'il lance. Il relancera
+ * autant de fois qu'il le veut — souvent deux, le temps de former le podium.
+ */
+function Departage({
+  competition,
+  groupes,
+  avecEnonces,
+}: {
+  competition: number;
+  groupes: string[];
+  avecEnonces: boolean;
+}) {
+  const [etat, action] = useActionState(lancerBarrage, {});
+  const router = useRouter();
+
+  // La console travaille sur une copie locale du deroule ; une fois la manche
+  // creee, c'est le serveur qui a raison.
+  useEffect(() => {
+    if (etat.message) router.refresh();
+  }, [etat.message, router]);
+
+  return (
+    <Carte titre="تعادل">
+      <p className="text-sm leading-relaxed text-dark-soft">
+        {groupes.join(" · ")} — بالنقاط نفسها.
+      </p>
+      <p className="mt-1 text-xs leading-relaxed text-gris">
+        {avecEnonces
+          ? "جولة الحسم تأخذ أسئلتها من الاحتياط: دور واحد لكل مجموعة."
+          : "لا أسئلة في الاحتياط: اطرحي السؤال بصوتك، والمؤقّت يعمل كالعادة."}
+      </p>
+
+      <form action={action} className="mt-3">
+        <input type="hidden" name="competition" value={competition} />
+        <button
+          type="submit"
+          className="flex w-full items-center justify-center gap-2 rounded-2xl px-6 py-4 text-base font-bold text-white shadow-card transition-opacity hover:opacity-90"
+          style={{ background: "linear-gradient(135deg,#8a6d0b,#b8930f)" }}
+        >
+          <Swords size={18} />
+          جولة الحسم
+        </button>
+      </form>
+
+      {etat.erreur ? (
+        <p role="alert" className="mt-2 text-sm text-red-700">
+          {etat.erreur}
+        </p>
+      ) : null}
+    </Carte>
   );
 }
 
