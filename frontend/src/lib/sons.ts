@@ -19,8 +19,26 @@
  * changent ensemble, et restent ensemble jusqu'a la fin du tour.
  */
 
-/** Le jury peut couper le son. Le choix suit l'appareil, pas le compte. */
-const CLE_MUET = "asleyn.concours.muet";
+/**
+ * Les deux ecrans qui sonnent, et leur reglage propre.
+ *
+ * Ils partageaient une seule cle. Un meme appareil ouvrant la console puis le
+ * lien de la salle heritait donc de la coupure faite pour l'autre : le jury
+ * coupait son son pendant une reunion, et l'ecran de la salle restait muet
+ * sans qu'on comprenne pourquoi.
+ *
+ * Ce sont deux usages differents. La console sonne pour une personne, penchee
+ * dessus ; l'ecran de la salle sonne pour une assemblee. Le second est
+ * toujours actif au depart — c'est la raison d'etre du lien.
+ */
+export type Ecran = "jury" | "salle";
+
+const CLES: Record<Ecran, string> = {
+  // Conservee telle quelle : les jurys qui ont deja coupe leur son gardent
+  // leur reglage.
+  jury: "asleyn.concours.muet",
+  salle: "asleyn.concours.muet.salle",
+};
 
 /** Nombre de secondes finales ou la pulsation monte d'un cran. */
 const SECONDES_CHAUDES = 5;
@@ -152,20 +170,20 @@ export async function reveiller(): Promise<boolean> {
   return ctx.state === "running";
 }
 
-/** Le son est-il coupe sur cet appareil ? */
-export function estMuet(): boolean {
+/** Le son est-il coupe sur cet appareil, pour cet ecran ? */
+export function estMuet(ecran: Ecran): boolean {
   if (typeof window === "undefined") return false;
   try {
-    return window.localStorage.getItem(CLE_MUET) === "1";
+    return window.localStorage.getItem(CLES[ecran]) === "1";
   } catch {
     // Navigation privee, stockage refuse : on sonne, c'est le defaut.
     return false;
   }
 }
 
-export function definirMuet(muet: boolean): void {
+export function definirMuet(ecran: Ecran, muet: boolean): void {
   try {
-    window.localStorage.setItem(CLE_MUET, muet ? "1" : "0");
+    window.localStorage.setItem(CLES[ecran], muet ? "1" : "0");
   } catch {
     // Sans stockage, le choix ne survit pas au rechargement. Tant pis : il
     // vaut mieux un reglage oublie qu'une page qui casse.
@@ -197,13 +215,15 @@ export function programmerTour({
   debut,
   secondes,
   ecart,
+  ecran,
 }: {
   debut: string;
   secondes: number;
   ecart: number;
+  ecran: Ecran;
 }): void {
   arreter();
-  if (estMuet()) return;
+  if (estMuet(ecran)) return;
 
   const ctx = ouvrir();
   if (!ctx) return;

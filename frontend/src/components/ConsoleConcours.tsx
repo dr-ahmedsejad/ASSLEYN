@@ -65,7 +65,7 @@ export function ConsoleConcours({ deroule }: { deroule: DerouleConcours }) {
    * ferait diverger le HTML envoye de celui que le navigateur reconstruit.
    */
   const [muet, setMuet] = useState(false);
-  useEffect(() => setMuet(estMuet()), []);
+  useEffect(() => setMuet(estMuet("jury")), []);
   const [restantMesure, setRestant] = useState(competition.turn_seconds);
 
   /**
@@ -162,6 +162,7 @@ export function ConsoleConcours({ deroule }: { deroule: DerouleConcours }) {
       debut: depart,
       secondes: competition.turn_seconds,
       ecart: ecart.current ?? 0,
+      ecran: "jury",
     });
     return () => arreterLesSons();
   }, [depart, muet, competition.turn_seconds]);
@@ -331,7 +332,7 @@ export function ConsoleConcours({ deroule }: { deroule: DerouleConcours }) {
               onClick={() => {
                 const suivant = !muet;
                 setMuet(suivant);
-                definirMuet(suivant);
+                definirMuet("jury", suivant);
               }}
               aria-pressed={muet}
               className="flex items-center gap-1.5 rounded-full border border-gray-200 px-3 py-1 text-xs font-medium text-gris transition-colors hover:bg-gray-50"

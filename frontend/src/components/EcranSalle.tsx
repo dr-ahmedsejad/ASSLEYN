@@ -57,7 +57,7 @@ export function EcranSalle({
    */
   const [muet, setMuet] = useState(false);
   const [autorise, setAutorise] = useState(false);
-  useEffect(() => setMuet(estMuet()), []);
+  useEffect(() => setMuet(estMuet("salle")), []);
 
   /**
    * Ecart avec l'horloge du serveur, recale a chaque reponse recue.
@@ -118,6 +118,7 @@ export function EcranSalle({
       debut: depart,
       secondes: etat.turn_seconds,
       ecart: ecart.current ?? 0,
+      ecran: "salle",
     });
     // Le contexte peut avoir ete cree sans etre actif. On le constate juste
     // apres, pour proposer le bouton d'activation plutot que rester muet
@@ -163,6 +164,7 @@ export function EcranSalle({
         debut: depart,
         secondes: etat.turn_seconds,
         ecart: ecart.current ?? 0,
+        ecran: "salle",
       });
     }
   }
@@ -225,7 +227,7 @@ export function EcranSalle({
               onClick={() => {
                 const suivant = !muet;
                 setMuet(suivant);
-                definirMuet(suivant);
+                definirMuet("salle", suivant);
               }}
               aria-pressed={muet}
               className="flex items-center gap-1.5 rounded-full border border-gray-200 bg-white/70 px-3 py-1 text-[11px] font-medium text-gris transition-colors hover:bg-white"
