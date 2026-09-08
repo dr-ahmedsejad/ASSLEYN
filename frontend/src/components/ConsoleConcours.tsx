@@ -24,6 +24,7 @@ import {
 
 import { LienDirect } from "@/components/LienDirect";
 import { Medaille } from "@/components/Medaille";
+import { classerLocalement } from "@/lib/classement";
 import { cloturerCompetition, lancerBarrage } from "@/lib/concours-actions";
 import { empiler, identifiant, vider } from "@/lib/file-hors-ligne";
 import {
@@ -110,25 +111,10 @@ export function ConsoleConcours({ deroule }: { deroule: DerouleConcours }) {
     [tours],
   );
 
-  const classement = useMemo(() => {
-    const parGroupe = new Map<
-      number,
-      { name: string; color: string; points: number; ordre: number }
-    >();
-    tours.forEach((tour, position) => {
-      const ligne = parGroupe.get(tour.group) ?? {
-        name: tour.group_name,
-        color: tour.group_color,
-        points: 0,
-        ordre: position,
-      };
-      if (tour.outcome === "CORRECT") ligne.points += 1;
-      parGroupe.set(tour.group, ligne);
-    });
-    return [...parGroupe.values()].sort(
-      (a, b) => b.points - a.points || a.ordre - b.ordre,
-    );
-  }, [tours]);
+  // Le classement vit dans son propre module : il doit rester identique a
+  // celui du serveur, et cette egalite se verifie mieux sur trente lignes
+  // isolees que sur un composant entier.
+  const classement = useMemo(() => classerLocalement(tours), [tours]);
 
   // Battement du compte a rebours. Tout le calcul du temps vit ici : c'est le
   // seul endroit ou lire l'horloge est legitime.
@@ -174,7 +160,10 @@ export function ConsoleConcours({ deroule }: { deroule: DerouleConcours }) {
   const restant = depart ? restantMesure : competition.turn_seconds;
   const enMarche = Boolean(courant?.started_at);
   const expire = enMarche && restant === 0;
-  const joues = tours.filter((t) => t.outcome !== "PENDING").length;
+  // Les manches de departage ne font pas partie du programme : les compter
+  // ferait afficher « 15 / 17 » ici et « 15 / 15 » sur l'ecran de la salle.
+  const ordinaires = tours.filter((t) => t.tiebreak_round === 0);
+  const joues = ordinaires.filter((t) => t.outcome !== "PENDING").length;
 
   function lancer() {
     if (!courant || courant.started_at) return;
@@ -440,7 +429,7 @@ export function ConsoleConcours({ deroule }: { deroule: DerouleConcours }) {
 
       <p className="chiffres text-center text-xs text-gris">
         {competition.avec_questions
-          ? `${joues} / ${tours.length} دورا`
+          ? `${joues} / ${ordinaires.length} دورا`
           : `${joues} دورا`}
       </p>
 
@@ -651,26 +640,27 @@ function Classement({
   lignes,
   final = false,
 }: {
-  lignes: { name: string; color: string; points: number }[];
+  lignes: { name: string; color: string; points: number; rank: number }[];
   final?: boolean;
 }) {
   const maximum = Math.max(...lignes.map((l) => l.points), 1);
   return (
     <Carte titre={final ? "النتيجة النهائية" : "النقاط"}>
       <ul className="space-y-2.5">
-        {lignes.map((ligne, index) => (
+        {lignes.map((ligne) => (
           <li key={ligne.name} className="flex items-center gap-3">
             {/* Au classement final, la medaille remplace le numero : c'est le
                 meme resultat que voit la salle, et le jury doit reconnaitre
-                son ecran dans le sien. */}
-            {final && index < 3 ? (
-              <Medaille rang={index + 1} taille={34} />
+                son ecran dans le sien. Le rang est partage a egalite, comme
+                partout ailleurs. */}
+            {final && ligne.rank <= 3 ? (
+              <Medaille rang={ligne.rank} taille={34} />
             ) : (
               <span
                 className="chiffres flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-xs font-bold leading-none text-white"
                 style={{ background: ligne.color }}
               >
-                {index + 1}
+                {ligne.rank}
               </span>
             )}
             <div className="min-w-0 flex-1">
