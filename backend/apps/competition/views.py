@@ -37,6 +37,7 @@ from apps.competition.models import (
     Turn,
 )
 from apps.competition.serializers import (
+    ClasseurGroupesSerializer,
     ClasseurQuestionsSerializer,
     CompetitionSerializer,
     DeciderSerializer,
@@ -100,13 +101,68 @@ class CompetitionViewSet(viewsets.ModelViewSet):
 
         serializer = GroupSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
+        rang = serializer.validated_data.get(
+            "display_order", competition.groups.count()
+        )
         serializer.save(
             competition=competition,
-            display_order=serializer.validated_data.get(
-                "display_order", competition.groups.count()
-            ),
+            display_order=rang,
+            color=serializer.validated_data.get("color")
+            or services.couleur_pour(rang),
         )
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    @extend_schema(
+        request=ClasseurGroupesSerializer, responses={201: GroupSerializer(many=True)}
+    )
+    @action(
+        detail=True,
+        methods=["post"],
+        url_path="groupes/classeur",
+        parser_classes=[MultiPartParser],
+    )
+    def importer_groupes(self, request: Request, pk=None) -> Response:
+        """
+        Constitue les groupes et leurs membres depuis un classeur Excel.
+
+        Deux colonnes : le groupe, puis la participante. Le groupe se repete
+        d'une ligne a l'autre, comme un tableur se remplit.
+
+        Les groupes deja presents sont completes, pas recrees : on depose la
+        liste d'une classe, puis celle d'une autre.
+        """
+        competition = self.get_object()
+        if competition.state != CompetitionState.DRAFT:
+            raise ValidationError("لا يمكن تعديل المجموعات بعد انطلاق المسابقة.")
+
+        serializer = ClasseurGroupesSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        try:
+            couples = classeur.lire_groupes(
+                serializer.validated_data["fichier"].read()
+            )
+        except classeur.ClasseurInvalide as erreur:
+            raise ValidationError(str(erreur)) from erreur
+
+        crees, inscrites = services.importer_groupes(competition, couples)
+        audit.info(
+            "Groupes importes — %s : %d groupes, %d participantes, par %s",
+            competition.name,
+            crees,
+            inscrites,
+            request.user.username,
+        )
+        return Response(
+            {
+                "groupes": crees,
+                "membres": inscrites,
+                "detail": GroupSerializer(
+                    competition.groups.prefetch_related("members"), many=True
+                ).data,
+            },
+            status=status.HTTP_201_CREATED,
+        )
 
     @extend_schema(
         request=QuestionsEnLotSerializer, responses={201: QuestionSerializer(many=True)}
@@ -315,7 +371,8 @@ class EcranPublicView(APIView):
     @extend_schema(responses={200: None})
     def get(self, request: Request, code: str) -> Response:
         competition = get_object_or_404(
-            Competition.objects.prefetch_related("groups"), code=code.upper()
+            Competition.objects.prefetch_related("groups", "groups__members"),
+            code=code.upper(),
         )
         courant = services.tour_courant(competition)
         maintenant = timezone.now()
@@ -327,6 +384,11 @@ class EcranPublicView(APIView):
                 "round_number": courant.round_number,
                 "group_name": courant.group.name,
                 "group_color": courant.group.color,
+                # La salle voit qui repond. Les noms seulement : ni matricule,
+                # ni identifiant, sur une page ouverte a tous.
+                "group_members": [
+                    membre.name for membre in courant.group.members.all()
+                ],
                 "question_text": (
                     courant.question.text
                     if courant.question_id and competition.show_question

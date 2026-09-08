@@ -1,10 +1,9 @@
 """
-Lecture d'un classeur de questions.
+Lecture des classeurs deposes : les questions, et les groupes.
 
 Le format est le plus simple qu'on puisse demander a quelqu'un : deux
-colonnes, la question puis la reponse, une ligne par question. Une ligne
-d'en-tete est acceptee et ignoree — les gens en mettent une, et refuser le
-fichier pour cela serait absurde.
+colonnes, une ligne par entree. Une ligne d'en-tete est acceptee et ignoree —
+les gens en mettent une, et refuser le fichier pour cela serait absurde.
 
 Ce module ne connait ni Django ni HTTP : il prend des octets, il rend des
 couples. C'est ce qui permet de le tester sans monter de requete.
@@ -33,6 +32,23 @@ ENTETES = {
     "reponse",
     "réponse",
     "answer",
+    "المجموعة",
+    "المجموعات",
+    "مجموعة",
+    "الطالبة",
+    "الطالبات",
+    "الاسم",
+    "رقم الطالبة",
+    "المتربص",
+    "groupe",
+    "groupes",
+    "equipe",
+    "étudiante",
+    "etudiante",
+    "nom",
+    "matricule",
+    "group",
+    "student",
 }
 
 
@@ -58,13 +74,13 @@ def _est_entete(question: str, reponse: str) -> bool:
     return question.lower() in ENTETES or reponse.lower() in ENTETES
 
 
-def lire(contenu: bytes) -> list[tuple[str, str]]:
+def _couples(contenu: bytes, vide: str) -> list[tuple[str, str]]:
     """
-    Rend les couples (question, reponse) d'un classeur.
+    Rend les couples des deux premieres colonnes d'un classeur.
 
-    Les lignes sans question sont ignorees : un classeur rempli a la main
-    traine presque toujours des lignes vides en dessous, et s'arreter a la
-    premiere ferait perdre ce qui suit.
+    Les lignes sans premiere colonne sont ignorees : un classeur rempli a la
+    main traine presque toujours des lignes vides en dessous, et s'arreter a
+    la premiere ferait perdre ce qui suit.
     """
     try:
         classeur = load_workbook(io.BytesIO(contenu), read_only=True, data_only=True)
@@ -93,5 +109,21 @@ def lire(contenu: bytes) -> list[tuple[str, str]]:
     classeur.close()
 
     if not couples:
-        raise ClasseurInvalide("لم يُعثر على أي سؤال في الملف.")
+        raise ClasseurInvalide(vide)
     return couples
+
+
+def lire(contenu: bytes) -> list[tuple[str, str]]:
+    """Les couples (enonce, reponse) d'un classeur de questions."""
+    return _couples(contenu, "لم يُعثر على أي سؤال في الملف.")
+
+
+def lire_groupes(contenu: bytes) -> list[tuple[str, str]]:
+    """
+    Les couples (groupe, membre) d'un classeur de composition.
+
+    Le groupe se repete d'une ligne a l'autre — c'est ainsi qu'un tableur se
+    remplit. Un groupe sans membre reste valable : on inscrit une equipe avant
+    d'en connaitre la composition.
+    """
+    return _couples(contenu, "لم يُعثر على أي مجموعة في الملف.")

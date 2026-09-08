@@ -140,6 +140,15 @@ export function EcranSalle({
                   {tour.group_name}
                 </p>
 
+                {/* Qui repond. Une salle reconnait des noms avant de
+                    reconnaitre une equipe, et les familles presentes
+                    cherchent le leur. */}
+                {tour.group_members.length > 0 ? (
+                  <p className="mx-auto mt-1.5 max-w-2xl text-sm leading-relaxed text-white/85 sm:text-lg">
+                    {tour.group_members.join(" · ")}
+                  </p>
+                ) : null}
+
                 {tour.question_text ? (
                   <p className="mx-auto mt-6 max-w-3xl text-xl leading-relaxed text-white/95 sm:text-3xl">
                     {tour.question_text}

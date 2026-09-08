@@ -8,15 +8,60 @@ from apps.competition.models import (
     Competition,
     CompetitionState,
     Group,
+    GroupMember,
     Question,
     Turn,
 )
 
 
+class ClasseurQuestionsSerializer(serializers.Serializer):
+    """
+    Depot d'un classeur de questions.
+
+    L'extension est verifiee ici, la structure dans `classeur.lire`. Le
+    plafond de taille protege le serveur : un classeur de questions pese
+    quelques kilo-octets, jamais dix megaoctets.
+    """
+
+    #: Cinq megaoctets — deux mille questions tiennent tres largement dedans.
+    TAILLE_MAX = 5 * 1024 * 1024
+
+    fichier = serializers.FileField()
+
+    def validate_fichier(self, fichier):
+        if not fichier.name.lower().endswith(".xlsx"):
+            raise serializers.ValidationError(
+                "المتوقع ملف Excel بصيغة xlsx."
+            )
+        if fichier.size > self.TAILLE_MAX:
+            raise serializers.ValidationError("الملف كبير جدا.")
+        return fichier
+
+
+class GroupMemberSerializer(serializers.ModelSerializer):
+    """Une participante : son nom, et sa place dans la liste."""
+
+    class Meta:
+        model = GroupMember
+        fields = ["id", "name", "display_order"]
+        read_only_fields = fields
+
+
 class GroupSerializer(serializers.ModelSerializer):
+    members = GroupMemberSerializer(many=True, read_only=True)
+
     class Meta:
         model = Group
-        fields = ["id", "name", "display_order", "color"]
+        fields = ["id", "name", "display_order", "color", "members"]
+        extra_kwargs = {
+            # La couleur est attribuee par le serveur quand elle n'est pas
+            # donnee : la palette n'a pas a etre connue de chaque appelant.
+            "color": {"required": False},
+        }
+
+
+class ClasseurGroupesSerializer(ClasseurQuestionsSerializer):
+    """Depot d'un classeur de composition. Memes garde-fous que les enonces."""
 
 
 class QuestionSerializer(serializers.ModelSerializer):
@@ -47,30 +92,6 @@ class QuestionsEnLotSerializer(serializers.Serializer):
         child=serializers.CharField(allow_blank=False, trim_whitespace=True),
         allow_empty=False,
     )
-
-
-class ClasseurQuestionsSerializer(serializers.Serializer):
-    """
-    Depot d'un classeur de questions.
-
-    L'extension est verifiee ici, la structure dans `classeur.lire`. Le
-    plafond de taille protege le serveur : un classeur de questions pese
-    quelques kilo-octets, jamais dix megaoctets.
-    """
-
-    #: Cinq megaoctets — deux mille questions tiennent tres largement dedans.
-    TAILLE_MAX = 5 * 1024 * 1024
-
-    fichier = serializers.FileField()
-
-    def validate_fichier(self, fichier):
-        if not fichier.name.lower().endswith(".xlsx"):
-            raise serializers.ValidationError(
-                "المتوقع ملف Excel بصيغة xlsx."
-            )
-        if fichier.size > self.TAILLE_MAX:
-            raise serializers.ValidationError("الملف كبير جدا.")
-        return fichier
 
 
 class TurnSerializer(serializers.ModelSerializer):

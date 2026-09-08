@@ -14,18 +14,6 @@ export interface ResultatConcours {
   code?: string;
 }
 
-/** Couleurs proposees aux groupes : la charte de l'institut, puis des teintes qui s'en distinguent de loin. */
-const COULEURS = [
-  "#006633",
-  "#C82020",
-  "#1d4ed8",
-  "#b8930f",
-  "#7c3aed",
-  "#0f766e",
-  "#be185d",
-  "#c2410c",
-];
-
 export async function creerCompetition(
   _etat: ResultatConcours,
   donnees: FormData,
@@ -62,19 +50,59 @@ export async function ajouterGroupe(
 ): Promise<ResultatConcours> {
   const competition = String(donnees.get("competition") ?? "");
   const name = String(donnees.get("name") ?? "").trim();
-  const rang = Number(donnees.get("rang") ?? 0);
   if (!name) return { erreur: "اسم المجموعة مطلوب." };
 
   try {
+    // La couleur vient du serveur : la palette est la meme pour un groupe
+    // ajoute ici et pour un groupe cree par l'import d'un classeur.
     await apiRequest(`/competitions/${competition}/groupes/`, {
       method: "POST",
-      body: { name, color: COULEURS[rang % COULEURS.length] },
+      body: { name },
     });
     revalidatePath(`/competitions/${competition}`);
     return { message: "تمت الإضافة." };
   } catch (erreur) {
     if (erreur instanceof ApiError) {
       return { erreur: erreur.messages[0] ?? "تعذرت إضافة المجموعة." };
+    }
+    throw erreur;
+  }
+}
+
+/**
+ * Import de la composition des groupes depuis un classeur Excel.
+ *
+ * Deux colonnes : le groupe, puis la participante. Le groupe se repete d'une
+ * ligne a l'autre, comme un tableur se remplit. Les groupes deja presents
+ * sont completes, pas recrees.
+ */
+export async function importerGroupes(
+  _etat: ResultatConcours,
+  donnees: FormData,
+): Promise<ResultatConcours> {
+  const competition = String(donnees.get("competition") ?? "");
+  const fichier = donnees.get("fichier");
+
+  if (!(fichier instanceof File) || fichier.size === 0) {
+    return { erreur: "اختر ملف Excel أولا." };
+  }
+
+  const corps = new FormData();
+  corps.append("fichier", fichier);
+
+  try {
+    const bilan = await apiRequestFichier<{
+      groupes: number;
+      membres: number;
+    }>(`/competitions/${competition}/groupes/classeur/`, corps);
+    revalidatePath(`/competitions/${competition}`);
+
+    return {
+      message: `أُضيف ${bilan.groupes} مجموعات و${bilan.membres} طالبة.`,
+    };
+  } catch (erreur) {
+    if (erreur instanceof ApiError) {
+      return { erreur: erreur.messages[0] ?? "تعذرت قراءة الملف." };
     }
     throw erreur;
   }

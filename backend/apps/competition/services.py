@@ -32,6 +32,8 @@ from django.utils import timezone
 from apps.competition.models import (
     Competition,
     CompetitionState,
+    Group,
+    GroupMember,
     Turn,
     TurnAction,
     TurnOutcome,
@@ -44,6 +46,29 @@ ALPHABET_CODE = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"
 #: Tolerance sur une heure annoncee par un navigateur en avance sur le serveur.
 DERIVE_TOLEREE = timedelta(seconds=5)
 
+#: Couleurs proposees aux groupes.
+#:
+#: Le vert de l'institut d'abord, puis des teintes qui s'en distinguent de
+#: loin — c'est a la couleur qu'un groupe se reconnait sur les deux ecrans,
+#: avant que son nom se lise. Au-dela de huit groupes, on recommence : deux
+#: equipes de meme couleur valent mieux qu'une teinte indistincte.
+COULEURS_GROUPES = (
+    "#006633",
+    "#C82020",
+    "#1d4ed8",
+    "#b8930f",
+    "#7c3aed",
+    "#0f766e",
+    "#be185d",
+    "#c2410c",
+)
+
+
+def couleur_pour(rang: int) -> str:
+    """La couleur du groupe d'indice `rang`."""
+    return COULEURS_GROUPES[rang % len(COULEURS_GROUPES)]
+
+
 #: Jolees preparees d'avance pour une ندوة شعرية.
 #:
 #: Cette seance n'a pas de fin ecrite : elle tourne jusqu'a ce que le jury
@@ -53,6 +78,61 @@ DERIVE_TOLEREE = timedelta(seconds=5)
 #: qu'une soiree n'en contient, et ce sont des lignes vides qui ne couteront
 #: rien : celles qui n'auront pas servi disparaissent a la cloture.
 JOLEES_DAVANCE = 25
+
+
+@transaction.atomic
+def importer_groupes(
+    competition: Competition, couples: list[tuple[str, str]]
+) -> tuple[int, int]:
+    """
+    Constitue les groupes et leurs listes a partir d'un classeur.
+
+    Rend le compte des groupes crees et des participantes inscrites.
+
+    Deux choix a lire avant de modifier :
+
+    - un groupe deja present est complete, pas recree. On depose la liste
+      d'une classe, puis celle d'une autre, sans repartir de zero ;
+    - le nom est pris tel quel, sans etre confronte au fichier des
+      etudiantes. Ces participantes ne se connectent pas et rien ne leur est
+      rattache : une correspondance n'apporterait rien, et son absence
+      passerait pour une anomalie alors qu'elle sera la regle.
+    """
+    groupes: dict[str, Group] = {
+        groupe.name: groupe for groupe in competition.groups.all()
+    }
+    rang_groupe = len(groupes)
+
+    crees = 0
+    inscrites = 0
+
+    for nom_groupe, nom_membre in couples:
+        groupe = groupes.get(nom_groupe)
+        if groupe is None:
+            groupe = Group.objects.create(
+                competition=competition,
+                name=nom_groupe,
+                color=couleur_pour(rang_groupe),
+                display_order=rang_groupe,
+            )
+            groupes[nom_groupe] = groupe
+            rang_groupe += 1
+            crees += 1
+
+        if not nom_membre:
+            continue
+
+        # Le meme nom depose deux fois reste une seule participante : un
+        # classeur se redepose souvent, corrige d'une ligne.
+        _, cree = GroupMember.objects.get_or_create(
+            group=groupe,
+            name=nom_membre,
+            defaults={"display_order": groupe.members.count()},
+        )
+        if cree:
+            inscrites += 1
+
+    return crees, inscrites
 
 
 class CompetitionInvalide(Exception):

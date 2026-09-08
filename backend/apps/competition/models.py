@@ -174,6 +174,46 @@ class Group(models.Model):
         return self.name
 
 
+class GroupMember(models.Model):
+    """
+    Une participante d'un groupe : un nom, rien de plus.
+
+    Aucun lien vers le fichier des etudiantes, et c'est voulu. Ces listes
+    disent qui compose une equipe le temps d'une seance ; les participantes ne
+    se connectent pas, et rien dans l'application ne leur est rattache. Un
+    lien vers une fiche n'apporterait donc rien — mais il ferait apparaitre
+    comme une anomalie chaque nom sans correspondance, alors que la plupart
+    n'en auront jamais.
+
+    Le nom reste donc du texte, tel qu'il a ete depose. C'est aussi ce qui
+    rend le compte rendu d'une seance passee insensible aux changements du
+    fichier des etudiantes.
+    """
+
+    group = models.ForeignKey(
+        Group,
+        on_delete=models.CASCADE,
+        related_name="members",
+        verbose_name=_("المجموعة"),
+    )
+    name = models.CharField(_("الاسم"), max_length=150)
+    display_order = models.PositiveSmallIntegerField(_("الترتيب"), default=0)
+
+    class Meta:
+        verbose_name = _("عضوة")
+        verbose_name_plural = _("الأعضاء")
+        ordering = ["display_order", "id"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["group", "name"],
+                name="un_nom_par_groupe",
+            )
+        ]
+
+    def __str__(self) -> str:
+        return self.name
+
+
 class Question(models.Model):
     """
     Une question posee a voix haute.

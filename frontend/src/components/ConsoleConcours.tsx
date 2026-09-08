@@ -234,6 +234,13 @@ export function ConsoleConcours({ deroule }: { deroule: DerouleConcours }) {
     );
   }
 
+  // Le deroule porte la composition des groupes ; le tour ne porte que
+  // l'identifiant du sien.
+  const membres =
+    competition.groups.find((g) => g.id === courant.group)?.members.map(
+      (m) => m.name,
+    ) ?? [];
+
   const fraction = restant / competition.turn_seconds;
 
   return (
@@ -270,6 +277,13 @@ export function ConsoleConcours({ deroule }: { deroule: DerouleConcours }) {
           <p className="mt-0.5 text-2xl font-bold leading-tight">
             {courant.group_name}
           </p>
+
+          {/* La composition, pour appeler les participantes par leur nom. */}
+          {membres.length > 0 ? (
+            <p className="mt-1 text-xs leading-relaxed opacity-85">
+              {membres.join(" · ")}
+            </p>
+          ) : null}
         </div>
 
         <div className="flex flex-col items-center gap-5 p-5">

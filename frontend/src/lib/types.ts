@@ -385,6 +385,19 @@ export interface GroupeConcours {
   name: string;
   display_order: number;
   color: string;
+  members: MembreGroupe[];
+}
+
+/**
+ * Une participante d'un groupe : un nom, rien de plus.
+ *
+ * Ces listes disent qui compose une equipe le temps d'une seance. Les
+ * participantes ne se connectent pas et rien ne leur est rattache.
+ */
+export interface MembreGroupe {
+  id: number;
+  name: string;
+  display_order: number;
 }
 
 export interface QuestionConcours {
@@ -475,6 +488,8 @@ export interface EcranDirect {
     round_number: number;
     group_name: string;
     group_color: string;
+    /** Les prenoms de la salle. Aucun matricule ne sort par cette route. */
+    group_members: string[];
     question_text: string | null;
     started_at: string | null;
     secondes_restantes: number;
