@@ -394,8 +394,8 @@ def test_ajouter_des_questions_ne_reserve_rien(animateur) -> None:
 @pytest.mark.django_db
 def test_le_reglage_garde_un_enonce_par_groupe(animateur) -> None:
     competition = _concours(animateur, groupes=5, questions=15)
-    competition.reserve_departage = True
-    competition.save(update_fields=["reserve_departage"])
+    competition.questions_reservees = 5
+    competition.save(update_fields=["questions_reservees"])
 
     services.demarrer(competition)
 
@@ -404,11 +404,30 @@ def test_le_reglage_garde_un_enonce_par_groupe(animateur) -> None:
 
 
 @pytest.mark.django_db
+def test_la_reserve_peut_couvrir_plusieurs_manches(animateur) -> None:
+    """
+    Une manche ne suffit pas toujours a departager.
+
+    Cinq groupes et vingt enonces reserves, ce sont quatre manches possibles :
+    de quoi separer un peloton entier sans jamais avoir a poser de question a
+    voix haute.
+    """
+    competition = _concours(animateur, groupes=5, questions=35)
+    competition.questions_reservees = 20
+    competition.save(update_fields=["questions_reservees"])
+
+    services.demarrer(competition)
+
+    assert competition.turns.count() == 15  # trois جولات
+    assert len(services.questions_de_reserve(competition)) == 20
+
+
+@pytest.mark.django_db
 def test_la_manche_reservee_porte_ses_enonces(animateur) -> None:
     """C'est tout l'objet du reglage : un departage a l'ecran, pas a voix haute."""
     competition = _concours(animateur, groupes=3, questions=9)
-    competition.reserve_departage = True
-    competition.save(update_fields=["reserve_departage"])
+    competition.questions_reservees = 3
+    competition.save(update_fields=["questions_reservees"])
     services.demarrer(competition)
     _jouer(competition, {0: 2, 1: 2, 2: 2}, animateur)
 
@@ -428,8 +447,8 @@ def test_reserver_ne_doit_pas_vider_la_competition(animateur) -> None:
     manque plutot que de laisser une competition sans aucun tour.
     """
     competition = _concours(animateur, groupes=5, questions=5)
-    competition.reserve_departage = True
-    competition.save(update_fields=["reserve_departage"])
+    competition.questions_reservees = 5
+    competition.save(update_fields=["questions_reservees"])
 
     with pytest.raises(services.CompetitionInvalide) as erreur:
         services.demarrer(competition)

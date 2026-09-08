@@ -185,7 +185,7 @@ def demarrer(competition: Competition) -> int:
         questions = list(competition.questions.all())
         # Ce qu'on garde pour un eventuel departage : de quoi faire passer
         # chaque groupe une fois, et pas davantage.
-        gardees = len(groupes) if competition.reserve_departage else 0
+        gardees = competition.questions_reservees
         total = (max(len(questions) - gardees, 0) // len(groupes)) * len(groupes)
         if total < len(groupes):
             raise CompetitionInvalide(

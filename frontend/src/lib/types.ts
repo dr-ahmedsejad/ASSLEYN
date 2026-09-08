@@ -422,8 +422,13 @@ export interface Competition {
   state: EtatCompetition;
   state_display: string;
   turn_seconds: number;
-  /** Garder de quoi jouer une manche de departage. Coute une جولة. */
-  reserve_departage: boolean;
+  /**
+   * Enonces gardes hors du deroule, pour les departages.
+   *
+   * Une manche consomme un enonce par groupe encore a egalite : cinq groupes
+   * et vingt reserves, ce sont quatre manches possibles.
+   */
+  questions_reservees: number;
   show_question: boolean;
   created_at: string;
   started_at: string | null;

@@ -119,7 +119,7 @@ export function PreparationConcours({
   //
   // Les questions gardees pour le departage sortent du calcul avant tout le
   // reste : c'est ce qui les rend reellement indisponibles au deroule.
-  const gardees = competition.reserve_departage ? groupes : 0;
+  const gardees = competition.questions_reservees;
   const jolees =
     avecQuestions && groupes > 0
       ? Math.floor(Math.max(questions - gardees, 0) / groupes)
@@ -327,38 +327,53 @@ export function PreparationConcours({
           </form>
           <Message etat={etatQuestions} />
 
-          {/* Une seule case, et le compte se met a jour au-dessus.
-              Sans elle, ajouter des questions ne met rien de cote : le
+          {/* Un nombre, et le compte se met a jour au-dessus.
+              Sans ce reglage, ajouter des questions ne met rien de cote : le
               deroule les consomme par جولات entieres, et le reste — toujours
               plus petit que le nombre de groupes — ne suffit jamais a une
-              manche de departage. */}
+              manche de departage.
+
+              Un nombre plutot qu'un oui-non : une manche consomme un enonce
+              par groupe encore a egalite, et il en faut parfois plusieurs
+              d'affilee. */}
           <form
+            key={`reserve-${competition.questions_reservees}`}
             action={actionReserve}
             className="mt-4 rounded-xl border border-gray-100 bg-gray-50/60 p-3"
           >
             <input type="hidden" name="competition" value={competition.id} />
-            <input
-              type="hidden"
-              name="reserver"
-              value={competition.reserve_departage ? "0" : "1"}
-            />
-            <label className="flex cursor-pointer items-start gap-2.5">
-              <input
-                type="checkbox"
-                checked={competition.reserve_departage}
-                onChange={(evenement) => evenement.currentTarget.form?.requestSubmit()}
-                className="mt-0.5 h-4 w-4 shrink-0 accent-primary"
-              />
-              <span>
-                <span className="block text-sm font-medium text-dark-soft">
-                  احجز {groupes || "…"} أسئلة لجولة الحسم
-                </span>
-                <span className="mt-0.5 block text-xs leading-relaxed text-gris">
-                  سؤال لكل مجموعة، يُترك جانبا للتعادل. يكلّف جولة كاملة من
-                  المسابقة.
-                </span>
-              </span>
+            <label
+              htmlFor="questions_reservees"
+              className="block text-sm font-medium text-dark-soft"
+            >
+              عدد الأسئلة المحجوزة لجولات الحسم
             </label>
+            <p className="mt-1 text-xs leading-relaxed text-gris">
+              تُترك جانبا ولا تُلعب. كل جولة حسم تستهلك سؤالا لكل مجموعة
+              متعادلة
+              {groupes > 0 && gardees > 0
+                ? ` — ${gardees} سؤالا يكفي ${Math.floor(gardees / groupes)} جولة بخمس مجموعات`
+                : ""}
+              .
+            </p>
+
+            <div className="mt-2 flex flex-wrap items-center gap-2">
+              <input
+                id="questions_reservees"
+                name="questions_reservees"
+                type="number"
+                min={0}
+                max={500}
+                defaultValue={competition.questions_reservees}
+                dir="ltr"
+                className="champ w-28"
+              />
+              <Bouton
+                libelle="حفظ"
+                enCours="…"
+                icone={<ListPlus size={15} />}
+              />
+            </div>
           </form>
           <Message etat={etatReserve} />
 
@@ -397,8 +412,8 @@ export function PreparationConcours({
                   <Chiffre libelle="دورا" valeur={tours} />
                   <Chiffre
                     libelle={
-                      competition.reserve_departage
-                        ? "سؤالا لجولة الحسم"
+                      competition.questions_reservees > 0
+                        ? "سؤالا لجولات الحسم"
                         : "سؤالا في الاحتياط"
                     }
                     valeur={reserve}

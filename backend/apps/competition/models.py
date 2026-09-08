@@ -88,19 +88,24 @@ class Competition(models.Model):
         validators=[MinValueValidator(5), MaxValueValidator(600)],
     )
 
-    #: Garder de quoi jouer une manche de departage.
+    #: Nombre d'enonces gardes hors du deroule, pour les departages.
     #:
     #: Sans ce reglage, la reserve vaut le reste de la division des questions
     #: par les groupes : elle est donc toujours plus petite que le nombre de
     #: groupes, et n'alimente jamais une manche complete. Ajouter des questions
     #: n'y change rien — elles forment simplement une جولة de plus.
     #:
-    #: Quand il est actif, le deroule met de cote exactement de quoi faire
-    #: passer chaque groupe une fois. Cela coute une جولة : cinq groupes et
-    #: quinze questions donnent deux جولات jouees au lieu de trois, et cinq
-    #: enonces gardes pour le departage.
-    reserve_departage = models.BooleanField(
-        _("حجز أسئلة لجولة الحسم"), default=False
+    #: Un nombre plutot qu'un oui-non : une manche de departage consomme un
+    #: enonce par groupe encore a egalite, et il en faut parfois plusieurs
+    #: d'affilee. Cinq groupes et vingt enonces reserves, ce sont quatre
+    #: manches possibles.
+    #:
+    #: Ce qui est reserve ne se joue pas : le deroule ordinaire se calcule sur
+    #: ce qui reste.
+    questions_reservees = models.PositiveSmallIntegerField(
+        _("عدد أسئلة الحسم"),
+        default=0,
+        validators=[MaxValueValidator(500)],
     )
 
     #: L'ecran public montre l'enonce du tour en cours — jamais les suivants.
@@ -155,7 +160,7 @@ class Competition(models.Model):
         questions = self.questions.count()
         if questions == 0:
             return 0
-        gardees = groupes if self.reserve_departage else 0
+        gardees = self.questions_reservees
         return (max(questions - gardees, 0) // groupes) * groupes
 
 

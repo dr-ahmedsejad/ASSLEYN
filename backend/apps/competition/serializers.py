@@ -167,7 +167,7 @@ class CompetitionSerializer(serializers.ModelSerializer):
             "state",
             "state_display",
             "turn_seconds",
-            "reserve_departage",
+            "questions_reservees",
             "show_question",
             "created_at",
             "started_at",

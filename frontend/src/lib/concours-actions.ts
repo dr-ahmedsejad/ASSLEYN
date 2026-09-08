@@ -185,25 +185,30 @@ export async function importerQuestions(
  * Sans ce reglage, la reserve vaut le reste de la division des questions par
  * les groupes : toujours plus petite que le nombre de groupes, donc jamais
  * suffisante. Ajouter des questions n'y change rien — elles forment une جولة
- * de plus. Il faut dire au deroule d'en garder.
+ * de plus. Il faut dire au deroule combien en garder.
  */
 export async function reserverPourLeDepartage(
   _etat: ResultatConcours,
   donnees: FormData,
 ): Promise<ResultatConcours> {
   const competition = String(donnees.get("competition") ?? "");
-  const reserver = donnees.get("reserver") === "1";
+  const nombre = Number(donnees.get("questions_reservees") ?? 0);
+
+  if (!Number.isFinite(nombre) || nombre < 0) {
+    return { erreur: "عدد غير صالح." };
+  }
 
   try {
     await apiRequest(`/competitions/${competition}/`, {
       method: "PATCH",
-      body: { reserve_departage: reserver },
+      body: { questions_reservees: Math.floor(nombre) },
     });
     revalidatePath(`/competitions/${competition}`);
     return {
-      message: reserver
-        ? "حُجزت أسئلة لجولة الحسم."
-        : "أُلغي الحجز: كل الأسئلة تُلعب.",
+      message:
+        nombre > 0
+          ? `حُجز ${Math.floor(nombre)} سؤالا لجولات الحسم.`
+          : "أُلغي الحجز: كل الأسئلة تُلعب.",
     };
   } catch (erreur) {
     if (erreur instanceof ApiError) {
