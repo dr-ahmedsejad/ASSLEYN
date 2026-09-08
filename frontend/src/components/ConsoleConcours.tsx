@@ -16,6 +16,8 @@ import {
   Flag,
   Play,
   TimerOff,
+  Volume2,
+  VolumeX,
   XCircle,
 } from "lucide-react";
 
@@ -23,6 +25,12 @@ import { LienDirect } from "@/components/LienDirect";
 import { Medaille } from "@/components/Medaille";
 import { cloturerCompetition } from "@/lib/concours-actions";
 import { empiler, identifiant, vider } from "@/lib/file-hors-ligne";
+import {
+  arreter as arreterLesSons,
+  definirMuet,
+  estMuet,
+  programmerTour,
+} from "@/lib/sons";
 import type { DerouleConcours, Tour } from "@/lib/types";
 
 import { Alerte, Carte } from "./ui";
@@ -48,6 +56,16 @@ export function ConsoleConcours({ deroule }: { deroule: DerouleConcours }) {
   const [tours, setTours] = useState<Tour[]>(deroule.tours);
   const [enAttente, setEnAttente] = useState(0);
   const [motif, setMotif] = useState("");
+
+  /**
+   * Le son est-il coupe ?
+   *
+   * `false` au premier rendu, puis relu depuis l'appareil dans un effet : le
+   * serveur ne connait pas ce reglage, et lire le stockage pendant le rendu
+   * ferait diverger le HTML envoye de celui que le navigateur reconstruit.
+   */
+  const [muet, setMuet] = useState(false);
+  useEffect(() => setMuet(estMuet()), []);
   const [restantMesure, setRestant] = useState(competition.turn_seconds);
 
   /**
@@ -126,6 +144,27 @@ export function ConsoleConcours({ deroule }: { deroule: DerouleConcours }) {
     }, 250);
     return () => clearInterval(battement);
   }, [depart, competition.turn_seconds, deroule.maintenant]);
+
+  /**
+   * Les sons du tour.
+   *
+   * Poses d'un coup au demarrage, sur l'horloge audio, a partir des memes
+   * deux valeurs qui font le compte a rebours — l'heure de depart et l'ecart
+   * avec l'horloge du serveur. La pulsation tombe donc exactement sur le
+   * changement de chiffre, et le reste jusqu'a la fin du tour.
+   *
+   * Le nettoyage coupe tout : une decision prise avant l'expiration fait
+   * changer de tour, et les pulsations restantes n'ont plus lieu d'etre.
+   */
+  useEffect(() => {
+    if (!depart || muet) return;
+    programmerTour({
+      debut: depart,
+      secondes: competition.turn_seconds,
+      ecart: ecart.current ?? 0,
+    });
+    return () => arreterLesSons();
+  }, [depart, muet, competition.turn_seconds]);
 
   // Tant que le tour n'a pas demarre, la duree pleine se deduit : inutile de
   // la poser dans l'etat, et l'y poser depuis un effet serait une mise a jour
@@ -262,12 +301,31 @@ export function ConsoleConcours({ deroule }: { deroule: DerouleConcours }) {
             </div>
           ) : null}
 
-          <Chronometre
-            secondes={restant}
-            fraction={fraction}
-            enMarche={enMarche}
-            couleur={courant.group_color}
-          />
+          <div className="flex flex-col items-center gap-2">
+            <Chronometre
+              secondes={restant}
+              fraction={fraction}
+              enMarche={enMarche}
+              couleur={courant.group_color}
+            />
+
+            {/* Une salle petite, une seance filmee, une reunion a cote : le
+                son doit pouvoir se taire d'un geste, et le choix rester pris
+                pour les tours suivants. */}
+            <button
+              type="button"
+              onClick={() => {
+                const suivant = !muet;
+                setMuet(suivant);
+                definirMuet(suivant);
+              }}
+              aria-pressed={muet}
+              className="flex items-center gap-1.5 rounded-full border border-gray-200 px-3 py-1 text-xs font-medium text-gris transition-colors hover:bg-gray-50"
+            >
+              {muet ? <VolumeX size={13} /> : <Volume2 size={13} />}
+              {muet ? "الصوت مكتوم" : "الصوت يعمل"}
+            </button>
+          </div>
 
           {!enMarche ? (
             <button
