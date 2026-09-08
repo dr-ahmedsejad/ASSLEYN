@@ -4,7 +4,7 @@ import "server-only";
 
 import { revalidatePath } from "next/cache";
 
-import { ApiError, apiRequest } from "@/lib/api";
+import { ApiError, apiRequest, apiRequestFichier } from "@/lib/api";
 import type { Competition } from "@/lib/types";
 
 export interface ResultatConcours {
@@ -109,6 +109,43 @@ export async function ajouterQuestions(
   } catch (erreur) {
     if (erreur instanceof ApiError) {
       return { erreur: erreur.messages[0] ?? "تعذرت إضافة الأسئلة." };
+    }
+    throw erreur;
+  }
+}
+
+/**
+ * Import des questions depuis un classeur Excel.
+ *
+ * Deux colonnes : l'enonce, puis la reponse. Preparer vingt questions la
+ * veille dans un tableur revient moins cher en attention que de les recopier
+ * une par une dans un navigateur — surtout quand l'application tourne sur un
+ * serveur distant et que chaque saisie attend le reseau.
+ */
+export async function importerQuestions(
+  _etat: ResultatConcours,
+  donnees: FormData,
+): Promise<ResultatConcours> {
+  const competition = String(donnees.get("competition") ?? "");
+  const fichier = donnees.get("fichier");
+
+  if (!(fichier instanceof File) || fichier.size === 0) {
+    return { erreur: "اختر ملف Excel أولا." };
+  }
+
+  const corps = new FormData();
+  corps.append("fichier", fichier);
+
+  try {
+    const creees = await apiRequestFichier<{ id: number }[]>(
+      `/competitions/${competition}/questions/classeur/`,
+      corps,
+    );
+    revalidatePath(`/competitions/${competition}`);
+    return { message: `أُضيف ${creees.length} سؤالا من الملف.` };
+  } catch (erreur) {
+    if (erreur instanceof ApiError) {
+      return { erreur: erreur.messages[0] ?? "تعذرت قراءة الملف." };
     }
     throw erreur;
   }

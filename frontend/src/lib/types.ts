@@ -390,6 +390,8 @@ export interface GroupeConcours {
 export interface QuestionConcours {
   id: number;
   text: string;
+  /** Aide-memoire du jury. Ne sort jamais par l'ecran de la salle. */
+  answer: string;
   display_order: number;
 }
 
@@ -427,6 +429,8 @@ export interface Tour {
   group_color: string;
   question: number | null;
   question_text: string | null;
+  /** Aide-memoire du jury. Absente de l'ecran de la salle. */
+  question_answer: string | null;
   started_at: string | null;
   outcome: IssueTour;
   outcome_display: string;

@@ -17,6 +17,9 @@ django-csp==4.0              # Content-Security-Policy
 # --- Base de donnees ---
 psycopg[binary]==3.2.9       # PostgreSQL (production)
 
+# --- Bureautique ---
+openpyxl==3.1.5              # import des questions depuis un classeur Excel
+
 # --- Taches asynchrones ---
 celery==5.5.3
 redis==6.4.0

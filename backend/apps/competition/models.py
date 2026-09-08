@@ -178,9 +178,15 @@ class Question(models.Model):
     """
     Une question posee a voix haute.
 
-    Aucune reponse n'est stockee, et il n'y a pas de choix : c'est le jury qui
-    apprecie. Le modele ne pretend donc pas savoir ce qui est juste — il
-    enregistre ce que la commission a decide.
+    La reponse est **facultative**, et elle ne juge rien : le point est
+    toujours accorde par la commission, jamais par une comparaison de texte.
+    Elle sert d'aide-memoire a qui anime — quand les questions arrivent d'un
+    classeur prepare par quelqu'un d'autre, personne ne connait par coeur les
+    vingt reponses.
+
+    Elle ne sort donc que par les routes du jury. L'ecran de la salle
+    construit sa reponse a la main, champ par champ : la reponse n'y figure
+    pas, et ne peut pas s'y glisser par inadvertance.
     """
 
     competition = models.ForeignKey(
@@ -190,6 +196,10 @@ class Question(models.Model):
         verbose_name=_("المسابقة"),
     )
     text = models.TextField(_("نص السؤال"))
+
+    #: Vide tant que personne ne l'a saisie — la saisie collee n'en fournit pas.
+    answer = models.TextField(_("الإجابة"), blank=True)
+
     display_order = models.PositiveSmallIntegerField(_("الترتيب"), default=0)
 
     class Meta:

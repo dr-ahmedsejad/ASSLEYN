@@ -20,6 +20,7 @@ from drf_spectacular.utils import extend_schema
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
+from rest_framework.parsers import MultiPartParser
 from rest_framework.permissions import AllowAny
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -28,7 +29,7 @@ from rest_framework.views import APIView
 
 from apps.accounts.rbac import Permission
 from apps.common.permissions import IsAdmin, RequiresPermission
-from apps.competition import services
+from apps.competition import classeur, services
 from apps.competition.models import (
     Competition,
     CompetitionState,
@@ -36,6 +37,7 @@ from apps.competition.models import (
     Turn,
 )
 from apps.competition.serializers import (
+    ClasseurQuestionsSerializer,
     CompetitionSerializer,
     DeciderSerializer,
     GroupSerializer,
@@ -126,6 +128,64 @@ class CompetitionViewSet(viewsets.ModelViewSet):
                 Question(competition=competition, text=texte, display_order=depart + i)
                 for i, texte in enumerate(serializer.validated_data["textes"])
             ]
+        )
+        return Response(
+            QuestionSerializer(creees, many=True).data, status=status.HTTP_201_CREATED
+        )
+
+    @extend_schema(
+        request=ClasseurQuestionsSerializer,
+        responses={201: QuestionSerializer(many=True)},
+    )
+    @action(
+        detail=True,
+        methods=["post"],
+        url_path="questions/classeur",
+        parser_classes=[MultiPartParser],
+    )
+    def importer_questions(self, request: Request, pk=None) -> Response:
+        """
+        Charge les questions depuis un classeur Excel.
+
+        Deux colonnes : l'enonce, puis la reponse. Preparer vingt questions la
+        veille dans un tableur et les deposer ici demande moins d'attention que
+        de les recopier une par une dans un navigateur, surtout quand
+        l'application tourne sur un serveur distant.
+
+        Les questions **s'ajoutent** a celles deja presentes : on peut deposer
+        deux fichiers, ou completer un depot par une saisie collee.
+        """
+        competition = self.get_object()
+        if competition.state != CompetitionState.DRAFT:
+            raise ValidationError("لا يمكن تعديل الأسئلة بعد انطلاق المسابقة.")
+        if not competition.avec_questions:
+            raise ValidationError("الندوة الشعرية لا تتضمن أسئلة.")
+
+        serializer = ClasseurQuestionsSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        try:
+            couples = classeur.lire(serializer.validated_data["fichier"].read())
+        except classeur.ClasseurInvalide as erreur:
+            raise ValidationError(str(erreur)) from erreur
+
+        depart = competition.questions.count()
+        creees = Question.objects.bulk_create(
+            [
+                Question(
+                    competition=competition,
+                    text=question,
+                    answer=reponse,
+                    display_order=depart + i,
+                )
+                for i, (question, reponse) in enumerate(couples)
+            ]
+        )
+        audit.info(
+            "Questions importees — %s : %d depuis un classeur, par %s",
+            competition.name,
+            len(creees),
+            request.user.username,
         )
         return Response(
             QuestionSerializer(creees, many=True).data, status=status.HTTP_201_CREATED

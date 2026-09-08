@@ -20,9 +20,18 @@ class GroupSerializer(serializers.ModelSerializer):
 
 
 class QuestionSerializer(serializers.ModelSerializer):
+    """
+    Un enonce et sa reponse.
+
+    Ce serialiseur ne sert que les routes du jury — la preparation et le
+    deroule. L'ecran de la salle n'y touche jamais : il construit sa reponse
+    champ par champ, ce qui rend impossible d'y laisser filer la reponse en
+    ajoutant un champ ici.
+    """
+
     class Meta:
         model = Question
-        fields = ["id", "text", "display_order"]
+        fields = ["id", "text", "answer", "display_order"]
 
 
 class QuestionsEnLotSerializer(serializers.Serializer):
@@ -38,6 +47,30 @@ class QuestionsEnLotSerializer(serializers.Serializer):
         child=serializers.CharField(allow_blank=False, trim_whitespace=True),
         allow_empty=False,
     )
+
+
+class ClasseurQuestionsSerializer(serializers.Serializer):
+    """
+    Depot d'un classeur de questions.
+
+    L'extension est verifiee ici, la structure dans `classeur.lire`. Le
+    plafond de taille protege le serveur : un classeur de questions pese
+    quelques kilo-octets, jamais dix megaoctets.
+    """
+
+    #: Cinq megaoctets — deux mille questions tiennent tres largement dedans.
+    TAILLE_MAX = 5 * 1024 * 1024
+
+    fichier = serializers.FileField()
+
+    def validate_fichier(self, fichier):
+        if not fichier.name.lower().endswith(".xlsx"):
+            raise serializers.ValidationError(
+                "المتوقع ملف Excel بصيغة xlsx."
+            )
+        if fichier.size > self.TAILLE_MAX:
+            raise serializers.ValidationError("الملف كبير جدا.")
+        return fichier
 
 
 class TurnSerializer(serializers.ModelSerializer):
@@ -59,8 +92,14 @@ class TurnSerializer(serializers.ModelSerializer):
     #: pointant sur `question.text` leverait sur ce tour-la.
     question_text = serializers.SerializerMethodField()
 
+    #: Pour la console seule. Voir `QuestionSerializer`.
+    question_answer = serializers.SerializerMethodField()
+
     def get_question_text(self, obj: Turn) -> str | None:
         return obj.question.text if obj.question_id else None
+
+    def get_question_answer(self, obj: Turn) -> str | None:
+        return obj.question.answer or None if obj.question_id else None
 
     class Meta:
         model = Turn
@@ -73,6 +112,7 @@ class TurnSerializer(serializers.ModelSerializer):
             "group_color",
             "question",
             "question_text",
+            "question_answer",
             "started_at",
             "outcome",
             "outcome_display",

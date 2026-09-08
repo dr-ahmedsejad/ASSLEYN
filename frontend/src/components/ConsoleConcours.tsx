@@ -12,6 +12,7 @@ import { useRouter } from "next/navigation";
 import {
   CheckCircle2,
   CloudOff,
+  Eye,
   Flag,
   Play,
   TimerOff,
@@ -236,9 +237,29 @@ export function ConsoleConcours({ deroule }: { deroule: DerouleConcours }) {
           {/* Pas d'enonce dans une ندوة شعرية : le tour de parole s'ouvre sur
               le chronometre, et le jury ecoute. */}
           {courant.question_text ? (
-            <p className="text-center text-xl font-semibold leading-relaxed text-dark">
-              {courant.question_text}
-            </p>
+            <div className="w-full">
+              <p className="text-center text-xl font-semibold leading-relaxed text-dark">
+                {courant.question_text}
+              </p>
+
+              {/* La reponse, quand le classeur en portait une.
+                  Elle n'apparait que sur cet ecran — celui du jury — et
+                  jamais sur celui de la salle, qui ne la recoit meme pas.
+                  Elle ne decide de rien : le point reste accorde a la main,
+                  parce qu'une reponse juste peut etre dite autrement que ce
+                  qui a ete tape la veille dans un tableur. */}
+              {courant.question_answer ? (
+                <div className="mt-3 rounded-xl border border-primary/25 bg-green-50/70 px-3 py-2">
+                  <p className="flex items-center gap-1.5 text-[11px] font-bold text-primary">
+                    <Eye size={12} />
+                    الإجابة — لا تظهر في شاشة القاعة
+                  </p>
+                  <p className="mt-0.5 text-base leading-relaxed text-dark-soft">
+                    {courant.question_answer}
+                  </p>
+                </div>
+              ) : null}
+            </div>
           ) : null}
 
           <Chronometre

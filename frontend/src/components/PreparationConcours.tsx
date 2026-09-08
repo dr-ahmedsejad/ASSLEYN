@@ -2,12 +2,13 @@
 
 import { useActionState } from "react";
 import { useFormStatus } from "react-dom";
-import { ListPlus, Play, UserPlus } from "lucide-react";
+import { Download, ListPlus, Play, Upload, UserPlus } from "lucide-react";
 
 import {
   ajouterGroupe,
   ajouterQuestions,
   demarrerCompetition,
+  importerQuestions,
   type ResultatConcours,
 } from "@/lib/concours-actions";
 import type { Competition } from "@/lib/types";
@@ -87,6 +88,10 @@ export function PreparationConcours({
     demarrerCompetition,
     ETAT_INITIAL,
   );
+  const [etatFichier, actionFichier] = useActionState(
+    importerQuestions,
+    ETAT_INITIAL,
+  );
 
   const avecQuestions = competition.avec_questions;
   const groupes = competition.groups.length;
@@ -155,6 +160,55 @@ export function PreparationConcours({
           vide laisserait croire a un oubli. */}
       {avecQuestions ? (
         <Carte titre={`الأسئلة (${questions})`}>
+          {/* Le classeur d'abord : c'est la voie qui porte les reponses, et
+              celle qui coute le moins d'attention quand l'application tourne
+              sur un serveur distant. La saisie collee reste dessous, pour la
+              question qu'on ajoute au dernier moment.
+
+              `key` sur le nombre de questions : le formulaire se remonte
+              apres chaque import, sinon le champ garde le fichier deja
+              depose et un second clic le rechargerait en double. */}
+          <form
+            key={`classeur-${questions}`}
+            action={actionFichier}
+            className="mb-5 rounded-xl border border-dashed border-gray-200 bg-gray-50/60 p-4"
+          >
+            <input type="hidden" name="competition" value={competition.id} />
+
+            <p className="text-sm font-medium text-dark-soft">
+              استيراد من ملف Excel
+            </p>
+            <p className="mt-1 text-xs leading-relaxed text-gris">
+              عمودان: السؤال ثم الإجابة، سطر لكل سؤال. الإجابة اختيارية، ولا
+              تظهر إلا في شاشة اللجنة.
+            </p>
+
+            <div className="mt-3 flex flex-wrap items-center gap-2">
+              <input
+                type="file"
+                name="fichier"
+                accept=".xlsx"
+                required
+                className="min-w-0 flex-1 text-sm text-dark-soft file:me-3 file:rounded-lg file:border-0 file:bg-primary/10 file:px-3 file:py-2 file:text-sm file:font-semibold file:text-primary"
+              />
+              <Bouton
+                libelle="استيراد"
+                enCours="جارٍ…"
+                icone={<Upload size={15} />}
+              />
+            </div>
+
+            <a
+              href="/modele-questions.xlsx"
+              download
+              className="mt-3 inline-flex items-center gap-1.5 text-xs font-medium text-primary hover:underline"
+            >
+              <Download size={13} />
+              تنزيل نموذج جاهز
+            </a>
+          </form>
+          <Message etat={etatFichier} />
+
           <form action={actionQuestions} className="space-y-3">
             <input type="hidden" name="competition" value={competition.id} />
             <div>
@@ -162,7 +216,7 @@ export function PreparationConcours({
                 htmlFor="textes"
                 className="mb-1.5 block text-sm font-medium text-dark-soft"
               >
-                سؤال في كل سطر
+                أو الصق الأسئلة: سؤال في كل سطر، بلا إجابات
               </label>
               <textarea
                 id="textes"
@@ -192,6 +246,11 @@ export function PreparationConcours({
                     {index + 1}.
                   </span>{" "}
                   {question.text}
+                  {question.answer ? (
+                    <span className="mt-0.5 block ps-4 text-xs text-primary">
+                      ← {question.answer}
+                    </span>
+                  ) : null}
                 </li>
               ))}
             </ol>

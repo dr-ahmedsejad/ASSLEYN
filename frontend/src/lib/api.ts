@@ -141,6 +141,36 @@ export async function apiRequest<T>(
 }
 
 /**
+ * Depot d'un fichier vers l'API, a travers le meme relais.
+ *
+ * Le corps n'est pas du JSON : on laisse `fetch` poser lui-meme le
+ * `Content-Type`, car il doit contenir la frontiere multipart qu'il vient de
+ * tirer. La fixer a la main casse le decoupage cote serveur.
+ */
+export async function apiRequestFichier<T>(
+  path: string,
+  corps: FormData,
+): Promise<T> {
+  const headers = await authHeaders("POST");
+  headers.set("Accept", "application/json");
+
+  const response = await fetch(buildUrl(path), {
+    method: "POST",
+    headers,
+    body: corps,
+    cache: "no-store",
+  });
+
+  if (response.status === 204) return undefined as T;
+
+  const text = await response.text();
+  const payload = text ? safeJson(text) : null;
+
+  if (!response.ok) throw new ApiError(response.status, payload);
+  return payload as T;
+}
+
+/**
  * Comme `apiRequest`, mais un 404 de l'API devient un 404 de page.
  *
  * Une ressource ouverte depuis un lien peut avoir disparu entre-temps — une
