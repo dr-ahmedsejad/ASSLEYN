@@ -129,6 +129,32 @@ export function EcranSalle({
     };
   }, [depart, muet, etat.turn_seconds]);
 
+  /**
+   * Le premier contact avec la page ouvre le son.
+   *
+   * Les navigateurs exigent un geste ; ils ne demandent pas lequel. Un doigt
+   * pose n'importe ou sur l'ecran de la salle suffit donc, et c'est le geste
+   * le plus probable — bien avant qu'on cherche un bouton.
+   *
+   * L'ecoute se retire d'elle-meme apres le premier evenement : elle n'a plus
+   * rien a faire ensuite.
+   */
+  useEffect(() => {
+    if (muet || autorise) return;
+    const ouvrir = () => {
+      void reveiller().then((pret) => {
+        if (pret) setAutorise(true);
+      });
+    };
+    const options = { once: true, passive: true } as const;
+    window.addEventListener("pointerdown", ouvrir, options);
+    window.addEventListener("keydown", ouvrir, options);
+    return () => {
+      window.removeEventListener("pointerdown", ouvrir);
+      window.removeEventListener("keydown", ouvrir);
+    };
+  }, [muet, autorise]);
+
   async function activerLeSon() {
     if (!(await reveiller())) return;
     setAutorise(true);
@@ -177,6 +203,38 @@ export function EcranSalle({
             إعادة الاتصال…
           </p>
         ) : null}
+
+        {/* Le reglage du son, sous le titre.
+            Il etait en pied de page : sur un telephone il tombait sous la
+            ligne de flottaison, donc invisible — et sans lui le navigateur
+            reste muet. Tant que le son est bloque, c'est un bandeau qu'on ne
+            peut pas manquer ; une fois ouvert, il redevient une pastille. */}
+        <div className="mt-3 flex justify-center">
+          {!muet && !autorise ? (
+            <button
+              type="button"
+              onClick={() => void activerLeSon()}
+              className="flex items-center gap-2 rounded-full border border-accent/60 bg-accent/15 px-5 py-2 text-sm font-bold text-accent-dk shadow-card transition-colors hover:bg-accent/25"
+            >
+              <Volume2 size={16} />
+              اضغط لتفعيل صوت المؤقّت
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={() => {
+                const suivant = !muet;
+                setMuet(suivant);
+                definirMuet(suivant);
+              }}
+              aria-pressed={muet}
+              className="flex items-center gap-1.5 rounded-full border border-gray-200 bg-white/70 px-3 py-1 text-[11px] font-medium text-gris transition-colors hover:bg-white"
+            >
+              {muet ? <VolumeX size={12} /> : <Volume2 size={12} />}
+              {muet ? "الصوت مكتوم" : "الصوت يعمل"}
+            </button>
+          )}
+        </div>
       </header>
 
       {termine ? (
@@ -246,36 +304,6 @@ export function EcranSalle({
           : `${etat.tours_joues} / ${etat.tours_prevus}`}
       </p>
 
-      {/* Le reglage du son, discret et toujours accessible.
-          Tant que le navigateur n'a pas eu de geste, le bouton demande
-          l'activation : rester silencieux sans le dire laisserait croire a
-          une panne. */}
-      <div className="mt-3 flex justify-center">
-        {!muet && !autorise ? (
-          <button
-            type="button"
-            onClick={() => void activerLeSon()}
-            className="flex items-center gap-1.5 rounded-full border border-primary/30 bg-white px-3.5 py-1.5 text-xs font-semibold text-primary shadow-card transition-colors hover:bg-green-50"
-          >
-            <Volume2 size={13} />
-            تفعيل الصوت
-          </button>
-        ) : (
-          <button
-            type="button"
-            onClick={() => {
-              const suivant = !muet;
-              setMuet(suivant);
-              definirMuet(suivant);
-            }}
-            aria-pressed={muet}
-            className="flex items-center gap-1.5 rounded-full border border-gray-200 bg-white/70 px-3 py-1 text-[11px] font-medium text-gris transition-colors hover:bg-white"
-          >
-            {muet ? <VolumeX size={12} /> : <Volume2 size={12} />}
-            {muet ? "الصوت مكتوم" : "الصوت يعمل"}
-          </button>
-        )}
-      </div>
     </main>
   );
 }
