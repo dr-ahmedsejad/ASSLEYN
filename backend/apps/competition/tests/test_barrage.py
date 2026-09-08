@@ -494,8 +494,9 @@ def test_la_route_ouvre_la_manche_et_la_console_l_apprend(api_jury, animateur) -
         reverse("competition-barrage", args=[competition.id]), format="json"
     )
 
-    assert avant["groupes"] == ["المجموعة 1", "المجموعة 2"]
-    # Six questions pour deux groupes : aucune reserve, donc a voix haute.
-    assert avant["avec_enonces"] is False
+    # Le deroule ne dit que ce que la console ne peut pas savoir : l'etat de
+    # la reserve. Qui est a egalite, elle le calcule elle-meme, faute de quoi
+    # elle afficherait l'egalite du chargement de la page.
+    assert avant == {"reserve": 0}
     assert reponse.status_code == status.HTTP_200_OK
     assert reponse.data == {"manche": 1, "groupes": 2}

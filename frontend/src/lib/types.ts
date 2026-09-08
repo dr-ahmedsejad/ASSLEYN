@@ -480,12 +480,12 @@ export interface DerouleConcours {
   maintenant: string;
   tours: Tour[];
   classement: LigneClassement[];
-  /** L'egalite qui reste a departager, et de quoi la departager. */
-  departage: {
-    groupes: string[];
-    /** Faux : le jury posera sa question a voix haute. */
-    avec_enonces: boolean;
-  };
+  /**
+   * Ce que la console ne peut pas savoir : ce qui reste dans la reserve
+   * d'enonces. Qui est a egalite, elle le calcule elle-meme — sinon elle
+   * afficherait l'egalite du chargement de la page.
+   */
+  departage: { reserve: number };
 }
 
 /** Ce que voit la salle. Rien de plus. */

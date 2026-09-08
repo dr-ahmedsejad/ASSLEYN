@@ -96,3 +96,23 @@ export function classerLocalement(tours: TourClassable[]): LigneLocale[] {
     return { ...ligne, rank: rang };
   });
 }
+
+/**
+ * Les groupes de la plus haute egalite non resolue, ou une liste vide.
+ *
+ * Une seule egalite a la fois, et la plus haute d'abord — meme regle qu'au
+ * serveur. Ce calcul doit vivre ici, et non venir du serveur : la console
+ * joue hors ligne, ses scores evoluent sans que rien ne soit envoye, et une
+ * liste recue au chargement de la page annoncerait l'egalite du depart —
+ * celle ou tout le monde est a zero point.
+ */
+export function groupesADepartager(lignes: LigneLocale[]): LigneLocale[] {
+  const compte = new Map<number, number>();
+  lignes.forEach((ligne) => {
+    compte.set(ligne.rank, (compte.get(ligne.rank) ?? 0) + 1);
+  });
+
+  // `lignes` est deja trie du meilleur rang au dernier.
+  const premiere = lignes.find((ligne) => (compte.get(ligne.rank) ?? 0) > 1);
+  return premiere ? lignes.filter((l) => l.rank === premiere.rank) : [];
+}

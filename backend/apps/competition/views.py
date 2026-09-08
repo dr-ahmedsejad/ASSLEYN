@@ -280,18 +280,19 @@ class CompetitionViewSet(viewsets.ModelViewSet):
         competition = self.get_object()
         tours = competition.turns.select_related("group", "question").all()
 
-        # Ce qu'il reste a departager, et avec quoi. La console ne peut pas le
-        # calculer : la reserve d'enonces n'est connue que du serveur.
-        egalite = services.groupes_a_departager(competition)
-        reserve = (
-            len(services.questions_de_reserve(competition))
-            if competition.avec_questions
-            else 0
-        )
+        # La console calcule elle-meme **qui** est a egalite : elle joue hors
+        # ligne, ses scores evoluent sans rien envoyer, et une liste calculee
+        # ici annoncerait l'egalite du chargement de la page — celle ou tout le
+        # monde est encore a zero point.
+        #
+        # Ce qu'elle ne peut pas savoir, en revanche, c'est ce qui reste dans
+        # la reserve d'enonces. C'est la seule chose qu'on lui envoie.
         departage = {
-            "groupes": [ligne["name"] for ligne in egalite],
-            # `False` veut dire : le jury posera sa question a voix haute.
-            "avec_enonces": bool(egalite) and reserve >= len(egalite),
+            "reserve": (
+                len(services.questions_de_reserve(competition))
+                if competition.avec_questions
+                else 0
+            )
         }
 
         return Response(

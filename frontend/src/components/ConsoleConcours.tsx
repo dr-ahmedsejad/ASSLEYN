@@ -24,7 +24,7 @@ import {
 
 import { LienDirect } from "@/components/LienDirect";
 import { Medaille } from "@/components/Medaille";
-import { classerLocalement } from "@/lib/classement";
+import { classerLocalement, groupesADepartager } from "@/lib/classement";
 import { cloturerCompetition, lancerBarrage } from "@/lib/concours-actions";
 import { empiler, identifiant, vider } from "@/lib/file-hors-ligne";
 import {
@@ -115,6 +115,11 @@ export function ConsoleConcours({ deroule }: { deroule: DerouleConcours }) {
   // celui du serveur, et cette egalite se verifie mieux sur trente lignes
   // isolees que sur un composant entier.
   const classement = useMemo(() => classerLocalement(tours), [tours]);
+
+  // Qui reste a departager, d'apres les scores que la console tient elle-meme.
+  // Le serveur ne peut pas le dire : entre le chargement de la page et la fin
+  // de la seance, le jury a joue quinze tours sans rien lui envoyer.
+  const egalite = useMemo(() => groupesADepartager(classement), [classement]);
 
   // Battement du compte a rebours. Tout le calcul du temps vit ici : c'est le
   // seul endroit ou lire l'horloge est legitime.
@@ -222,11 +227,11 @@ export function ConsoleConcours({ deroule }: { deroule: DerouleConcours }) {
         {/* Un seul bouton, et rien a regler.
             Le serveur sait qui est a egalite et avec quoi la departager ; le
             jury n'a qu'a decider s'il le veut. */}
-        {deroule.departage.groupes.length > 1 ? (
+        {egalite.length > 1 ? (
           <Departage
             competition={competition.id}
-            groupes={deroule.departage.groupes}
-            avecEnonces={deroule.departage.avec_enonces}
+            groupes={egalite.map((ligne) => ligne.name)}
+            avecEnonces={deroule.departage.reserve >= egalite.length}
           />
         ) : null}
 
