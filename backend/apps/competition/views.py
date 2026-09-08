@@ -60,11 +60,11 @@ class CompetitionViewSet(viewsets.ModelViewSet):
     permission_classes = [PeutAnimer]
     queryset = Competition.objects.prefetch_related("groups", "questions")
 
-    #: Ce que `competition.animer` ne donne pas.
+    #: La preparation appartient a l'administration ; le jury conduit.
     #:
-    #: Cette permission sert a **conduire** un concours : constituer les
-    #: equipes, lancer, trancher les tours, departager. Elle ne donne ni de
-    #: l'ouvrir, ni de l'effacer, ni d'en ecrire le contenu.
+    #: `competition.animer` donne exactement de quoi mener une seance : lire le
+    #: deroule, lancer un tour, trancher, departager, clore. Rien de ce qui
+    #: **compose** le concours n'en fait partie.
     #:
     #: - **ouvrir** engage l'institut, **effacer** emporte les groupes, les
     #:   tours et les decisions du jury — la seule trace de ce qui s'est passe
@@ -73,22 +73,25 @@ class CompetitionViewSet(viewsets.ModelViewSet):
     #:   ils se pesent, et celui qui anime les decouvre en meme temps que la
     #:   salle. Les lui laisser ecrire reviendrait a lui laisser choisir ce sur
     #:   quoi les etudiantes sont evaluees ;
-    #: - **les listes deposees en bloc** sont de la meme nature. Inscrire les
-    #:   participantes d'une classe entiere est un acte de preparation, pas de
-    #:   conduite. Ajouter un groupe a la main reste ouvert : c'est le
-    #:   rattrapage d'un oubli le jour meme.
+    #: - **les equipes aussi.** Qui concourt, et contre qui, se decide avant la
+    #:   seance. Une equipe ajoutee au dernier moment changerait l'ordre de
+    #:   passage et le nombre de tours — c'est-a-dire le concours lui-meme.
     #:
     #: `partial_update` en fait partie : c'est par la que se regle le nombre
     #: d'enonces reserves au departage.
+    #:
+    #: Le jury arrive donc devant une session complete, et n'a plus qu'un
+    #: bouton a presser : celui du depart.
     ACTIONS_RESERVEES = frozenset(
         {
             "create",
             "destroy",
             "update",
             "partial_update",
+            "ajouter_groupe",
+            "importer_groupes",
             "ajouter_questions",
             "importer_questions",
-            "importer_groupes",
         }
     )
 

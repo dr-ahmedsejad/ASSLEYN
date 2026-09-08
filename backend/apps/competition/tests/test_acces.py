@@ -13,12 +13,11 @@ Trois regles se lisent dans les resultats :
   aucun sens ;
 - **conduire un concours tient a `competition.animer`**, une permission
   delegable — le jury n'est pas forcement l'administration ;
-- **ouvrir, effacer et ecrire les enonces restent a l'administration.**
-  Animer, c'est conduire : constituer les equipes, lancer, trancher. Decider
-  qu'il y aura un concours engage l'institut ; effacer celui qui a eu lieu
-  emporte la seule trace de ce qui s'est passe dans la salle ; et les enonces
-  sont le fond du concours — qui anime les decouvre en meme temps que la
-  salle.
+- **toute la preparation reste a l'administration.** Animer, c'est conduire :
+  lancer un tour, trancher, departager, clore. Composer le concours — decider
+  qu'il aura lieu, ecrire ses enonces, constituer ses equipes — se fait avant,
+  et par d'autres mains. Le jury arrive devant une session complete et n'a
+  plus qu'un bouton a presser : celui du depart.
 """
 
 from __future__ import annotations
@@ -85,7 +84,6 @@ def _routes(competition: Competition, tour_id: int) -> list[tuple[str, str, dict
     return [
         ("get", reverse("competition-list"), {}),
         ("get", reverse("competition-detail", args=[competition.id]), {}),
-        ("post", reverse("competition-ajouter-groupe", args=[competition.id]), {"name": "ج"}),
         ("get", reverse("competition-deroule", args=[competition.id]), {}),
         ("post", reverse("competition-demarrer", args=[competition.id]), {}),
         ("post", reverse("competition-barrage", args=[competition.id]), {}),
@@ -104,6 +102,11 @@ def _routes_reservees(competition: Competition) -> list[tuple[str, str, dict]]:
     return [
         ("post", reverse("competition-list"), {"name": "أخرى"}),
         ("delete", reverse("competition-detail", args=[competition.id]), {}),
+        (
+            "post",
+            reverse("competition-ajouter-groupe", args=[competition.id]),
+            {"name": "مجموعة"},
+        ),
         (
             "patch",
             reverse("competition-detail", args=[competition.id]),

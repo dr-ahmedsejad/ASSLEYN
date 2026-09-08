@@ -135,6 +135,14 @@ export function PreparationConcours({
     <div className="space-y-5">
       {/* ─── Groupes ────────────────────────────────────────────── */}
       <Carte titre={`المجموعات (${groupes})`}>
+        {/* Le jury n'ajoute rien ici : si les equipes manquent, il faut le lui
+            dire, et lui dire a qui s'adresser. */}
+        {!administre && groupes === 0 ? (
+          <Alerte ton="warning">
+            لم تُسجَّل أي مجموعة بعد. راجعي الإدارة.
+          </Alerte>
+        ) : null}
+
         {competition.groups.length > 0 ? (
           <ul className="mb-4 grid gap-2 sm:grid-cols-2">
             {competition.groups.map((groupe) => (
@@ -222,35 +230,47 @@ export function PreparationConcours({
           </>
         ) : null}
 
-        {/* `key` sur le nombre de groupes : le formulaire se remonte apres
-            chaque ajout, et le champ repart vide. Sans cela le nom precedent
-            restait, et deux groupes ajoutes de suite se retrouvaient colles
-            dans un seul nom. */}
-        <form
-          key={groupes}
-          action={actionGroupe}
-          className="flex flex-wrap items-end gap-2"
-        >
-          <input type="hidden" name="competition" value={competition.id} />
-          <div className="min-w-0 flex-1">
-            <label
-              htmlFor="groupe"
-              className="mb-1.5 block text-sm font-medium text-dark-soft"
+        {/* Qui concourt, et contre qui, se decide avant la seance : une
+            equipe ajoutee au dernier moment changerait l'ordre de passage et
+            le nombre de tours, c'est-a-dire le concours lui-meme. Le jury lit
+            donc la composition, et ne la modifie pas. */}
+        {administre ? (
+          <>
+            {/* `key` sur le nombre de groupes : le formulaire se remonte apres
+              chaque ajout, et le champ repart vide. Sans cela le nom precedent
+              restait, et deux groupes ajoutes de suite se retrouvaient colles
+              dans un seul nom. */}
+            <form
+              key={groupes}
+              action={actionGroupe}
+              className="flex flex-wrap items-end gap-2"
             >
-              اسم المجموعة
-            </label>
-            <input
-              id="groupe"
-              name="name"
-              type="text"
-              required
-              placeholder="مجموعة الحافظات"
-              className="champ"
-            />
-          </div>
-          <Bouton libelle="إضافة" enCours="…" icone={<UserPlus size={15} />} />
-        </form>
-        <Message etat={etatGroupe} />
+              <input type="hidden" name="competition" value={competition.id} />
+              <div className="min-w-0 flex-1">
+                <label
+                  htmlFor="groupe"
+                  className="mb-1.5 block text-sm font-medium text-dark-soft"
+                >
+                  اسم المجموعة
+                </label>
+                <input
+                  id="groupe"
+                  name="name"
+                  type="text"
+                  required
+                  placeholder="مجموعة الحافظات"
+                  className="champ"
+                />
+              </div>
+              <Bouton
+                libelle="إضافة"
+                enCours="…"
+                icone={<UserPlus size={15} />}
+              />
+            </form>
+            <Message etat={etatGroupe} />
+          </>
+        ) : null}
       </Carte>
 
       {/* ─── Questions ──────────────────────────────────────────────
