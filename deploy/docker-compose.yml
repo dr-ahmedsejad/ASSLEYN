@@ -114,9 +114,16 @@ services:
       DJANGO_SETTINGS_MODULE: config.settings.prod
       DJANGO_SECRET_KEY: ${SECRET_KEY:?cle Django absente du .env}
       DJANGO_DEBUG: "False"
-      # Django compare le nom d'hote seul, sans le port. `backend` y figure
+      # Django compare le nom d'hote seul, **sans le port**. `backend` y figure
       # parce que Nginx et le serveur Next appellent le conteneur par ce nom.
-      DJANGO_ALLOWED_HOSTS: ${DOMAIN},localhost,127.0.0.1,backend
+      #
+      # Le defaut suffit tant qu'un seul nom mene au serveur. Des qu'il y en a
+      # plusieurs — le domaine, sa forme sans « www », l'adresse IP qui
+      # continue de servir — il faut les enumerer, car Django refuse tout Host
+      # qu'il ne reconnait pas, et le refus ressemble a une panne :
+      #   ALLOWED_HOSTS=www.asleyn.online,asleyn.online,203.0.113.10,localhost,127.0.0.1,backend
+      # Ne jamais oublier `backend` dans une liste ecrite a la main.
+      DJANGO_ALLOWED_HOSTS: ${ALLOWED_HOSTS:-${DOMAIN},localhost,127.0.0.1,backend}
       # Vrai par defaut, et cela doit le rester : c'est le seul reglage qui
       # empeche un mot de passe de circuler en clair. Le passer a False n'a
       # qu'un usage — un serveur joint par son IP, ou aucune autorite ne
