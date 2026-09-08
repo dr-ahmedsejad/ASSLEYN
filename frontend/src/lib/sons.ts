@@ -121,6 +121,37 @@ function cloche(
   note(ctx, destination, { quand, hauteur: 2350, duree: 0.35, volume: 0.045 });
 }
 
+/**
+ * Le son est-il reellement ouvert ?
+ *
+ * Un contexte cree mais suspendu ne joue rien. C'est le cas ordinaire sur
+ * l'ecran de la salle : la page est ouverte puis laissee seule, et les
+ * navigateurs refusent le son tant que personne n'a touche la page.
+ */
+export function sonPret(): boolean {
+  return contexte !== null && contexte.state === "running";
+}
+
+/**
+ * Ouvre le son sur un geste de l'utilisateur.
+ *
+ * Rend `true` quand le son est effectivement disponible. C'est ce que le
+ * bouton d'activation appelle : le geste est la condition, on ne peut pas
+ * l'obtenir autrement.
+ */
+export async function reveiller(): Promise<boolean> {
+  const ctx = ouvrir();
+  if (!ctx) return false;
+  if (ctx.state === "suspended") {
+    try {
+      await ctx.resume();
+    } catch {
+      return false;
+    }
+  }
+  return ctx.state === "running";
+}
+
 /** Le son est-il coupe sur cet appareil ? */
 export function estMuet(): boolean {
   if (typeof window === "undefined") return false;

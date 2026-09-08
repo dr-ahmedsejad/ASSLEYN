@@ -1,13 +1,21 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Trophy, WifiOff } from "lucide-react";
+import { Trophy, Volume2, VolumeX, WifiOff } from "lucide-react";
 
 import {
   LIBELLE_PLACE,
   Medaille,
   TEINTE_PLACE,
 } from "@/components/Medaille";
+import {
+  arreter as arreterLesSons,
+  definirMuet,
+  estMuet,
+  programmerTour,
+  reveiller,
+  sonPret,
+} from "@/lib/sons";
 import type { EcranDirect } from "@/lib/types";
 
 /**
@@ -35,6 +43,21 @@ export function EcranSalle({
   const [etat, setEtat] = useState<EcranDirect>(initial);
   const [perdu, setPerdu] = useState(false);
   const [restantMesure, setRestant] = useState(initial.turn_seconds);
+
+  /**
+   * Le son sur cet ecran.
+   *
+   * `muet` est le choix de l'appareil, relu dans un effet : le serveur ne le
+   * connait pas, et lire le stockage pendant le rendu ferait diverger le HTML
+   * envoye de celui que le navigateur reconstruit.
+   *
+   * `autorise` est autre chose — c'est le navigateur qui decide. Cet ecran est
+   * ouvert puis laisse seul : personne ne le touche, et sans geste le son
+   * reste bloque. Il faut donc le demander, une fois, explicitement.
+   */
+  const [muet, setMuet] = useState(false);
+  const [autorise, setAutorise] = useState(false);
+  useEffect(() => setMuet(estMuet()), []);
 
   /**
    * Ecart avec l'horloge du serveur, recale a chaque reponse recue.
@@ -81,6 +104,42 @@ export function EcranSalle({
     }, 250);
     return () => clearInterval(battement);
   }, [depart, etat.turn_seconds]);
+
+  /**
+   * Les sons du tour, poses d'avance sur l'horloge audio.
+   *
+   * Memes valeurs que le compte a rebours affiche — l'heure de depart et
+   * l'ecart avec l'horloge du serveur — donc meme instant. Les deux ecrans
+   * sonnent ensemble sans se parler : ils se calent sur la meme horloge.
+   */
+  useEffect(() => {
+    if (!depart || muet) return;
+    programmerTour({
+      debut: depart,
+      secondes: etat.turn_seconds,
+      ecart: ecart.current ?? 0,
+    });
+    // Le contexte peut avoir ete cree sans etre actif. On le constate juste
+    // apres, pour proposer le bouton d'activation plutot que rester muet
+    // sans rien dire.
+    const controle = setTimeout(() => setAutorise(sonPret()), 200);
+    return () => {
+      clearTimeout(controle);
+      arreterLesSons();
+    };
+  }, [depart, muet, etat.turn_seconds]);
+
+  async function activerLeSon() {
+    if (!(await reveiller())) return;
+    setAutorise(true);
+    if (depart) {
+      programmerTour({
+        debut: depart,
+        secondes: etat.turn_seconds,
+        ecart: ecart.current ?? 0,
+      });
+    }
+  }
 
   const restant = depart ? restantMesure : etat.turn_seconds;
 
@@ -186,6 +245,37 @@ export function EcranSalle({
           ? etat.tours_joues
           : `${etat.tours_joues} / ${etat.tours_prevus}`}
       </p>
+
+      {/* Le reglage du son, discret et toujours accessible.
+          Tant que le navigateur n'a pas eu de geste, le bouton demande
+          l'activation : rester silencieux sans le dire laisserait croire a
+          une panne. */}
+      <div className="mt-3 flex justify-center">
+        {!muet && !autorise ? (
+          <button
+            type="button"
+            onClick={() => void activerLeSon()}
+            className="flex items-center gap-1.5 rounded-full border border-primary/30 bg-white px-3.5 py-1.5 text-xs font-semibold text-primary shadow-card transition-colors hover:bg-green-50"
+          >
+            <Volume2 size={13} />
+            تفعيل الصوت
+          </button>
+        ) : (
+          <button
+            type="button"
+            onClick={() => {
+              const suivant = !muet;
+              setMuet(suivant);
+              definirMuet(suivant);
+            }}
+            aria-pressed={muet}
+            className="flex items-center gap-1.5 rounded-full border border-gray-200 bg-white/70 px-3 py-1 text-[11px] font-medium text-gris transition-colors hover:bg-white"
+          >
+            {muet ? <VolumeX size={12} /> : <Volume2 size={12} />}
+            {muet ? "الصوت مكتوم" : "الصوت يعمل"}
+          </button>
+        )}
+      </div>
     </main>
   );
 }
