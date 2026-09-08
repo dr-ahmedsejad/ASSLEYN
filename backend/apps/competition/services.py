@@ -183,11 +183,16 @@ def demarrer(competition: Competition) -> int:
 
     if competition.avec_questions:
         questions = list(competition.questions.all())
-        if len(questions) < len(groupes):
+        # Ce qu'on garde pour un eventuel departage : de quoi faire passer
+        # chaque groupe une fois, et pas davantage.
+        gardees = len(groupes) if competition.reserve_departage else 0
+        total = (max(len(questions) - gardees, 0) // len(groupes)) * len(groupes)
+        if total < len(groupes):
             raise CompetitionInvalide(
                 "عدد الأسئلة لا يكفي لجولة واحدة كاملة."
+                if not gardees
+                else "بعد حجز أسئلة الحسم لا تبقى أسئلة تكفي لجولة كاملة."
             )
-        total = (len(questions) // len(groupes)) * len(groupes)
     else:
         # ندوة شعرية : elle n'a pas de fin ecrite d'avance. On pose une
         # reserve de جولات, qui se rechargera d'elle-meme.

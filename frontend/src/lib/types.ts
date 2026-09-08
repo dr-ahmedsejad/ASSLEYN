@@ -422,6 +422,8 @@ export interface Competition {
   state: EtatCompetition;
   state_display: string;
   turn_seconds: number;
+  /** Garder de quoi jouer une manche de departage. Coute une جولة. */
+  reserve_departage: boolean;
   show_question: boolean;
   created_at: string;
   started_at: string | null;

@@ -17,6 +17,7 @@ import {
   demarrerCompetition,
   importerGroupes,
   importerQuestions,
+  reserverPourLeDepartage,
   type ResultatConcours,
 } from "@/lib/concours-actions";
 import type { Competition } from "@/lib/types";
@@ -104,6 +105,10 @@ export function PreparationConcours({
     importerGroupes,
     ETAT_INITIAL,
   );
+  const [etatReserve, actionReserve] = useActionState(
+    reserverPourLeDepartage,
+    ETAT_INITIAL,
+  );
 
   const avecQuestions = competition.avec_questions;
   const groupes = competition.groups.length;
@@ -111,8 +116,14 @@ export function PreparationConcours({
 
   // Une ندوة شعرية n'a rien a compter : elle tourne jusqu'a ce que le jury
   // l'arrete, et deux groupes suffisent a la commencer.
+  //
+  // Les questions gardees pour le departage sortent du calcul avant tout le
+  // reste : c'est ce qui les rend reellement indisponibles au deroule.
+  const gardees = competition.reserve_departage ? groupes : 0;
   const jolees =
-    avecQuestions && groupes > 0 ? Math.floor(questions / groupes) : 0;
+    avecQuestions && groupes > 0
+      ? Math.floor(Math.max(questions - gardees, 0) / groupes)
+      : 0;
   const tours = jolees * groupes;
   const reserve = avecQuestions ? questions - tours : 0;
   const pret = groupes >= 2 && (!avecQuestions || jolees >= 1);
@@ -316,6 +327,41 @@ export function PreparationConcours({
           </form>
           <Message etat={etatQuestions} />
 
+          {/* Une seule case, et le compte se met a jour au-dessus.
+              Sans elle, ajouter des questions ne met rien de cote : le
+              deroule les consomme par جولات entieres, et le reste — toujours
+              plus petit que le nombre de groupes — ne suffit jamais a une
+              manche de departage. */}
+          <form
+            action={actionReserve}
+            className="mt-4 rounded-xl border border-gray-100 bg-gray-50/60 p-3"
+          >
+            <input type="hidden" name="competition" value={competition.id} />
+            <input
+              type="hidden"
+              name="reserver"
+              value={competition.reserve_departage ? "0" : "1"}
+            />
+            <label className="flex cursor-pointer items-start gap-2.5">
+              <input
+                type="checkbox"
+                checked={competition.reserve_departage}
+                onChange={(evenement) => evenement.currentTarget.form?.requestSubmit()}
+                className="mt-0.5 h-4 w-4 shrink-0 accent-primary"
+              />
+              <span>
+                <span className="block text-sm font-medium text-dark-soft">
+                  احجز {groupes || "…"} أسئلة لجولة الحسم
+                </span>
+                <span className="mt-0.5 block text-xs leading-relaxed text-gris">
+                  سؤال لكل مجموعة، يُترك جانبا للتعادل. يكلّف جولة كاملة من
+                  المسابقة.
+                </span>
+              </span>
+            </label>
+          </form>
+          <Message etat={etatReserve} />
+
           {competition.questions.length > 0 ? (
             <ol className="mt-4 max-h-56 space-y-1.5 overflow-y-auto border-t border-gray-100 pt-3">
               {competition.questions.map((question, index) => (
@@ -349,7 +395,14 @@ export function PreparationConcours({
                 <>
                   <Chiffre libelle="جولة" valeur={jolees} />
                   <Chiffre libelle="دورا" valeur={tours} />
-                  <Chiffre libelle="سؤالا في الاحتياط" valeur={reserve} />
+                  <Chiffre
+                    libelle={
+                      competition.reserve_departage
+                        ? "سؤالا لجولة الحسم"
+                        : "سؤالا في الاحتياط"
+                    }
+                    valeur={reserve}
+                  />
                 </>
               ) : (
                 <Chiffre libelle="مجموعات في كل جولة" valeur={groupes} />

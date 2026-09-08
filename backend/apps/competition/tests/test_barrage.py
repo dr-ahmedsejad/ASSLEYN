@@ -369,6 +369,75 @@ def test_une_manche_deja_ouverte_n_en_ouvre_pas_une_seconde(animateur) -> None:
 
 
 # --------------------------------------------------------------------------
+# Reserver de quoi departager
+# --------------------------------------------------------------------------
+
+
+@pytest.mark.django_db
+def test_ajouter_des_questions_ne_reserve_rien(animateur) -> None:
+    """
+    Le piege, et la raison d'etre du reglage.
+
+    La reserve vaut le reste de la division des questions par les groupes.
+    Passer de dix a quinze questions pour cinq groupes ne met donc rien de
+    cote : cela ajoute une جولة, et la reserve reste nulle. On ne peut pas
+    obtenir une reserve en ajoutant des questions — il faut demander au
+    deroule d'en garder.
+    """
+    competition = _concours(animateur, groupes=5, questions=15)
+    services.demarrer(competition)
+
+    assert competition.turns.count() == 15
+    assert services.questions_de_reserve(competition) == []
+
+
+@pytest.mark.django_db
+def test_le_reglage_garde_un_enonce_par_groupe(animateur) -> None:
+    competition = _concours(animateur, groupes=5, questions=15)
+    competition.reserve_departage = True
+    competition.save(update_fields=["reserve_departage"])
+
+    services.demarrer(competition)
+
+    assert competition.turns.count() == 10  # deux جولات au lieu de trois
+    assert len(services.questions_de_reserve(competition)) == 5
+
+
+@pytest.mark.django_db
+def test_la_manche_reservee_porte_ses_enonces(animateur) -> None:
+    """C'est tout l'objet du reglage : un departage a l'ecran, pas a voix haute."""
+    competition = _concours(animateur, groupes=3, questions=9)
+    competition.reserve_departage = True
+    competition.save(update_fields=["reserve_departage"])
+    services.demarrer(competition)
+    _jouer(competition, {0: 2, 1: 2, 2: 2}, animateur)
+
+    services.lancer_barrage(competition)
+    manche = competition.turns.filter(tiebreak_round=1)
+
+    assert manche.count() == 3
+    assert manche.filter(question__isnull=False).count() == 3
+
+
+@pytest.mark.django_db
+def test_reserver_ne_doit_pas_vider_la_competition(animateur) -> None:
+    """
+    Cinq groupes, cinq questions : tout partirait en reserve.
+
+    Le refus arrive au demarrage, pas en pleine seance, et il dit ce qui
+    manque plutot que de laisser une competition sans aucun tour.
+    """
+    competition = _concours(animateur, groupes=5, questions=5)
+    competition.reserve_departage = True
+    competition.save(update_fields=["reserve_departage"])
+
+    with pytest.raises(services.CompetitionInvalide) as erreur:
+        services.demarrer(competition)
+
+    assert "الحسم" in str(erreur.value)
+
+
+# --------------------------------------------------------------------------
 # La route
 # --------------------------------------------------------------------------
 

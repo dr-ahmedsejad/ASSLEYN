@@ -180,6 +180,40 @@ export async function importerQuestions(
 }
 
 /**
+ * Reserve — ou libere — de quoi jouer une manche de departage.
+ *
+ * Sans ce reglage, la reserve vaut le reste de la division des questions par
+ * les groupes : toujours plus petite que le nombre de groupes, donc jamais
+ * suffisante. Ajouter des questions n'y change rien — elles forment une جولة
+ * de plus. Il faut dire au deroule d'en garder.
+ */
+export async function reserverPourLeDepartage(
+  _etat: ResultatConcours,
+  donnees: FormData,
+): Promise<ResultatConcours> {
+  const competition = String(donnees.get("competition") ?? "");
+  const reserver = donnees.get("reserver") === "1";
+
+  try {
+    await apiRequest(`/competitions/${competition}/`, {
+      method: "PATCH",
+      body: { reserve_departage: reserver },
+    });
+    revalidatePath(`/competitions/${competition}`);
+    return {
+      message: reserver
+        ? "حُجزت أسئلة لجولة الحسم."
+        : "أُلغي الحجز: كل الأسئلة تُلعب.",
+    };
+  } catch (erreur) {
+    if (erreur instanceof ApiError) {
+      return { erreur: erreur.messages[0] ?? "تعذر تغيير الحجز." };
+    }
+    throw erreur;
+  }
+}
+
+/**
  * Ouvre la competition.
  *
  * C'est ici que tout le deroule est fige : les tours sont crees d'un coup,
