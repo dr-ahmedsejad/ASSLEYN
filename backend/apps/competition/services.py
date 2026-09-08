@@ -435,6 +435,18 @@ def classement(competition: Competition) -> list[dict]:
             rang += 1
             precedent = marque
         ligne["rank"] = rang
+
+    # Deux lignes au meme score et a des rangs differents : sans un mot, cela
+    # ressemble a une erreur de calcul. On marque les deux — celle qui a gagne
+    # le departage comme celle qui l'a perdu, puisque c'est le meme fait qui
+    # explique les deux places.
+    for ligne in lignes:
+        ligne["separe"] = any(
+            autre is not ligne
+            and autre["points"] == ligne["points"]
+            and autre["rank"] != ligne["rank"]
+            for autre in lignes
+        )
     return lignes
 
 

@@ -645,7 +645,13 @@ function Classement({
   lignes,
   final = false,
 }: {
-  lignes: { name: string; color: string; points: number; rank: number }[];
+  lignes: {
+    name: string;
+    color: string;
+    points: number;
+    rank: number;
+    separe: boolean;
+  }[];
   final?: boolean;
 }) {
   const maximum = Math.max(...lignes.map((l) => l.points), 1);
@@ -670,8 +676,18 @@ function Classement({
             )}
             <div className="min-w-0 flex-1">
               <div className="flex items-baseline justify-between gap-2">
-                <p className="truncate text-sm font-semibold text-dark">
-                  {ligne.name}
+                <p className="flex min-w-0 items-baseline gap-1.5">
+                  <span className="truncate text-sm font-semibold text-dark">
+                    {ligne.name}
+                  </span>
+                  {/* Le jury doit lire la meme chose que la salle : deux
+                      scores egaux a des rangs differents s'expliquent, ils ne
+                      se devinent pas. */}
+                  {ligne.separe ? (
+                    <span className="shrink-0 rounded-full bg-accent/15 px-1.5 py-px text-[10px] font-bold text-accent-dk">
+                      فُصل بالحسم
+                    </span>
+                  ) : null}
                 </p>
                 <span className="chiffres text-base font-bold text-primary">
                   {ligne.points}

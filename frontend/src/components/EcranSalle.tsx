@@ -505,6 +505,16 @@ function LigneTitrage({
               {place}
             </span>
           ) : null}
+
+          {/* Deux equipes au meme score et a des rangs differents : sans ce
+              mot, la salle y lit une erreur de calcul. Il s'affiche a toutes
+              les tailles, contrairement au libelle de la place — c'est lui
+              qui explique, et l'explication ne se coupe pas. */}
+          {ligne.separe ? (
+            <span className="shrink-0 rounded-full bg-accent/15 px-2 py-0.5 text-[10px] font-bold text-accent-dk sm:text-xs">
+              فُصل بالحسم
+            </span>
+          ) : null}
         </p>
 
         <div className="mt-1.5 h-1 overflow-hidden rounded-full bg-gray-100 sm:h-1.5">

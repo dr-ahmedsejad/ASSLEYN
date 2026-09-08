@@ -216,6 +216,33 @@ def test_le_barrage_ordonne_sans_faire_depasser_personne(animateur) -> None:
 
 
 @pytest.mark.django_db
+def test_les_scores_egaux_a_des_rangs_differents_sont_marques(animateur) -> None:
+    """
+    Sans un mot, deux fois trois points a deux rangs differents ressemblent a
+    une erreur de calcul — et c'est la premiere chose que la salle remarque.
+
+    Les deux lignes portent la marque, la gagnante comme la perdante : c'est
+    le meme fait qui explique les deux places. Celles qu'aucun departage n'a
+    touchees ne la portent pas.
+    """
+    competition = _concours(animateur, groupes=5, questions=15)
+    services.demarrer(competition)
+    _jouer(competition, {0: 3, 1: 3, 2: 2, 3: 2, 4: 1}, animateur)
+
+    services.lancer_barrage(competition)
+    _trancher_barrage(competition, gagnantes={0}, par=animateur)
+    marques = {
+        ligne["name"]: ligne["separe"] for ligne in services.classement(competition)
+    }
+
+    assert marques["المجموعة 1"] is True  # gagnante du departage
+    assert marques["المجموعة 2"] is True  # perdante, meme score
+    assert marques["المجموعة 3"] is False  # a egalite, mais non departagee
+    assert marques["المجموعة 4"] is False
+    assert marques["المجموعة 5"] is False
+
+
+@pytest.mark.django_db
 def test_une_manche_indecise_en_appelle_une_autre(animateur) -> None:
     """Toutes justes, ou toutes fausses : personne n'est separe."""
     competition = _concours(animateur, groupes=2, questions=10)

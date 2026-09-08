@@ -39,6 +39,14 @@ export interface LigneLocale {
   /** Resultat manche par manche des departages, dans l'ordre des manches. */
   departage: number[];
   rank: number;
+  /**
+   * Ce rang a-t-il ete separe d'un autre au meme score ?
+   *
+   * Deux lignes au meme nombre de points et a des rangs differents ressemblent
+   * a une erreur de calcul tant que rien ne l'explique. Les deux portent la
+   * marque : c'est le meme fait qui justifie les deux places.
+   */
+  separe: boolean;
 }
 
 export function classerLocalement(tours: TourClassable[]): LigneLocale[] {
@@ -87,14 +95,24 @@ export function classerLocalement(tours: TourClassable[]): LigneLocale[] {
 
   let rang = 0;
   let precedent: string | null = null;
-  return ordonnees.map(({ ordre: _ordre, ...ligne }) => {
+  const classees = ordonnees.map(({ ordre: _ordre, ...ligne }) => {
     const marque = `${ligne.points}|${ligne.departage.join("")}`;
     if (marque !== precedent) {
       rang += 1;
       precedent = marque;
     }
-    return { ...ligne, rank: rang };
+    return { ...ligne, rank: rang, separe: false };
   });
+
+  return classees.map((ligne) => ({
+    ...ligne,
+    separe: classees.some(
+      (autre) =>
+        autre !== ligne &&
+        autre.points === ligne.points &&
+        autre.rank !== ligne.rank,
+    ),
+  }));
 }
 
 /**

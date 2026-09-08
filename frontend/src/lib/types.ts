@@ -472,6 +472,8 @@ export interface LigneClassement {
   /** Resultat manche par manche des departages. Vide s'il n'y en a pas eu. */
   departage: number[];
   rank: number;
+  /** Ce rang a-t-il ete separe d'un autre au meme score par un departage ? */
+  separe: boolean;
 }
 
 /** Tout ce dont la console du jury a besoin, livre en une fois. */
