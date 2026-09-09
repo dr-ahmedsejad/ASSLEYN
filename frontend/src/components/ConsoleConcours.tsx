@@ -10,6 +10,7 @@ import {
 } from "react";
 import { useRouter } from "next/navigation";
 import {
+  AlertTriangle,
   CheckCircle2,
   CloudOff,
   Eye,
@@ -26,7 +27,7 @@ import { LienDirect } from "@/components/LienDirect";
 import { Medaille } from "@/components/Medaille";
 import { classerLocalement, groupesADepartager } from "@/lib/classement";
 import { cloturerCompetition, lancerBarrage } from "@/lib/concours-actions";
-import { empiler, identifiant, vider } from "@/lib/file-hors-ligne";
+import { empiler, identifiant, refuses, vider } from "@/lib/file-hors-ligne";
 import {
   arreter as arreterLesSons,
   definirMuet,
@@ -57,6 +58,9 @@ export function ConsoleConcours({ deroule }: { deroule: DerouleConcours }) {
 
   const [tours, setTours] = useState<Tour[]>(deroule.tours);
   const [enAttente, setEnAttente] = useState(0);
+  // Gestes refuses par le serveur. Ils ne se rattrapent pas : le jury
+  // doit l'apprendre pendant la seance, pas apres.
+  const [rejetes, setRejetes] = useState(0);
   const [motif, setMotif] = useState("");
 
   /**
@@ -92,6 +96,7 @@ export function ConsoleConcours({ deroule }: { deroule: DerouleConcours }) {
   const reprendre = useCallback(async () => {
     const restants = await vider();
     setEnAttente(restants);
+    setRejetes(refuses().length);
   }, []);
 
   useEffect(() => {
@@ -259,6 +264,24 @@ export function ConsoleConcours({ deroule }: { deroule: DerouleConcours }) {
             <span className="chiffres">
               {enAttente} عملية في الانتظار — الاتصال منقطع. لا شيء يضيع، سيُرسل
               كل شيء عند عودة الشبكة.
+            </span>
+          </span>
+        </Alerte>
+      ) : null}
+
+      {/*
+        Un geste refuse ne se rattrape pas : le serveur l'a ecarte, et le
+        rejouer donnerait le meme refus. Le dire tout de suite est la seule
+        chose utile — sans quoi le jury anime une seance entiere pendant que
+        la salle reste immobile.
+      */}
+      {rejetes > 0 ? (
+        <Alerte ton="danger">
+          <span className="flex items-center gap-2">
+            <AlertTriangle size={15} />
+            <span className="chiffres">
+              {rejetes} عملية رفضها الخادم ولم تُسجَّل. أعِد تحميل الصفحة
+              للاطلاع على الحالة الحقيقية قبل المتابعة.
             </span>
           </span>
         </Alerte>

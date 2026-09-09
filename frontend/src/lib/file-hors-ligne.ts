@@ -26,6 +26,15 @@
 
 const CLE = "asleyn.concours.file";
 
+/**
+ * Gestes refusés par le serveur.
+ *
+ * Un geste écarté doit laisser une trace visible. Sans elle, un jury peut
+ * animer une séance entière — lancer, trancher, clore — pendant que le serveur
+ * refuse tout et que l'écran de la salle reste immobile. C'est arrivé.
+ */
+const CLE_REFUS = "asleyn.concours.refus";
+
 export interface GesteEnAttente {
   /** Tiré par le navigateur : c'est lui qui rend le rejeu inoffensif. */
   client_uuid: string;
@@ -56,13 +65,47 @@ function ecrire(file: GesteEnAttente[]): void {
   }
 }
 
+/**
+ * Un UUID v4, y compris hors contexte sécurisé.
+ *
+ * `crypto.randomUUID()` n'existe qu'en contexte sécurisé — HTTPS, ou
+ * `localhost`. Servi par son adresse IP en clair, le navigateur ne l'a pas :
+ * un serveur d'établissement sans certificat est exactement ce cas. Le serveur
+ * attend un UUID et rien d'autre ; un repli qui n'en produirait pas ferait
+ * refuser **tous** les gestes du jury, en développement comme nulle part
+ * ailleurs, puisque `localhost` masque le problème.
+ *
+ * `crypto.getRandomValues`, lui, est disponible partout. Les deux octets
+ * imposés par la RFC 4122 sont posés à la main : version 4, variante 10xx.
+ */
 export function identifiant(): string {
-  if (typeof crypto !== "undefined" && "randomUUID" in crypto) {
-    return crypto.randomUUID();
+  const source = globalThis.crypto;
+
+  if (typeof source?.randomUUID === "function") {
+    return source.randomUUID();
   }
-  // Repli pour un navigateur ancien : la valeur n'a pas besoin d'être
-  // cryptographique, seulement d'être unique sur cette tablette.
-  return `${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
+
+  const octets = new Uint8Array(16);
+  if (typeof source?.getRandomValues === "function") {
+    source.getRandomValues(octets);
+  } else {
+    // Dernier recours : la valeur n'a pas besoin d'être cryptographique,
+    // seulement d'être unique sur cette tablette.
+    for (let i = 0; i < octets.length; i += 1) {
+      octets[i] = Math.floor(Math.random() * 256);
+    }
+  }
+  octets[6] = (octets[6] & 0x0f) | 0x40;
+  octets[8] = (octets[8] & 0x3f) | 0x80;
+
+  const hex = Array.from(octets, (o) => o.toString(16).padStart(2, "0"));
+  return [
+    hex.slice(0, 4).join(""),
+    hex.slice(4, 6).join(""),
+    hex.slice(6, 8).join(""),
+    hex.slice(8, 10).join(""),
+    hex.slice(10, 16).join(""),
+  ].join("-");
 }
 
 /** Dépose un geste. Il partira maintenant si le réseau répond, plus tard sinon. */
@@ -83,6 +126,45 @@ export function empiler(
 
 export function enAttente(): number {
   return lire().length;
+}
+
+/** Un geste que le serveur a refusé pour de bon. */
+export interface Refus {
+  chemin: string;
+  statut: number;
+  quand: string;
+}
+
+function lireRefus(): Refus[] {
+  if (typeof window === "undefined") return [];
+  try {
+    const brut = window.localStorage.getItem(CLE_REFUS);
+    return brut ? (JSON.parse(brut) as Refus[]) : [];
+  } catch {
+    return [];
+  }
+}
+
+function noterRefus(refus: Refus): void {
+  try {
+    // Les dix derniers suffisent : c'est un signal, pas un journal.
+    const liste = [...lireRefus(), refus].slice(-10);
+    window.localStorage.setItem(CLE_REFUS, JSON.stringify(liste));
+  } catch {
+    /* rien à faire de plus que continuer */
+  }
+}
+
+export function refuses(): Refus[] {
+  return lireRefus();
+}
+
+export function oublierRefus(): void {
+  try {
+    window.localStorage.removeItem(CLE_REFUS);
+  } catch {
+    /* rien à faire de plus que continuer */
+  }
 }
 
 /**
@@ -117,8 +199,18 @@ export async function vider(): Promise<number> {
         return file.length;
       }
 
-      // 2xx comme 4xx : le geste ne sera pas rejoué. Un 4xx signifie que le
-      // serveur l'a refusé pour de bon — le garder bloquerait la file.
+      // Un 4xx est définitif : le rejouer bloquerait la file derrière lui. Il
+      // est donc écarté — mais jamais en silence. Le jury doit savoir que son
+      // geste n'a pas été enregistré, sur le coup et non trois heures plus
+      // tard en découvrant un classement vide.
+      if (reponse.status >= 400) {
+        noterRefus({
+          chemin: geste.chemin,
+          statut: reponse.status,
+          quand: new Date().toISOString(),
+        });
+      }
+
       file = file.slice(1);
       ecrire(file);
     } catch {
