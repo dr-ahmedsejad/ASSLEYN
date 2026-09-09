@@ -172,6 +172,13 @@ services:
       # envoye sur une page en clair : le laisser vrai derriere un serveur en
       # HTTP empecherait toute connexion.
       COOKIES_SECURE: ${COOKIES_SECURE:-true}
+      # Adresse publique du site, telle que les gens la collent dans une
+      # conversation — le port compris. Elle ne sert qu'aux apercus de lien :
+      # les robots de WhatsApp et de Facebook ne resolvent pas un chemin
+      # relatif vers l'image. A poser dans le .env si le site n'ecoute pas sur
+      # le port standard, par exemple :
+      #   SITE_URL=http://www.asleyn.online:2121
+      SITE_URL: ${SITE_URL:-https://${DOMAIN}}
 
   # ─── Reverse proxy Nginx ─────────────────────────────────────────
   nginx:
